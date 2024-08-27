@@ -3,6 +3,7 @@ import { Observable, of, Subject } from 'rxjs';
 import { catchError, delay, map, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { UserModel } from '../models';
+import { LoginResponse } from '../models/auth.model';
 
 @Injectable()
 export class userService {

@@ -14,13 +14,14 @@ import {
   Subject,
   switchMap,
   take,
+  takeUntil,
   tap,
   timer,
 } from 'rxjs';
+import { EMAIL_PATTERN, PASSWORD_PATTERN } from 'src/app/util/auth';
 import { UserModel } from 'src/app/models/user.model';
 import { userService } from 'src/app/services/user.service';
-
-const PASSWORD_PATTERN = /^(?=.*[!@#$%^&*]+)[a-z0-9!@#$%^&*]{6,32}$/;
+import { validateForm } from 'src/app/util/validation';
 
 @Component({
   selector: 'app-register',
@@ -30,6 +31,8 @@ const PASSWORD_PATTERN = /^(?=.*[!@#$%^&*]+)[a-z0-9!@#$%^&*]{6,32}$/;
 export class RegisterComponent implements OnInit {
   formSubmit$ = new Subject<any>();
   registerForm!: FormGroup;
+  destroy$ = new Subject<void>();
+
   constructor(private _fb: FormBuilder, private userService: userService) {}
 
   ngOnInit() {
@@ -38,16 +41,16 @@ export class RegisterComponent implements OnInit {
     this.formSubmit$
       .pipe(
         tap(() => this.registerForm.markAsDirty()),
-        switchMap(() =>
-          this.registerForm.statusChanges.pipe(
-            startWith(this.registerForm.status),
-            filter((status) => status !== 'PENDING'),
-            take(1)
-          )
-        ),
-        filter((status) => status === 'VALID')
+        switchMap(() => validateForm(this.registerForm)),
+        filter((isValid) => isValid),
+        takeUntil(this.destroy$)
       )
-      .subscribe((validationSuccessful) => this.submitForm());
+      .subscribe(() => this.submitForm());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   submitForm() {
@@ -61,8 +64,6 @@ export class RegisterComponent implements OnInit {
       password,
     };
 
-    console.log(newUser);
-
     this.userService.register(newUser).subscribe(console.log);
   }
 
@@ -73,9 +74,7 @@ export class RegisterComponent implements OnInit {
           '',
           Validators.compose([
             Validators.required,
-            Validators.pattern(
-              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-            ),
+            Validators.pattern(EMAIL_PATTERN),
           ]),
           this.validateEmailFromAPIDebounce.bind(this),
         ],
