@@ -17,7 +17,8 @@ import {
   tap,
   timer,
 } from 'rxjs';
-import { ApiService } from 'src/app/services/api.service';
+import { UserModel } from 'src/app/models/user.model';
+import { userService } from 'src/app/services/user.service';
 
 const PASSWORD_PATTERN = /^(?=.*[!@#$%^&*]+)[a-z0-9!@#$%^&*]{6,32}$/;
 
@@ -29,7 +30,7 @@ const PASSWORD_PATTERN = /^(?=.*[!@#$%^&*]+)[a-z0-9!@#$%^&*]{6,32}$/;
 export class RegisterComponent implements OnInit {
   formSubmit$ = new Subject<any>();
   registerForm!: FormGroup;
-  constructor(private _fb: FormBuilder, private _api: ApiService) {}
+  constructor(private _fb: FormBuilder, private userService: userService) {}
 
   ngOnInit() {
     this.initForm();
@@ -50,20 +51,33 @@ export class RegisterComponent implements OnInit {
   }
 
   submitForm() {
-    console.log('Submit form leh');
+    console.log('Submit form');
+
+    const email = this.registerForm.value.email;
+    const password = this.registerForm.value.password;
+
+    const newUser: UserModel = {
+      email,
+      password,
+    };
+
+    console.log(newUser);
+
+    this.userService.register(newUser).subscribe(console.log);
   }
 
   initForm() {
     this.registerForm = this._fb.group(
       {
-        username: [
+        email: [
           '',
           Validators.compose([
             Validators.required,
-            Validators.minLength(6),
-            Validators.pattern(/^[a-z]{6,32}$/i),
+            Validators.pattern(
+              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+            ),
           ]),
-          this.validateUserNameFromAPIDebounce.bind(this),
+          this.validateEmailFromAPIDebounce.bind(this),
         ],
         password: [
           '',
@@ -105,37 +119,48 @@ export class RegisterComponent implements OnInit {
     };
   }
 
-  validateUserNameFromAPI(
+  validateEmailFromAPIDebounce(
     control: AbstractControl
   ): Observable<ValidationErrors | null> {
-    return this._api.validateUsername(control.value).pipe(
-      map((isValid) => {
-        if (isValid) {
-          return null;
-        }
-        return {
-          usernameDuplicated: true,
-        };
+    return timer(300).pipe(
+      switchMap(() => {
+        console.log(control.value);
+        return this.userService.validateEmail(control.value).pipe(
+          map((isValid) => {
+            if (isValid) {
+              return {
+                emailDuplicated: true,
+              };
+            }
+            return null;
+          })
+        );
       })
     );
   }
 
-  validateUserNameFromAPIDebounce(
-    control: AbstractControl
-  ): Observable<ValidationErrors | null> {
-    return timer(300).pipe(
-      switchMap(() =>
-        this._api.validateUsername(control.value).pipe(
-          map((isValid) => {
-            if (isValid) {
-              return null;
-            }
-            return {
-              usernameDuplicated: true,
-            };
-          })
-        )
-      )
-    );
+  getErrorMessage(controlName: string): string {
+    const control = this.registerForm.get(controlName);
+    if (control?.errors) {
+      if (control.errors['required']) {
+        return 'This field is required';
+      }
+      if (control.errors['minlength']) {
+        return `Minimum length is ${control.errors['minlength'].requiredLength} characters`;
+      }
+      if (control.errors['pattern']) {
+        return 'Invalid format';
+      }
+      if (control.errors['emailDuplicated']) {
+        return 'Email is already taken';
+      }
+      if (
+        controlName === 'confirmPassword' &&
+        control.errors['valueNotMatch']
+      ) {
+        return 'Passwords do not match';
+      }
+    }
+    return '';
   }
 }
