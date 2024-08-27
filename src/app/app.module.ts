@@ -7,8 +7,10 @@ import { HomePageComponent } from './component/home-page/home-page.component';
 import { LoginComponent } from './component/login/login/login.component';
 import { PasswordResetComponent } from './component/login/password-reset/password-reset.component';
 import { RegisterComponent } from './component/login/register/register.component';
-import { ApiService } from './services/api.service';
+import { userService } from './services/user.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AuthInterceptor } from './interceptor/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -19,8 +21,20 @@ import { ReactiveFormsModule } from '@angular/forms';
     RegisterComponent,
   ],
 
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
-  providers: [ApiService],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+  ],
+  providers: [
+    userService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
