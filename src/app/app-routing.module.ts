@@ -4,6 +4,8 @@ import { HomePageComponent } from './component/home-page/home-page.component';
 import { LoginComponent } from './component/login/login/login.component';
 import { RegisterComponent } from './component/login/register/register.component';
 import { PasswordResetComponent } from './component/login/password-reset/password-reset.component';
+import { EmailResetPasswordComponent } from './component/login/email-reset-password/email-reset-password.component';
+import { NotFoundComponent } from './component/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -31,6 +33,14 @@ const routes: Routes = [
   {
     path: 'password-reset',
     component: PasswordResetComponent,
+  },
+  {
+    path: 'email-reset-password',
+    component: EmailResetPasswordComponent,
+  },
+  {
+    path: '**',
+    component: NotFoundComponent,
   },
 ];
 

@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.userService
       .login(user)
       .pipe(
-        map((res) => {
+        map((res: LoginResponse) => {
           console.log(res);
           if (res.user && res.accessToken && res.refreshToken) {
             // Save the user data to local storage
