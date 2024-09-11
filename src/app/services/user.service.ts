@@ -54,7 +54,4 @@ export class userService {
     });
   }
 
-  getUsers() {
-    // return this.http.get("https://freeapi.gerasim.in/api/JWT/GetAllUsers")
-  }
 }

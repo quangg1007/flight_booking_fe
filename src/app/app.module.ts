@@ -11,6 +11,8 @@ import { userService } from './services/user.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
+import { EmailResetPasswordComponent } from './component/login/email-reset-password/email-reset-password.component';
+import { NotFoundComponent } from './component/not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,8 @@ import { AuthInterceptor } from './interceptor/auth.interceptor';
     LoginComponent,
     PasswordResetComponent,
     RegisterComponent,
+    EmailResetPasswordComponent,
+    NotFoundComponent
   ],
 
   imports: [
