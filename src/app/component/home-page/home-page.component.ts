@@ -3,20 +3,16 @@ import {
   AbstractControl,
   FormBuilder,
   FormGroup,
-  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
-  Observable,
-  of,
   Subject,
   switchMap,
   takeUntil,
   tap,
-  timer,
 } from 'rxjs';
 import { FlightService } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
@@ -39,7 +35,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   ) {}
   ngOnInit(): void {
     this.initForm();
-
+    this.setupAutocomplete();
     this.formSubmit$
       .pipe(
         tap(() => this.flighSearchForm.markAsDirty()),
@@ -78,73 +74,49 @@ export class HomePageComponent implements OnInit, OnDestroy {
     console.log('Submit form');
   }
 
-  // setupAutocomplete() {
-  //   this.flighSearchForm
-  //     .get('from_destination')!
-  //     .valueChanges.pipe(
-  //       debounceTime(200),
-  //       distinctUntilChanged(),
-  //       takeUntil(this.destroy$)
-  //     )
-  //     .subscribe((value) => {
-  //       if (value.length >= 3) {
-  //         this._flightService.getLocations(value).subscribe((results) => {
-  //           this.fromResults = results;
-  //         });
-  //       } else {
-  //         this.fromResults = [];
-  //       }
-  //     });
+  setupAutocomplete() {
+    this.flighSearchForm
+      .get('from_destination')!
+      .valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((value) => {
+        if (value.length >= 3) {
+          const fommatedValue = value.replace(/\s+/g, '-').toLowerCase();
+          this._flightService
+            .getLocations(fommatedValue)
+            .subscribe((results) => {
+              this.fromResults = results;
+              console.log(results);
+            });
+        } else {
+          this.fromResults = [];
+        }
+      });
 
-  //   // Repeat similar setup for 'to_destination'
-  //   this.flighSearchForm
-  //     .get('to_destination')!
-  //     .valueChanges.pipe(
-  //       debounceTime(200),
-  //       distinctUntilChanged(),
-  //       takeUntil(this.destroy$)
-  //     )
-  //     .subscribe((value) => {
-  //       if (value.length >= 3) {
-  //         this._flightService.getLocations(value).subscribe((results) => {
-  //           this.toResults = results;
-  //         });
-  //       } else {
-  //         this.toResults = [];
-  //       }
-  //     });
-  // }
-
-  onInputChange(controlName: string) {
-    const value = this.flighSearchForm
-      .get(controlName)!
-      .value.replace(/\s+/g, '-')
-      .toLowerCase();
-    if (value.length >= 3) {
-      timer(300)
-        .pipe(
-          switchMap(() => {
-            console.log(value);
-            return this._flightService.getLocations(value).pipe(
-              tap((results) => {
-                if (controlName === 'from_desination') {
-                  this.fromResults = results;
-                } else {
-                  this.toResults = results;
-                }
-                console.log(results);
-              })
-            );
-          })
-        )
-        .subscribe();
-    } else {
-      if (controlName === 'from_desination') {
-        this.fromResults = [];
-      } else {
-        this.toResults = [];
-      }
-    }
+    // Repeat similar setup for 'to_destination'
+    this.flighSearchForm
+      .get('to_destination')!
+      .valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((value) => {
+        if (value.length >= 3) {
+          const fommatedValue = value.replace(/\s+/g, '-').toLowerCase();
+          this._flightService
+            .getLocations(fommatedValue)
+            .subscribe((results) => {
+              this.toResults = results;
+              console.log(results);
+            });
+        } else {
+          this.toResults = [];
+        }
+      });
   }
 
   selectResult(controlName: string, result: any) {
@@ -202,23 +174,4 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
     return '';
   }
-
-  // getControlName(control: AbstractControl): string {
-  //   let parent = control.parent;
-
-  //   if (!parent) {
-  //     return '';
-  //   } else {
-  //     let name: string = '';
-
-  //     Object.keys(parent.controls).forEach((key) => {
-  //       const childControl = parent?.get(key);
-
-  //       if (childControl === control) {
-  //         name = key;
-  //       }
-  //     });
-  //     return name;
-  //   }
-  // }
 }
