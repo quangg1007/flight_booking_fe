@@ -13,6 +13,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { EmailResetPasswordComponent } from './component/login/email-reset-password/email-reset-password.component';
 import { NotFoundComponent } from './component/not-found/not-found.component';
+import { FlightService } from './services/flight.service';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { NotFoundComponent } from './component/not-found/not-found.component';
     PasswordResetComponent,
     RegisterComponent,
     EmailResetPasswordComponent,
-    NotFoundComponent
+    NotFoundComponent,
   ],
 
   imports: [
@@ -33,6 +34,7 @@ import { NotFoundComponent } from './component/not-found/not-found.component';
   ],
   providers: [
     userService,
+    FlightService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
