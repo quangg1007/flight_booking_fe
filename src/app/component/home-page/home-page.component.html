@@ -1,0 +1,136 @@
+<form
+  class="fligh-search-form"
+  autocomplete="off"
+  [formGroup]="flighSearchForm"
+>
+  <div class="row-control">
+    <label class="form-control w-full max-w-xs">
+      <div class="label">
+        <span class="label-text">From</span>
+      </div>
+      <input
+        type="text"
+        placeholder="Ha Noi"
+        class="input input-bordered w-full max-w-xs"
+        id="from_destination"
+        formControlName="from_destination"
+        name="from_destination"
+        required
+      />
+
+      <ng-container
+        *ngTemplateOutlet="
+          autocompleteTemplate;
+          context: { results: fromResults, field: 'from_destination' }
+        "
+      ></ng-container>
+
+      <div class="label">
+        <span
+          class="error-message label-text-alt text-red-600"
+          *ngIf="
+            flighSearchForm.get('from_destination')?.invalid &&
+            (flighSearchForm.get('from_destination')?.dirty ||
+              flighSearchForm.get('from_destination')?.touched)
+          "
+        >
+          {{ getErrorMessage("from_destination") }}
+        </span>
+      </div>
+    </label>
+  </div>
+
+  <div class="row-control">
+    <label class="form-control w-full max-w-xs">
+      <div class="label">
+        <span class="label-text">To</span>
+      </div>
+      <input
+        type="text"
+        placeholder="New york city"
+        class="input input-bordered w-full max-w-xs"
+        id="to_destination"
+        formControlName="to_destination"
+        name="to_destination"
+        required
+      />
+
+      <ng-container
+        *ngTemplateOutlet="
+          autocompleteTemplate;
+          context: { results: toResults, field: 'to_desination' }
+        "
+      ></ng-container>
+
+      <div class="label">
+        <span
+          class="error-message label-text-alt text-red-600"
+          *ngIf="
+            flighSearchForm.get('to_destination')?.invalid &&
+            (flighSearchForm.get('to_destination')?.dirty ||
+              flighSearchForm.get('to_destination')?.touched)
+          "
+        >
+          {{ getErrorMessage("to_destination") }}
+        </span>
+      </div>
+    </label>
+  </div>
+
+  <div class="row-control">
+    <label class="form-control w-full max-w-xs">
+      <div class="label">
+        <span class="label-text">Date</span>
+      </div>
+      <input
+        type="date"
+        placeholder="Today"
+        class="input input-bordered w-full max-w-xs"
+        id="date"
+        formControlName="date"
+        name="date"
+        required
+      />
+      <div class="label">
+        <span
+          class="error-message label-text-alt text-red-600"
+          *ngIf="
+            flighSearchForm.get('date')?.invalid &&
+            (flighSearchForm.get('date')?.dirty ||
+              flighSearchForm.get('date')?.touched)
+          "
+        >
+          {{ getErrorMessage("date") }}
+        </span>
+      </div>
+    </label>
+  </div>
+
+  <div class="row-control row-actions">
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="flighSearchForm.invalid"
+      (click)="submitForm()"
+    >
+      Search
+    </button>
+  </div>
+
+  <ng-template #autocompleteTemplate let-results="results" let-field="field">
+    <div
+      *ngIf="results && results.length > 0"
+      class="absolute z-10 w-full max-w-xs mt-1 bg-white shadow-lg rounded-md"
+    >
+      <ul class="py-1">
+        <li
+          *ngFor="let result of results"
+          class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+          (click)="selectResult(field, result)"
+        >
+          {{ result.name }}
+        </li>
+      </ul>
+    </div>
+  </ng-template>
+</form>

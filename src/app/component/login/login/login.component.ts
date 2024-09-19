@@ -74,7 +74,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           if (res.user && res.accessToken && res.refreshToken) {
             // Save the user data to local storage
             this.tokenService.setTokens(res.accessToken, res.refreshToken);
-            localStorage.setItem('tookeUser', res.user);
+            console.log(res);
 
             // Create a successfull notification
             console.log('Login successful');
