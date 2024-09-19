@@ -83,14 +83,18 @@ export class HomePageComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe((value) => {
+        // console.log(value);
         if (value.length >= 3) {
           const fommatedValue = value.replace(/\s+/g, '-').toLowerCase();
-          this._flightService
-            .getLocations(fommatedValue)
-            .subscribe((results) => {
-              this.fromResults = results;
-              console.log(results);
-            });
+          this._flightService.getLocations(fommatedValue).subscribe(
+            (results) => {
+              this.fromResults = results.data;
+              // console.log(this.fromResults);
+            },
+            (error) => {
+              // console.log(error);
+            }
+          );
         } else {
           this.fromResults = [];
         }
@@ -110,8 +114,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
           this._flightService
             .getLocations(fommatedValue)
             .subscribe((results) => {
-              this.toResults = results;
-              console.log(results);
+              this.toResults = results.data;
+              console.log(this.toResults);
             });
         } else {
           this.toResults = [];
@@ -120,8 +124,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   selectResult(controlName: string, result: any) {
-    this.flighSearchForm.get(controlName)!.setValue(result.name);
-    if (controlName === 'from_desination') {
+    console.log(controlName, result);
+    this.flighSearchForm.get(controlName)!.setValue(result.presentation.title);
+
+    if (controlName === 'from_destination') {
       this.fromResults = [];
     } else {
       this.toResults = [];
@@ -131,7 +137,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   // VALIDATOR
   dateValidator() {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      console.log(control.value);
+      // console.log(control.value);
       const selectedDate = new Date(control.value);
       const currentDate = new Date();
       currentDate.setHours(0, 0, 0, 0);

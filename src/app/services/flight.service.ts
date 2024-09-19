@@ -1,18 +1,24 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 
 @Injectable()
 export class FlightService {
   private apiUrl = 'http://localhost:8080/api';
 
-
   constructor(private http: HttpClient) {}
 
   getLocations(location: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/flights/search/auto-complete`, {
-      params: { keyword: location },
-    });
+    console.log('API call initiated for:', location);
+    const results = this.http.get<any>(
+      `${this.apiUrl}/flights/search/auto-complete`,
+      {
+        params: { keyword: location },
+      }
+    );
+
+    return results.pipe(
+      tap((data) => console.log('API response received:', data))
+    );
   }
 }
