@@ -16,6 +16,7 @@ import { NotFoundComponent } from './component/not-found/not-found.component';
 import { FlightService } from './services/flight.service';
 import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { CacheInterceptor } from './interceptor/cache.interceptor';
+import { RetryInterceptor } from './interceptor/retry.interceptor';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,11 @@ import { CacheInterceptor } from './interceptor/cache.interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CacheInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RetryInterceptor,
       multi: true,
     },
   ],

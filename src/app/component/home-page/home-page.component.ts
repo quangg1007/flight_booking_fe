@@ -89,7 +89,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
           this._flightService.getLocations(fommatedValue).subscribe(
             (results) => {
               this.fromResults = results.data;
-              // console.log(this.fromResults);
+              console.log(this.fromResults);
             },
             (error) => {
               // console.log(error);
