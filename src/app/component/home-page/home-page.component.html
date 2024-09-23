@@ -1,10 +1,10 @@
 <form
-  class="fligh-search-form"
+  class="fligh-search-form flex flex-row gap-x-10 justify-center items-center"
   autocomplete="off"
   [formGroup]="flighSearchForm"
 >
   <div class="row-control">
-    <label class="form-control w-full max-w-xs">
+    <label class="form-control w-full max-w-xs relative">
       <div class="label">
         <span class="label-text">From</span>
       </div>
@@ -41,7 +41,7 @@
   </div>
 
   <div class="row-control">
-    <label class="form-control w-full max-w-xs">
+    <label class="form-control w-full max-w-xs relative">
       <div class="label">
         <span class="label-text">To</span>
       </div>
@@ -58,7 +58,7 @@
       <ng-container
         *ngTemplateOutlet="
           autocompleteTemplate;
-          context: { results: toResults, field: 'to_desination' }
+          context: { results: toResults, field: 'to_destination' }
         "
       ></ng-container>
 
@@ -120,7 +120,7 @@
   <ng-template #autocompleteTemplate let-results="results" let-field="field">
     <div
       *ngIf="results && results.length > 0"
-      class="absolute z-10 w-full max-w-xs mt-1 bg-white shadow-lg rounded-md"
+      class="absolute z-10 w-full max-w-xs mt-24 bg-white shadow-lg rounded-md"
     >
       <ul class="py-1">
         <li
@@ -128,7 +128,7 @@
           class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
           (click)="selectResult(field, result)"
         >
-          {{ result.name }}
+          {{ result.presentation.title }}
         </li>
       </ul>
     </div>
