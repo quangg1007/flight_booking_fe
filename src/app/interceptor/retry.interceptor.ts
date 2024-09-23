@@ -17,9 +17,9 @@ export class RetryInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
-      retry(2),
+      retry(1),
       catchError((error: HttpErrorResponse) => {
-        console.error('Request failed after 3 attempts:', error);
+        console.error('Request failed after 2 attempts:', error);
         return throwError(() => error);
       })
     );

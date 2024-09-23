@@ -54,16 +54,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   initForm() {
     this.flighSearchForm = this._fb.group(
       {
-        from_destination: [
-          '',
-          [Validators.required, Validators.minLength(3)],
-          // this.findEverything.bind(this),
-        ],
-        to_destination: [
-          '',
-          [Validators.required, Validators.minLength(3)],
-          // this.findEverything.bind(this),
-        ],
+        from_destination: ['', [Validators.required, Validators.minLength(3)]],
+        to_destination: ['', [Validators.required, Validators.minLength(3)]],
         date: ['', [Validators.required, this.dateValidator()]],
       },
       { validator: this.differentDestinationsValidator }
@@ -92,7 +84,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
               console.log(this.fromResults);
             },
             (error) => {
-              // console.log(error);
+              this.fromResults = [{ presentation: { title: 'No data found' } }];
             }
           );
         } else {
@@ -111,12 +103,15 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .subscribe((value) => {
         if (value.length >= 3) {
           const fommatedValue = value.replace(/\s+/g, '-').toLowerCase();
-          this._flightService
-            .getLocations(fommatedValue)
-            .subscribe((results) => {
+          this._flightService.getLocations(fommatedValue).subscribe(
+            (results) => {
               this.toResults = results.data;
               console.log(this.toResults);
-            });
+            },
+            (error) => {
+              this.toResults = [{ presentation: { title: 'No data found' } }];
+            }
+          );
         } else {
           this.toResults = [];
         }
@@ -125,7 +120,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   selectResult(controlName: string, result: any) {
     console.log(controlName, result);
-    this.flighSearchForm.get(controlName)!.setValue(result.presentation.title);
+    this.flighSearchForm
+      .get(controlName)!
+      .setValue(result.presentation.title, { emitEvent: false });
 
     if (controlName === 'from_destination') {
       this.fromResults = [];
