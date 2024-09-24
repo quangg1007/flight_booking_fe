@@ -6,10 +6,12 @@ import { RegisterComponent } from './component/login/register/register.component
 import { PasswordResetComponent } from './component/login/password-reset/password-reset.component';
 import { EmailResetPasswordComponent } from './component/login/email-reset-password/email-reset-password.component';
 import { NotFoundComponent } from './component/not-found/not-found.component';
+import { AuthGuard } from './guard/auth.guard';
 
 const routes: Routes = [
   {
     path: 'home',
+    canActivate: [AuthGuard],
     component: HomePageComponent,
   },
   {

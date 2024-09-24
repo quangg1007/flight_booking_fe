@@ -5,13 +5,16 @@ import { BookingsComponent } from './bookings/bookings.component';
 import { BookingDetailComponent } from './booking-detail/booking-detail.component';
 import { AccountComponent } from './account/account.component';
 import { PaymentsComponent } from './payments/payments.component';
-import { AccountGuard } from 'src/app/guard/account.guard';
+import { RoleGuard } from 'src/app/guard/role.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: AccountComponent,
-    canActivate: [AccountGuard],
+    canActivate: [RoleGuard],
+    data: {
+      expectedRole: 'admin',
+    },
     children: [
       {
         path: 'profile',
