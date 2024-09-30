@@ -17,6 +17,7 @@ import { FlightService } from './services/flight.service';
 import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { CacheInterceptor } from './interceptor/cache.interceptor';
 import { RetryInterceptor } from './interceptor/retry.interceptor';
+import { LoadingPageComponent } from './component/loading-page/loading-page.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { RetryInterceptor } from './interceptor/retry.interceptor';
     RegisterComponent,
     EmailResetPasswordComponent,
     NotFoundComponent,
+    LoadingPageComponent,
   ],
 
   imports: [

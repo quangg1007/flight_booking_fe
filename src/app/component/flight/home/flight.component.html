@@ -1,2 +1,9 @@
-<p>flight works!</p>
-<router-outlet></router-outlet>
+<div *ngIf="isLoading">
+  <app-loading-page></app-loading-page>
+</div>
+
+<div *ngIf="!isLoading">
+  <!-- Display search results here -->
+  <h2>Flight Results</h2>
+  <pre>{{ searchResults | json }}</pre>
+</div>

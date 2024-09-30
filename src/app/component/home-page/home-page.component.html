@@ -2,6 +2,7 @@
   class="fligh-search-form flex flex-row gap-x-10 justify-center items-center"
   autocomplete="off"
   [formGroup]="flighSearchForm"
+  (ngSubmit)="submitForm()"
 >
   <div class="row-control">
     <label class="form-control w-full max-w-xs relative">
@@ -111,7 +112,6 @@
       class="btn btn-primary"
       type="submit"
       [disabled]="flighSearchForm.invalid"
-      (click)="submitForm()"
     >
       Search
     </button>

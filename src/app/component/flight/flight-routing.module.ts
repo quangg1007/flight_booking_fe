@@ -2,7 +2,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { FlightComponent } from './home/flight.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ListComponent } from './list/list.component';
+import { DetailComponent } from './detail/detail.component';
 
 const routes: Routes = [
   {
@@ -10,8 +10,8 @@ const routes: Routes = [
     component: FlightComponent,
     children: [
       {
-        path: 'list',
-        component: ListComponent,
+        path: 'detail',
+        component: DetailComponent,
       },
     ],
   },
