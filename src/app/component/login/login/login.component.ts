@@ -70,11 +70,11 @@ export class LoginComponent implements OnInit, OnDestroy {
       .login(user)
       .pipe(
         map((res: LoginResponse) => {
-          console.log(res);
-          if (res.user && res.accessToken && res.refreshToken) {
+          // console.log(res);
+          if (res.user && res.accessToken && res.refreshToken && res.isAdmin) {
             // Save the user data to local storage
             this.tokenService.setTokens(res.accessToken, res.refreshToken);
-            console.log(res);
+            // console.log(res);
 
             // Create a successfull notification
             console.log('Login successful');
