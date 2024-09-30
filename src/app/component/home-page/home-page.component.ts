@@ -6,9 +6,11 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  catchError,
   debounceTime,
   distinctUntilChanged,
   filter,
+  of,
   Subject,
   switchMap,
   takeUntil,
@@ -54,8 +56,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
   initForm() {
     this.flighSearchForm = this._fb.group(
       {
-        from_destination: ['', [Validators.required, Validators.minLength(3)]],
+        from_departure: ['', [Validators.required, Validators.minLength(3)]],
+        from_departure_skyID: [''],
         to_destination: ['', [Validators.required, Validators.minLength(3)]],
+        to_destination_skyID: [''],
         date: ['', [Validators.required, this.dateValidator()]],
       },
       { validator: this.differentDestinationsValidator }
@@ -64,71 +68,80 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   submitForm() {
     console.log('Submit form');
+    const fromEntityId = this.flighSearchForm.get(
+      'from_departure_skyID'
+    )!.value;
+
+    const toEntityId = this.flighSearchForm.get('to_destination_skyID')!.value;
+
+    const date = this.flighSearchForm.get('date')!.value;
+
+    this._flightService
+      .searchOneWay(fromEntityId, toEntityId, date)
+      .subscribe((value) => {
+        console.log(value);
+      });
+    console.log(fromEntityId, toEntityId, date);
   }
 
   setupAutocomplete() {
-    this.flighSearchForm
-      .get('from_destination')!
-      .valueChanges.pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((value) => {
-        // console.log(value);
-        if (value.length >= 3) {
-          const fommatedValue = value.replace(/\s+/g, '-').toLowerCase();
-          this._flightService.getLocations(fommatedValue).subscribe(
-            (results) => {
-              this.fromResults = results.data;
-              console.log(this.fromResults);
-            },
-            (error) => {
-              this.fromResults = [{ presentation: { title: 'No data found' } }];
-            }
-          );
-        } else {
-          this.fromResults = [];
-        }
-      });
+    this.setupFieldAutocomplete('from_departure');
+    this.setupFieldAutocomplete('to_destination');
+  }
 
-    // Repeat similar setup for 'to_destination'
+  private setupFieldAutocomplete(
+    fieldName: 'from_departure' | 'to_destination'
+  ) {
     this.flighSearchForm
-      .get('to_destination')!
+      .get(fieldName)!
       .valueChanges.pipe(
-        debounceTime(300),
+        debounceTime(500),
         distinctUntilChanged(),
+        tap((value) => {
+          if (value.length < 3) {
+            this[fieldName === 'from_departure' ? 'fromResults' : 'toResults'] =
+              [];
+          }
+        }),
+        filter((value) => value.length >= 3),
+        switchMap((value) => {
+          const formattedValue = value.replace(/\s+/g, '-').toLowerCase();
+          return this._flightService.getLocations(formattedValue).pipe(
+            catchError((error) => {
+              console.error(`Error fetching ${fieldName} locations:`, error);
+              return of({ data: [] });
+            })
+          );
+        }),
         takeUntil(this.destroy$)
       )
-      .subscribe((value) => {
-        if (value.length >= 3) {
-          const fommatedValue = value.replace(/\s+/g, '-').toLowerCase();
-          this._flightService.getLocations(fommatedValue).subscribe(
-            (results) => {
-              this.toResults = results.data;
-              console.log(this.toResults);
-            },
-            (error) => {
-              this.toResults = [{ presentation: { title: 'No data found' } }];
-            }
-          );
-        } else {
-          this.toResults = [];
-        }
+      .subscribe((results) => {
+        const resultArray =
+          fieldName === 'from_departure' ? 'fromResults' : 'toResults';
+        this[resultArray] =
+          results.data.length > 0
+            ? results.data
+            : [{ presentation: { title: 'No data found' } }];
+        console.log(`${fieldName} results:`, this[resultArray]);
       });
   }
 
   selectResult(controlName: string, result: any) {
-    console.log(controlName, result);
-    this.flighSearchForm
-      .get(controlName)!
-      .setValue(result.presentation.title, { emitEvent: false });
+    const visibleControl = this.flighSearchForm.get(controlName)!;
+    const skyIDControl = this.flighSearchForm.get(`${controlName}_skyID`)!;
 
-    if (controlName === 'from_destination') {
+    visibleControl.setValue(result.presentation.title, { emitEvent: false });
+    skyIDControl.setValue(result.navigation!.relevantFlightParams!.skyId, {
+      emitEvent: false,
+    });
+
+    if (controlName === 'from_departure') {
       this.fromResults = [];
     } else {
       this.toResults = [];
     }
+
+    console.log(skyIDControl!.value);
   }
 
   // VALIDATOR
@@ -149,7 +162,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   differentDestinationsValidator(
     group: FormGroup
   ): { [key: string]: any } | null {
-    const fromDestination = group.get('from_destination')?.value;
+    const fromDestination = group.get('from_departure')?.value;
     const toDestination = group.get('to_destination')?.value;
 
     return fromDestination &&

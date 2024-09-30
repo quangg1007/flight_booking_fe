@@ -21,4 +21,19 @@ export class FlightService {
       tap((data) => console.log('API response received:', data))
     );
   }
+
+  searchOneWay(
+    fromEntityId: string,
+    toEntityId: string,
+    date: string
+  ): Observable<any> {
+    const url = `${this.apiUrl}/flights/search/one-way`;
+    const params = {
+      fromEntityId,
+      toEntityId,
+      date,
+    };
+
+    return this.http.get<any>(url, { params });
+  }
 }

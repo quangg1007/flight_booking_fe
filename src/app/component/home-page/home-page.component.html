@@ -12,16 +12,16 @@
         type="text"
         placeholder="Ha Noi"
         class="input input-bordered w-full max-w-xs"
-        id="from_destination"
-        formControlName="from_destination"
-        name="from_destination"
+        id="from_departure"
+        formControlName="from_departure"
+        name="from_departure"
         required
       />
 
       <ng-container
         *ngTemplateOutlet="
           autocompleteTemplate;
-          context: { results: fromResults, field: 'from_destination' }
+          context: { results: fromResults, field: 'from_departure' }
         "
       ></ng-container>
 
@@ -29,12 +29,12 @@
         <span
           class="error-message label-text-alt text-red-600"
           *ngIf="
-            flighSearchForm.get('from_destination')?.invalid &&
-            (flighSearchForm.get('from_destination')?.dirty ||
-              flighSearchForm.get('from_destination')?.touched)
+            flighSearchForm.get('from_departure')?.invalid &&
+            (flighSearchForm.get('from_departure')?.dirty ||
+              flighSearchForm.get('from_departure')?.touched)
           "
         >
-          {{ getErrorMessage("from_destination") }}
+          {{ getErrorMessage("from_departure") }}
         </span>
       </div>
     </label>
