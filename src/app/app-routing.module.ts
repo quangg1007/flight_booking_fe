@@ -7,6 +7,7 @@ import { PasswordResetComponent } from './component/login/password-reset/passwor
 import { EmailResetPasswordComponent } from './component/login/email-reset-password/email-reset-password.component';
 import { NotFoundComponent } from './component/not-found/not-found.component';
 import { AuthGuard } from './guard/auth.guard';
+import { LoadingPageComponent } from './component/loading-page/loading-page.component';
 
 const routes: Routes = [
   {

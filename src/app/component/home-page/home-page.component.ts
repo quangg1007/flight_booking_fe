@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   catchError,
   debounceTime,
@@ -33,7 +34,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   constructor(
     private _fb: FormBuilder,
-    private _flightService: FlightService
+    private _flightService: FlightService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.initForm();
@@ -67,21 +69,20 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   submitForm() {
-    console.log('Submit form');
     const fromEntityId = this.flighSearchForm.get(
       'from_departure_skyID'
     )!.value;
-
     const toEntityId = this.flighSearchForm.get('to_destination_skyID')!.value;
-
     const date = this.flighSearchForm.get('date')!.value;
 
-    this._flightService
-      .searchOneWay(fromEntityId, toEntityId, date)
-      .subscribe((value) => {
-        console.log(value);
-      });
-    console.log(fromEntityId, toEntityId, date);
+    // Navigate to /flight with query parameters
+    this.router.navigate(['/flight'], {
+      queryParams: {
+        from_departure: fromEntityId,
+        to_destination: toEntityId,
+        date: date,
+      },
+    });
   }
 
   setupAutocomplete() {

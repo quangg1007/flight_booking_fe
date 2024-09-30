@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ListComponent } from './list.component';
+import { LoadingPageComponent } from './loading-page.component';
 
-describe('ListComponent', () => {
-  let component: ListComponent;
-  let fixture: ComponentFixture<ListComponent>;
+describe('LoadingPageComponent', () => {
+  let component: LoadingPageComponent;
+  let fixture: ComponentFixture<LoadingPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ListComponent ]
+      declarations: [ LoadingPageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ListComponent);
+    fixture = TestBed.createComponent(LoadingPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
