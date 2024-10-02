@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { RouterModule } from '@angular/router';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomePageComponent } from './component/home-page/home-page.component';
@@ -17,7 +19,7 @@ import { FlightService } from './services/flight.service';
 import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { CacheInterceptor } from './interceptor/cache.interceptor';
 import { RetryInterceptor } from './interceptor/retry.interceptor';
-import { LoadingPageComponent } from './component/loading-page/loading-page.component';
+
 
 @NgModule({
   declarations: [
@@ -28,7 +30,6 @@ import { LoadingPageComponent } from './component/loading-page/loading-page.comp
     RegisterComponent,
     EmailResetPasswordComponent,
     NotFoundComponent,
-    LoadingPageComponent,
   ],
 
   imports: [
@@ -36,6 +37,7 @@ import { LoadingPageComponent } from './component/loading-page/loading-page.comp
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
+    RouterModule,
   ],
   providers: [
     userService,
