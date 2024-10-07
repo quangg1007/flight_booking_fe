@@ -31,6 +31,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   fromResults: any[] = [];
   toResults: any[] = [];
+  selectedFlightType: 'oneWay' | 'roundTrip' | 'multiCity' = 'oneWay';
 
   constructor(
     private _fb: FormBuilder,
@@ -62,7 +63,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         from_departure_skyID: [''],
         to_destination: ['', [Validators.required, Validators.minLength(3)]],
         to_destination_skyID: [''],
-        date: ['', [Validators.required, this.dateValidator()]],
+        date: ['', [Validators.required]],
       },
       { validator: this.differentDestinationsValidator }
     );
@@ -145,20 +146,24 @@ export class HomePageComponent implements OnInit, OnDestroy {
     console.log(skyIDControl!.value);
   }
 
-  // VALIDATOR
-  dateValidator() {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      // console.log(control.value);
-      const selectedDate = new Date(control.value);
-      const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0);
-
-      if (selectedDate < currentDate) {
-        return { pastDate: true };
-      }
-      return null;
-    };
+  selectFlightType(type: 'oneWay' | 'roundTrip' | 'multiCity'): void {
+    this.selectedFlightType = type;
   }
+
+  // VALIDATOR
+  // dateValidator() {
+  //   return (control: AbstractControl): { [key: string]: any } | null => {
+  //     // console.log(control.value);
+  //     const selectedDate = new Date(control.value);
+  //     const currentDate = new Date();
+  //     currentDate.setHours(0, 0, 0, 0);
+
+  //     if (selectedDate < currentDate) {
+  //       return { pastDate: true };
+  //     }
+  //     return null;
+  //   };
+  // }
 
   differentDestinationsValidator(
     group: FormGroup
