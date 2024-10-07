@@ -1,9 +1,4 @@
-<form
-  class="flex relative flex-col bg-slate-200"
-  autocomplete="off"
-  [formGroup]="flighSearchForm"
-  (ngSubmit)="submitForm()"
->
+<div class="flex relative flex-col bg-slate-200">
   <img
     loading="lazy"
     src="https://cdn.builder.io/api/v1/image/assets/TEMP/f7b6b2931a5ba543da034a16e2dcc32321625dcb98cef54c0d19c43197e5314e?apiKey=6b158420ea1148c682b1835c67783cca&"
@@ -11,14 +6,20 @@
     class="object-contain absolute inset-0 size-full"
   />
 
-  <div class="flex relative flex-row gap-10 justify-center m-auto">
+  <form
+    class="flex relative flex-row gap-10 justify-center m-auto"
+    autocomplete="off"
+    [formGroup]="flighSearchForm"
+    (ngSubmit)="submitForm()"
+  >
     <section
       class="flex flex-col self-stretch my-auto text-black whitespace-nowrap w-[173px]"
     >
       <div class="row-control">
         <label class="form-control w-full max-w-xs relative">
-          <div class="label">
-            <span class="label-text">From</span>
+          <div class="label flex gap-2 justify-start">
+            <span class="label-text">Depature</span>
+            <span class="material-symbols-outlined"> flight_takeoff </span>
           </div>
           <input
             type="text"
@@ -65,7 +66,7 @@
       </figure>
     </section>
 
-    <section
+    <div
       class="flex relative gap-2.5 justify-center items-start self-stretch px-12 py-20 my-auto min-h-[591px] min-w-[240px] w-[479px] max-md:px-5 max-md:max-w-full"
     >
       <img
@@ -76,58 +77,93 @@
       />
       <div class="flex z-0 flex-col my-auto min-w-[240px] w-[382px]">
         <div class="flex gap-10 items-center self-center">
-          <div class="flex flex-col self-stretch my-auto rounded-none w-[78px]">
+          <!-- One way Option -->
+
+          <button
+            type="button"
+            class="flex gap-2 items-center self-stretch px-1.5 pt-1.5 pb-1.5 my-auto bg-white min-h-[142px] rounded-[100px] w-[78px]"
+            [ngClass]="
+              selectedFlightType === 'oneWay' ? 'flex-col' : 'flex-col-reverse'
+            "
+            (click)="selectFlightType('oneWay')"
+          >
             <div
-              class="flex flex-col px-1.5 pt-1.5 pb-5 w-full bg-white rounded-[100px]"
-            >
-              <button
-                class="flex gap-2.5 items-center p-5 bg-slate-400 h-[66px] min-h-[66px] rounded-[33px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[66px] max-md:px-5"
-                aria-label="Select one way flight"
-              >
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/cedc533bb0a0be3b184aa7a146cf684064ec308f66198c3915d0e7a0ea9db309?apiKey=6b158420ea1148c682b1835c67783cca&"
-                  alt=""
-                  class="object-contain self-stretch my-auto w-6 aspect-square"
-                />
-              </button>
-              <div class="mt-1.5 text-xl text-black">One way</div>
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center self-stretch px-1.5 pt-1.5 pb-5 my-auto bg-white min-h-[142px] rounded-[100px] w-[78px]"
-          >
-            <button
-              class="flex gap-2.5 items-center px-6 py-3.5 bg-white border border-solid border-stone-300 h-[66px] min-h-[66px] rounded-[33px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[66px] max-md:px-5"
-              aria-label="Select round trip flight"
-            >
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/bac8bf01f397f5db96f1e3af188a18b58057c5c9c22404ed88aaea172d3b4f53?apiKey=6b158420ea1148c682b1835c67783cca&"
-                alt=""
-                class="object-contain self-stretch my-auto aspect-[0.49] w-[19px]"
-              />
-            </button>
-            <div class="mt-1.5 text-xl text-center text-black">Round Trip</div>
-          </div>
-          <div
-            class="flex flex-col items-center self-stretch px-1.5 pt-1.5 pb-5 my-auto bg-white min-h-[142px] rounded-[100px] w-[78px]"
-          >
-            <button
-              class="flex gap-2.5 items-center py-5 pr-5 pl-6 bg-white border border-solid border-stone-300 h-[66px] min-h-[66px] rounded-[33px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[66px] max-md:pl-5"
+              class="flex gap-2.5 items-center justify-center border border-solid border-stone-300 h-[66px] min-h-[66px] rounded-[33px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[66px] max-md:pl-5"
+              [ngClass]="
+                selectedFlightType === 'oneWay' ? 'bg-[#97C1CE]' : 'bg-white'
+              "
               aria-label="Select multi-city flight"
             >
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/13f69e15088ce40903a1e6030fbfc4b95d57f0f49bcc8e54ca215359bcb6d7ed?apiKey=6b158420ea1148c682b1835c67783cca&"
-                alt=""
-                class="object-contain self-stretch my-auto w-6 aspect-square"
-              />
-            </button>
-            <div class="mt-1.5 text-xl text-center text-black">Multi City</div>
-          </div>
+              <span
+                class="material-symbols-outlined"
+                [ngClass]="selectedFlightType === 'oneWay' ? 'text-white' : ''"
+              >
+                flight
+              </span>
+            </div>
+            <div class="mt-1.5 text-xl text-center text-black">One way</div>
+          </button>
+
+          <!-- Round trip Option -->
+          <button
+            type="button"
+            class="flex gap-2 items-center self-stretch px-1.5 pt-1.5 pb-1.5 my-auto bg-white min-h-[142px] rounded-[100px] w-[78px]"
+            [ngClass]="
+              selectedFlightType === 'roundTrip'
+                ? 'flex-col'
+                : 'flex-col-reverse'
+            "
+            (click)="selectFlightType('roundTrip')"
+          >
+            <div
+              class="flex gap-2.5 items-center justify-center border border-solid border-stone-300 h-[66px] min-h-[66px] rounded-[33px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[66px] max-md:pl-5"
+              [ngClass]="
+                selectedFlightType === 'roundTrip' ? 'bg-[#97C1CE]' : 'bg-white'
+              "
+            >
+              <span
+                class="material-symbols-outlined"
+                [ngClass]="
+                  selectedFlightType === 'roundTrip' ? 'text-white' : ''
+                "
+              >
+                connecting_airports
+              </span>
+            </div>
+            <div class="my-1.5 text-xl text-center text-black">Round Trip</div>
+          </button>
+
+          <!-- Multi city Option -->
+          <button
+            type="button"
+            class="flex gap-2 items-center self-stretch px-1.5 pt-1.5 pb-1.5 my-auto bg-white min-h-[142px] rounded-[100px] w-[78px]"
+            [ngClass]="
+              selectedFlightType === 'multiCity'
+                ? 'flex-col'
+                : 'flex-col-reverse'
+            "
+            (click)="selectFlightType('multiCity')"
+          >
+            <div
+              class="flex gap-2.5 items-center justify-center border border-solid border-stone-300 h-[66px] min-h-[66px] rounded-[33px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[66px] max-md:pl-5"
+              [ngClass]="
+                selectedFlightType === 'multiCity' ? 'bg-[#97C1CE]' : 'bg-white'
+              "
+            >
+              <span
+                class="material-symbols-outlined"
+                [ngClass]="
+                  selectedFlightType === 'multiCity' ? 'text-white' : ''
+                "
+              >
+                language
+              </span>
+            </div>
+            <div class="my-1.5 text-xl text-center text-black">Multi City</div>
+          </button>
         </div>
 
+        <!-- Date -->
         <div
           class="flex gap-10 items-center px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
         >
@@ -145,8 +181,9 @@
 
           <div class="row-control flex flex-col self-stretch my-auto w-[120px]">
             <label class="form-control w-full max-w-xs">
-              <div class="label">
+              <div class="label flex gap-2 justify-start">
                 <span class="label-text">Date</span>
+                <span class="material-symbols-outlined"> calendar_today </span>
               </div>
               <input
                 type="date"
@@ -179,12 +216,17 @@
             <label for="returnDate" class="text-base text-black text-opacity-60"
               >Return Date</label
             >
-            <button id="returnDate" class="mt-2 text-xl font-bold text-black">
+            <button
+              type="button"
+              id="returnDate"
+              class="mt-2 text-xl font-bold text-black"
+            >
               Tap to select
             </button>
           </div>
         </div>
 
+        <!-- Class and Traveller -->
         <div
           class="flex gap-10 items-center px-3 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
         >
@@ -241,6 +283,7 @@
           </div>
         </div>
 
+        <!--  Search Button -->
         <button
           class="flex gap-2.5 items-center self-center p-5 mt-3.5 bg-slate-400 h-[60px] min-h-[60px] rounded-[30px] w-[60px]"
           aria-label="Search flights"
@@ -254,25 +297,16 @@
             class="object-contain self-stretch my-auto w-6 aspect-square"
           />
         </button>
-
-        <!-- <div class="row-control row-actions">
-    <button
-      class="btn btn-primary"
-      type="submit"
-      [disabled]="flighSearchForm.invalid"
-    >
-      Search
-    </button>
-  </div> -->
       </div>
-    </section>
+    </div>
 
     <section
       class="flex flex-col self-stretch my-auto text-black whitespace-nowrap min-w-[240px] w-[252px]"
     >
       <div class="row-control">
         <label class="form-control w-full max-w-xs relative">
-          <div class="label">
+          <div class="label flex gap-2 justify-start">
+            <span class="material-symbols-outlined"> flight_land </span>
             <span class="label-text">To</span>
           </div>
           <input
@@ -319,22 +353,22 @@
         <figcaption class="mt-2.5">Singapore</figcaption>
       </figure>
     </section>
-  </div>
+  </form>
+</div>
 
-  <ng-template #autocompleteTemplate let-results="results" let-field="field">
-    <div
-      *ngIf="results && results.length > 0"
-      class="absolute z-10 w-full max-w-xs mt-24 bg-white shadow-lg rounded-md"
-    >
-      <ul class="py-1">
-        <li
-          *ngFor="let result of results"
-          class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-          (click)="selectResult(field, result)"
-        >
-          {{ result.presentation.title }}
-        </li>
-      </ul>
-    </div>
-  </ng-template>
-</form>
+<ng-template #autocompleteTemplate let-results="results" let-field="field">
+  <div
+    *ngIf="results && results.length > 0"
+    class="absolute z-10 w-full max-w-xs mt-24 bg-white shadow-lg rounded-md"
+  >
+    <ul class="py-1">
+      <li
+        *ngFor="let result of results"
+        class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        (click)="selectResult(field, result)"
+      >
+        {{ result.presentation.title }}
+      </li>
+    </ul>
+  </div>
+</ng-template>

@@ -31,6 +31,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   fromResults: any[] = [];
   toResults: any[] = [];
+  selectedFlightType: 'oneWay' | 'roundTrip' | 'multiCity' = 'oneWay';
 
   constructor(
     private _fb: FormBuilder,
@@ -143,6 +144,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     console.log(skyIDControl!.value);
+  }
+
+  selectFlightType(type: 'oneWay' | 'roundTrip' | 'multiCity'): void {
+    this.selectedFlightType = type;
   }
 
   // VALIDATOR
