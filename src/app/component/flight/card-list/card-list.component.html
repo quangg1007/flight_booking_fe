@@ -1,0 +1,122 @@
+<div
+  class="flex flex-row max-w-[800px] min-h-[200px] bg-red-300 z-0 flex-wrap justify-center rounded-xl ml-40 mt-10 max-md:max-w-full"
+>
+  <section
+    class="flex flex-col grow shrink text-base font-bold min-w-[240px] w-[600px] max-md:max-w-full"
+  >
+    <header
+      class="flex flex-wrap gap-10 justify-end items-center p-3 w-full text-xl text-cyan-600 whitespace-nowrap max-md:max-w-full"
+      [ngClass]="flightCard.tags ? 'justify-between' : 'justify-end'"
+    >
+      <!-- Badge tags -->
+      <div
+        class="gap-2.5 self-stretch px-6 py-3 my-auto bg-green-100 rounded-xl max-md:px-5"
+        [ngClass]="flightCard.tags ? 'flex' : 'hidden'"
+      >
+        {{ flightCard.tags }}
+      </div>
+      <span class="material-symbols-outlined text-black"> favorite </span>
+    </header>
+
+    <!-- From Departure -->
+    <div
+      class="flex flex-wrap gap-10 justify-between items-center px-6 py-3 w-full max-md:px-5 max-md:max-w-full"
+    >
+      <div
+        class="flex gap-2 items-start self-stretch my-auto min-w-[240px] relative"
+      >
+        <!-- flight brand logo -->
+
+        @if (flightCard.legs[0].carriers. marketing.length > 1){
+        <div class="flex justify-between flex-wrap w-10 h-10 relative">
+          @for (logo of flightCard.legs[0].carriers.marketing; track $index; let
+          o = $odd) {
+          <img
+            src="{{ logo.logoUrl }}"
+            class="w-1/2 h-1/2"
+            ngClass="{{ o ? 'absolute right-0 bottom-0' : '' }}"
+          />
+          }
+        </div>
+        }@else {
+        <div class="w-20 h-5">
+          <img
+            src="{{ flightCard.legs[0].carriers.marketing[0].logoUrl }}"
+            class="object-contain shrink-0 aspect-[3.31] w-[80px]"
+          />
+        </div>
+        }
+
+        <!-- Time to takeoff -->
+        <div class="flex flex-col w-[187px]">
+          <div class="text-black">{{ timeDeparture }} - {{ timeArrival }}</div>
+          <!-- Flight brand -->
+          <div class="mt-2 text-black text-opacity-50">
+            {{ brandNameFlight }}
+          </div>
+        </div>
+      </div>
+      <!-- Flight type -->
+      <div class="self-stretch my-auto text-black">
+        {{ stopCount > 0 ? stopCount + " stop" : "Non-stop" }}
+      </div>
+      <div class="flex flex-col self-stretch my-auto text-black w-[72px]">
+        <!-- Time and airport -->
+        <div>{{ duration }}</div>
+        <div class="mt-2 whitespace-nowrap">{{ formatedDepDesCode }}</div>
+      </div>
+    </div>
+  </section>
+
+  <div
+    class="flex justify-center items-center min-h-[200px] py-4 w-0.5 bg-slate-400"
+  ></div>
+
+  <section class="flex flex-col grow shrink px-3 py-3.5 w-44 h-full">
+    <div class="flex flex-col w-full text-black whitespace-nowrap">
+      <div class="flex gap-6 items-center w-full text-base font-bold">
+        <!-- Carry on bag -->
+        <div
+          class="flex overflow-hidden gap-2.5 items-center self-stretch p-1.5 my-auto rounded-sm border border-solid border-cyan-600 border-opacity-60"
+        >
+          <span class="material-symbols-outlined">
+            travel_luggage_and_bags
+          </span>
+          <div class="self-stretch my-auto">1</div>
+        </div>
+
+        <!-- Checked bag -->
+        <div
+          class="flex gap-2.5 items-center self-stretch p-1.5 my-auto rounded-sm border border-solid border-cyan-600 border-opacity-60"
+        >
+          <span class="material-symbols-outlined"> work </span>
+          <div class="self-stretch my-auto">0</div>
+        </div>
+      </div>
+
+      <!-- Total price, class, website  -->
+      <div class="flex flex-col mt-1.5 w-full">
+        <div class="text-3xl font-bold">{{ flightCard.price.formatted }}</div>
+        <div class="flex flex-col mt-2 text-base w-[70px]">
+          <div>Economy</div>
+          <div>eDream</div>
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="flex justify-center items-center px-5 py-3 mt-3 w-full textl font-bold text-white bg-lime-600 rounded"
+      (click)="toggleDetail()"
+    >
+      <span class="self-stretch my-auto">View Detail</span>
+      <span class="material-symbols-outlined">
+        {{ isDetailVisible ? "arrow_drop_up" : "arrow_drop_down" }}
+      </span>
+    </button>
+  </section>
+</div>
+
+<app-card-detail
+  *ngIf="isDetailVisible"
+  [itineraryId]="flightCard.id"
+></app-card-detail>

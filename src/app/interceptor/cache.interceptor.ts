@@ -1,5 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse } from '@angular/common/http';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor,
+  HttpResponse,
+} from '@angular/common/http';
 import { Observable, of, shareReplay, tap } from 'rxjs';
 import { CachingService } from '../services/caching.service';
 
@@ -16,8 +22,8 @@ export class CacheInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-
     const cachedResponse = this.caching.get(request.urlWithParams);
+
     if (cachedResponse) {
       console.log('Serving from cache:', request.urlWithParams);
       // console.log(cachedResponse.clone());

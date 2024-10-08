@@ -11,12 +11,13 @@ interface BrandFlight {
 }
 
 @Component({
-  selector: 'app-list-card',
-  templateUrl: './list-card.component.html',
-  styleUrl: './list-card.component.css',
+  selector: 'app-card-list',
+  templateUrl: './card-list.component.html',
+  styleUrl: './card-list.component.css',
 })
-export class ListCardComponent {
+export class CardListComponent {
   @Input() flightCard: any;
+  isDetailVisible: boolean = false;
 
   brandFlight: BrandFlight[] = [];
   brandNameFlight: string = '';
@@ -43,6 +44,10 @@ export class ListCardComponent {
     this.brandFlight = this.flightCard?.legs[0]?.carriers?.marketing;
     this.formatBrandFlight(this.brandFlight);
     this.formatedDepDesCode = this.formatDepDesCode();
+  }
+
+  toggleDetail() {
+    this.isDetailVisible = !this.isDetailVisible;
   }
 
   formatBrandFlight(brandFlight: any) {

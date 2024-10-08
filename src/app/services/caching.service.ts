@@ -2,12 +2,13 @@ import { HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CacheEntry } from '../models/caching.model';
 
-const TTL = 3_000;
+const TTL = 300000;
 
 @Injectable({
   providedIn: 'root',
 })
 export class CachingService {
+  private readonly keyword = ['autocomplete', 'one-way', 'detail'];
   constructor() {}
 
   readonly #cache = new Map<string, CacheEntry>();
@@ -31,12 +32,14 @@ export class CachingService {
 
   set(key: string, data: HttpEvent<unknown>): void {
     // Add TTL for some chaning data
-    if (key.includes('autocomplete')) {
-      this.#cache.set(key, {
-        data,
-        // 👇 Set its lifespan
-        expiresOn: new Date().getTime() + TTL,
-      });
+    for (const keyword of this.keyword) {
+      if (key.includes(keyword)) {
+        this.#cache.set(key, {
+          data,
+          // 👇 Set its lifespan
+          expiresOn: new Date().getTime() + TTL,
+        });
+      }
     }
   }
 }

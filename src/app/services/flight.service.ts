@@ -36,4 +36,13 @@ export class FlightService {
 
     return this.http.get<any>(url, { params });
   }
+
+  searchDetail(itineraryId: string) : Observable<any> {
+    const url = `${this.apiUrl}/flights/search/detail`;
+    const params = {
+      itineraryId,
+    };
+
+    return this.http.get<any>(url, { params });
+  }
 }

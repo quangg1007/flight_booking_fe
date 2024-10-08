@@ -35,7 +35,12 @@ import { AppRoutingModule } from './app-routing.module';
     NotFoundComponent,
   ],
   bootstrap: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    RouterModule,
+  ],
   providers: [
     userService,
     FlightService,

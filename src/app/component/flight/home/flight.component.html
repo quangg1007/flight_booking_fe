@@ -3,8 +3,8 @@
 </div>
 
 <div *ngIf="!isLoading">
-  <app-list-card
+  <app-card-list
     *ngFor="let item of searchResults?.data?.itineraries"
     [flightCard]="item"
-  ></app-list-card>
+  ></app-card-list>
 </div>
