@@ -27,11 +27,12 @@ import { validateForm } from 'src/app/util/validation';
 })
 export class HomePageComponent implements OnInit, OnDestroy {
   formSubmit$ = new Subject<any>();
-  flighSearchForm!: FormGroup;
+  flightSearchForm!: FormGroup;
   destroy$ = new Subject<void>();
   fromResults: any[] = [];
   toResults: any[] = [];
-  selectedFlightType: 'oneWay' | 'roundTrip' | 'multiCity' = 'oneWay';
+  selectedFlightType: 'oneWay' | 'roundTrip' = 'oneWay';
+  selectedMultiCity: boolean = false;
 
   constructor(
     private _fb: FormBuilder,
@@ -43,8 +44,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.setupAutocomplete();
     this.formSubmit$
       .pipe(
-        tap(() => this.flighSearchForm.markAsDirty()),
-        switchMap(() => validateForm(this.flighSearchForm)),
+        tap(() => this.flightSearchForm.markAsDirty()),
+        switchMap(() => validateForm(this.flightSearchForm)),
         filter((isValid) => isValid),
         takeUntil(this.destroy$)
       )
@@ -57,7 +58,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   initForm() {
-    this.flighSearchForm = this._fb.group(
+    this.flightSearchForm = this._fb.group(
       {
         from_departure: ['', [Validators.required, Validators.minLength(3)]],
         from_departure_skyID: [''],
@@ -70,11 +71,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   submitForm() {
-    const fromEntityId = this.flighSearchForm.get(
+    const fromEntityId = this.flightSearchForm.get(
       'from_departure_skyID'
     )!.value;
-    const toEntityId = this.flighSearchForm.get('to_destination_skyID')!.value;
-    const date = this.flighSearchForm.get('date')!.value;
+    const toEntityId = this.flightSearchForm.get('to_destination_skyID')!.value;
+    const date = this.flightSearchForm.get('date')!.value;
 
     // Navigate to /flight with query parameters
     this.router.navigate(['/flight'], {
@@ -94,7 +95,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private setupFieldAutocomplete(
     fieldName: 'from_departure' | 'to_destination'
   ) {
-    this.flighSearchForm
+    this.flightSearchForm
       .get(fieldName)!
       .valueChanges.pipe(
         debounceTime(500),
@@ -129,8 +130,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   selectResult(controlName: string, result: any) {
-    const visibleControl = this.flighSearchForm.get(controlName)!;
-    const skyIDControl = this.flighSearchForm.get(`${controlName}_skyID`)!;
+    const visibleControl = this.flightSearchForm.get(controlName)!;
+    const skyIDControl = this.flightSearchForm.get(`${controlName}_skyID`)!;
 
     visibleControl.setValue(result.presentation.title, { emitEvent: false });
     skyIDControl.setValue(result.navigation!.relevantFlightParams!.skyId, {
@@ -146,8 +147,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
     console.log(skyIDControl!.value);
   }
 
-  selectFlightType(type: 'oneWay' | 'roundTrip' | 'multiCity'): void {
+  selectFlightType(type: 'oneWay' | 'roundTrip'): void {
     this.selectedFlightType = type;
+  }
+
+  toggleMultiCity() {
+    this.selectedMultiCity = !this.selectedMultiCity;
   }
 
   // VALIDATOR
@@ -179,7 +184,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   getErrorMessage(controlName: string): string {
-    const control = this.flighSearchForm.get(controlName);
+    const control = this.flightSearchForm.get(controlName);
     if (control?.errors) {
       if (control.errors['required']) {
         return 'This field is required';

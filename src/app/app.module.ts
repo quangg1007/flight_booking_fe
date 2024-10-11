@@ -23,6 +23,7 @@ import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { CacheInterceptor } from './interceptor/cache.interceptor';
 import { RetryInterceptor } from './interceptor/retry.interceptor';
 import { AppRoutingModule } from './app-routing.module';
+import { NgOptimizedImage } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { AppRoutingModule } from './app-routing.module';
     AppRoutingModule,
     ReactiveFormsModule,
     RouterModule,
+    NgOptimizedImage,
   ],
   providers: [
     userService,

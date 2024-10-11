@@ -104,12 +104,9 @@
       </div>
     </div>
 
-    <button
-      class="flex justify-center items-center px-5 py-3 mt-3 w-full textl font-bold text-white bg-lime-600 rounded"
-      (click)="toggleDetail()"
-    >
-      <span class="self-stretch my-auto">View Detail</span>
-      <span class="material-symbols-outlined">
+    <button class="btn btn-success" (click)="toggleDetail()">
+      <span class="self-stretch my-auto text-white">View Detail</span>
+      <span class="material-symbols-outlined text-white">
         {{ isDetailVisible ? "arrow_drop_up" : "arrow_drop_down" }}
       </span>
     </button>
