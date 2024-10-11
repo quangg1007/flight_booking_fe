@@ -32,17 +32,22 @@
           @for (logo of flightCard.legs[0].carriers.marketing; track $index; let
           o = $odd) {
           <img
-            src="{{ logo.logoUrl }}"
-            class="w-1/2 h-1/2"
-            ngClass="{{ o ? 'absolute right-0 bottom-0' : '' }}"
+            ngSrc="{{ logo.logoUrl }}"
+            width="20"
+            height="20"
+            ngClass="{{
+              o ? 'absolute right-0 bottom-0' : 'absolute left-0 top-0'
+            }}"
           />
           }
         </div>
         }@else {
         <div class="w-20 h-5">
           <img
-            src="{{ flightCard.legs[0].carriers.marketing[0].logoUrl }}"
-            class="object-contain shrink-0 aspect-[3.31] w-[80px]"
+            ngSrc="{{ flightCard.legs[0].carriers.marketing[0].logoUrl }}"
+            class="object-contain shrink-0"
+            width="40"
+            height="40"
           />
         </div>
         }
