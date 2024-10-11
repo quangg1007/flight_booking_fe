@@ -68,7 +68,7 @@
     </section>
 
     <div
-      class="flex relative gap-2.5 justify-center items-start self-stretch px-12 py-20 my-auto min-h-[591px] min-w-[240px] w-[700px] max-md:px-5 max-md:max-w-full"
+      class="flex relative gap-2.5 justify-center items-start self-stretch px-12 py-20 my-auto min-h-[591px] min-w-[240px] max-md:px-5 max-md:max-w-full"
     >
       <img
         ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/3dd1ba8dd670d19287ef667409c5adca6a3fd1f7e65741a52893e3082a10a766?apiKey=6b158420ea1148c682b1835c67783cca&"
@@ -76,7 +76,7 @@
         priority
         width="478"
         height="591"
-        class="absolute top-2/4 left-2/4 z-0 self-start -translate-x-2/4 -translate-y-2/4 min-w-[240px] w-[700px] max-md:max-w-full"
+        class="absolute top-2/4 left-2/4 z-0 self-start -translate-x-2/4 -translate-y-2/4 min-w-[240px] max-md:max-w-full"
       />
       <div class="flex z-0 flex-col my-auto min-w-[240px] w-[400px]">
         <div class="flex gap-10 items-center self-center">
@@ -349,21 +349,21 @@
           type="date"
           placeholder="Today"
           class="input input-bordered w-full max-w-xs"
-          id="date"
-          formControlName="date"
-          name="date"
+          id="depart_date"
+          formControlName="depart_date"
+          name="depart_date"
           required
         />
         <div class="label">
           <span
             class="error-message label-text-alt text-red-600"
             *ngIf="
-              flightSearchForm.get('date')?.invalid &&
-              (flightSearchForm.get('date')?.dirty ||
-                flightSearchForm.get('date')?.touched)
+              flightSearchForm.get('depart_date')?.invalid &&
+              (flightSearchForm.get('depart_date')?.dirty ||
+                flightSearchForm.get('depart_date')?.touched)
             "
           >
-            {{ getErrorMessage("date") }}
+            {{ getErrorMessage("depart_date") }}
           </span>
         </div>
       </label>
@@ -381,21 +381,21 @@
           type="date"
           placeholder="Today"
           class="input input-bordered w-full max-w-xs"
-          id="date"
-          formControlName="date"
-          name="date"
+          id="return_date"
+          formControlName="return_date"
+          name="return_date"
           required
         />
         <div class="label">
           <span
             class="error-message label-text-alt text-red-600"
             *ngIf="
-              flightSearchForm.get('date')?.invalid &&
-              (flightSearchForm.get('date')?.dirty ||
-                flightSearchForm.get('date')?.touched)
+              flightSearchForm.get('return_date')?.invalid &&
+              (flightSearchForm.get('return_date')?.dirty ||
+                flightSearchForm.get('return_date')?.touched)
             "
           >
-            {{ getErrorMessage("date") }}
+            {{ getErrorMessage("return_date") }}
           </span>
         </div>
       </label>

@@ -18,25 +18,57 @@ export class FlightComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      const fromEntityId = params['from_departure'];
-      const toEntityId = params['to_destination'];
-      const date = params['date'];
+      if (params['return_date'] && params['depart_date']) {
+        console.log(params['return_date'], params['depart_date']);
 
-      console.log(fromEntityId, toEntityId, date);
-
-      this._flightService
-        .searchOneWay(fromEntityId, toEntityId, date)
-        .subscribe(
-          (results) => {
-            this.searchResults = results;
-            this.isLoading = false;
-          },
-          (error) => {
-            console.error('Error fetching flight results:', error);
-            this.isLoading = false;
-            // Handle error (e.g., show error message)
-          }
+        this.searchRoundTrip(
+          params['from_departure'],
+          params['to_destination'],
+          params['depart_date'],
+          params['return_date']
         );
+      } else {
+        this.searchOneWay(
+          params['from_departure'],
+          params['to_destination'],
+          params['date']
+        );
+      }
     });
+  }
+
+  searchRoundTrip(
+    fromEntityId: string,
+    toEntityId: string,
+    departDate: string,
+    returnDate: string
+  ) {
+    this._flightService
+      .searchRoundTrip(fromEntityId, toEntityId, departDate, returnDate)
+      .subscribe(
+        (results) => {
+          this.searchResults = results;
+          this.isLoading = false;
+        },
+        (error) => {
+          console.error('Error fetching flight results:', error);
+          this.isLoading = false;
+          // Handle error (e.g., show error message)
+        }
+      );
+  }
+
+  searchOneWay(fromEntityId: string, toEntityId: string, date: string) {
+    this._flightService.searchOneWay(fromEntityId, toEntityId, date).subscribe(
+      (results) => {
+        this.searchResults = results;
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error fetching flight results:', error);
+        this.isLoading = false;
+        // Handle error (e.g., show error message)
+      }
+    );
   }
 }

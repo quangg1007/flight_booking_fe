@@ -37,7 +37,24 @@ export class FlightService {
     return this.http.get<any>(url, { params });
   }
 
-  searchDetail(itineraryId: string) : Observable<any> {
+  searchRoundTrip(
+    fromEntityId: string,
+    toEntityId: string,
+    departDate: string,
+    returnDate: string
+  ): Observable<any> {
+    const url = `${this.apiUrl}/flights/search/round-trip`;
+    const params = {
+      fromEntityId,
+      toEntityId,
+      departDate,
+      returnDate,
+    };
+
+    return this.http.get<any>(url, { params });
+  }
+
+  searchDetail(itineraryId: string): Observable<any> {
     const url = `${this.apiUrl}/flights/search/detail`;
     const params = {
       itineraryId,
