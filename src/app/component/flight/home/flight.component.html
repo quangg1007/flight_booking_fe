@@ -2,9 +2,11 @@
   <app-loading-page></app-loading-page>
 </div>
 
-<div *ngIf="!isLoading">
-  <app-card-list
-    *ngFor="let item of searchResults?.data?.itineraries"
-    [flightCard]="item"
-  ></app-card-list>
+<div *ngIf="!isLoading" class="flex flex-row gap-10">
+  <app-card-filter></app-card-filter>
+  <div class="flex-auto">
+    @for (item of searchResults?.data?.itineraries; track $index) {
+    <app-card-list [flightCard]="item"></app-card-list>
+    }
+  </div>
 </div>

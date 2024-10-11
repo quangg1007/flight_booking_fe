@@ -1,15 +1,15 @@
 <div class="flex relative flex-col bg-slate-200">
   <img
-    loading="lazy"
-    src="https://cdn.builder.io/api/v1/image/assets/TEMP/f7b6b2931a5ba543da034a16e2dcc32321625dcb98cef54c0d19c43197e5314e?apiKey=6b158420ea1148c682b1835c67783cca&"
+    ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/f7b6b2931a5ba543da034a16e2dcc32321625dcb98cef54c0d19c43197e5314e?apiKey=6b158420ea1148c682b1835c67783cca&"
+    priority
     alt=""
-    class="object-contain absolute inset-0 size-full"
+    fill
   />
 
   <form
     class="flex relative flex-row gap-10 justify-center m-auto"
     autocomplete="off"
-    [formGroup]="flighSearchForm"
+    [formGroup]="flightSearchForm"
     (ngSubmit)="submitForm()"
   >
     <section
@@ -42,9 +42,9 @@
             <span
               class="error-message label-text-alt text-red-600"
               *ngIf="
-                flighSearchForm.get('from_departure')?.invalid &&
-                (flighSearchForm.get('from_departure')?.dirty ||
-                  flighSearchForm.get('from_departure')?.touched)
+                flightSearchForm.get('from_departure')?.invalid &&
+                (flightSearchForm.get('from_departure')?.dirty ||
+                  flightSearchForm.get('from_departure')?.touched)
               "
             >
               {{ getErrorMessage("from_departure") }}
@@ -57,25 +57,28 @@
         class="flex flex-col p-2 mt-7 text-lg bg-white rounded-xl h-[171px] w-[171px]"
       >
         <img
-          loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/d4438f2f2f0d4e1b80b2a07ec4bc458cd606a527405112f27a29a1b4bc9eda8e?apiKey=6b158420ea1148c682b1835c67783cca&"
+          ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/d4438f2f2f0d4e1b80b2a07ec4bc458cd606a527405112f27a29a1b4bc9eda8e?apiKey=6b158420ea1148c682b1835c67783cca&"
           alt="Hanoi cityscape"
-          class="object-contain rounded-xl aspect-[1.3] w-[157px]"
+          priority
+          width="157"
+          height="120"
         />
         <figcaption class="mt-2.5">Hanoi</figcaption>
       </figure>
     </section>
 
     <div
-      class="flex relative gap-2.5 justify-center items-start self-stretch px-12 py-20 my-auto min-h-[591px] min-w-[240px] w-[479px] max-md:px-5 max-md:max-w-full"
+      class="flex relative gap-2.5 justify-center items-start self-stretch px-12 py-20 my-auto min-h-[591px] min-w-[240px] w-[700px] max-md:px-5 max-md:max-w-full"
     >
       <img
-        loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/3dd1ba8dd670d19287ef667409c5adca6a3fd1f7e65741a52893e3082a10a766?apiKey=6b158420ea1148c682b1835c67783cca&"
+        ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/3dd1ba8dd670d19287ef667409c5adca6a3fd1f7e65741a52893e3082a10a766?apiKey=6b158420ea1148c682b1835c67783cca&"
         alt=""
-        class="object-contain absolute top-2/4 left-2/4 z-0 self-start -translate-x-2/4 -translate-y-2/4 aspect-[0.81] h-[591px] min-w-[240px] w-[479px] max-md:max-w-full"
+        priority
+        width="478"
+        height="591"
+        class="absolute top-2/4 left-2/4 z-0 self-start -translate-x-2/4 -translate-y-2/4 min-w-[240px] w-[700px] max-md:max-w-full"
       />
-      <div class="flex z-0 flex-col my-auto min-w-[240px] w-[382px]">
+      <div class="flex z-0 flex-col my-auto min-w-[240px] w-[400px]">
         <div class="flex gap-10 items-center self-center">
           <!-- One way Option -->
 
@@ -137,24 +140,16 @@
           <button
             type="button"
             class="flex gap-2 items-center self-stretch px-1.5 pt-1.5 pb-1.5 my-auto bg-white min-h-[142px] rounded-[100px] w-[78px]"
-            [ngClass]="
-              selectedFlightType === 'multiCity'
-                ? 'flex-col'
-                : 'flex-col-reverse'
-            "
-            (click)="selectFlightType('multiCity')"
+            [ngClass]="selectedMultiCity ? 'flex-col' : 'flex-col-reverse'"
+            (click)="toggleMultiCity()"
           >
             <div
               class="flex gap-2.5 items-center justify-center border border-solid border-stone-300 h-[66px] min-h-[66px] rounded-[33px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[66px] max-md:pl-5"
-              [ngClass]="
-                selectedFlightType === 'multiCity' ? 'bg-[#97C1CE]' : 'bg-white'
-              "
+              [ngClass]="selectedMultiCity ? 'bg-[#97C1CE]' : 'bg-white'"
             >
               <span
                 class="material-symbols-outlined"
-                [ngClass]="
-                  selectedFlightType === 'multiCity' ? 'text-white' : ''
-                "
+                [ngClass]="selectedMultiCity ? 'text-white' : ''"
               >
                 language
               </span>
@@ -165,74 +160,18 @@
 
         <!-- Date -->
         <div
-          class="flex gap-10 items-center px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
-        >
-          <!-- <div class="flex flex-col self-stretch my-auto w-[120px]">
-            <label
-              for="departureDate"
-              class="text-base text-black text-opacity-60"
-              >Departure Date</label
-            >
-            <div class="flex flex-col mt-2 w-full text-black whitespace-nowrap">
-              <div class="text-xl font-bold" id="departureDate">24/02/2024</div>
-              <div class="text-base">Saturday</div>
-            </div>
-          </div> -->
-
-          <div class="row-control flex flex-col self-stretch my-auto w-[120px]">
-            <label class="form-control w-full max-w-xs">
-              <div class="label flex gap-2 justify-start">
-                <span class="label-text">Date</span>
-                <span class="material-symbols-outlined"> calendar_today </span>
-              </div>
-              <input
-                type="date"
-                placeholder="Today"
-                class="input input-bordered w-full max-w-xs"
-                id="date"
-                formControlName="date"
-                name="date"
-                required
-              />
-              <div class="label">
-                <span
-                  class="error-message label-text-alt text-red-600"
-                  *ngIf="
-                    flighSearchForm.get('date')?.invalid &&
-                    (flighSearchForm.get('date')?.dirty ||
-                      flighSearchForm.get('date')?.touched)
-                  "
-                >
-                  {{ getErrorMessage("date") }}
-                </span>
-              </div>
-            </label>
-          </div>
-
-          <div
-            class="shrink-0 self-stretch my-auto w-0 border border-black border-solid h-[95px]"
-          ></div>
-          <div class="flex flex-col self-stretch my-auto w-[126px]">
-            <label for="returnDate" class="text-base text-black text-opacity-60"
-              >Return Date</label
-            >
-            <button
-              type="button"
-              id="returnDate"
-              class="mt-2 text-xl font-bold text-black"
-            >
-              Tap to select
-            </button>
-          </div>
-        </div>
+          *ngIf="
+            selectedFlightType == 'oneWay';
+            then oneWayCalendar;
+            else roundTripCalendar
+          "
+        ></div>
 
         <!-- Class and Traveller -->
         <div
-          class="flex gap-10 items-center px-3 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
+          class="flex items-center justify-between px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
         >
-          <div
-            class="flex flex-col self-stretch my-auto whitespace-nowrap w-[122px]"
-          >
+          <div class="flex flex-col my-auto w-auto">
             <label
               for="classSelect"
               class="text-base text-black text-opacity-60"
@@ -247,18 +186,13 @@
               >
                 <option>Business</option>
               </select>
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/e82ef87a6c75d7c536eca738ac545d27736a22b2d9c8e912e4ef127e2febfc2e?apiKey=6b158420ea1148c682b1835c67783cca&"
-                alt=""
-                class="object-contain shrink-0 self-stretch my-auto w-6 aspect-square"
-              />
+              <span class="material-symbols-outlined"> arrow_drop_down </span>
             </div>
           </div>
-          <div
-            class="shrink-0 self-stretch my-auto w-0 border border-black border-solid h-[95px]"
-          ></div>
-          <div class="flex flex-col self-stretch my-auto w-[130px]">
+
+          <div class="divider divider-horizontal"></div>
+
+          <div class="flex flex-col my-auto w-auto">
             <label
               for="travelerSelect"
               class="text-base text-black text-opacity-60"
@@ -273,12 +207,7 @@
               >
                 <option>2 Traveler</option>
               </select>
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/e82ef87a6c75d7c536eca738ac545d27736a22b2d9c8e912e4ef127e2febfc2e?apiKey=6b158420ea1148c682b1835c67783cca&"
-                alt=""
-                class="object-contain shrink-0 self-stretch my-auto w-6 aspect-square"
-              />
+              <span class="material-symbols-outlined"> arrow_drop_down </span>
             </div>
           </div>
         </div>
@@ -288,14 +217,9 @@
           class="flex gap-2.5 items-center self-center p-5 mt-3.5 bg-slate-400 h-[60px] min-h-[60px] rounded-[30px] w-[60px]"
           aria-label="Search flights"
           type="submit"
-          [disabled]="flighSearchForm.invalid"
+          [disabled]="flightSearchForm.invalid"
         >
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/c098bad9e157aa5619a60bca49c2b2fa87b23778789a4494405b1b974069d7c2?apiKey=6b158420ea1148c682b1835c67783cca&"
-            alt=""
-            class="object-contain self-stretch my-auto w-6 aspect-square"
-          />
+          <span class="material-symbols-outlined text-white"> search </span>
         </button>
       </div>
     </div>
@@ -330,9 +254,9 @@
             <span
               class="error-message label-text-alt text-red-600"
               *ngIf="
-                flighSearchForm.get('to_destination')?.invalid &&
-                (flighSearchForm.get('to_destination')?.dirty ||
-                  flighSearchForm.get('to_destination')?.touched)
+                flightSearchForm.get('to_destination')?.invalid &&
+                (flightSearchForm.get('to_destination')?.dirty ||
+                  flightSearchForm.get('to_destination')?.touched)
               "
             >
               {{ getErrorMessage("to_destination") }}
@@ -345,10 +269,12 @@
         class="flex flex-col p-2 mt-7 text-lg bg-white rounded-xl h-[171px] w-[171px]"
       >
         <img
-          loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/6655cded37a0d184135bb1e86f283624fb3cd1f0647a52aa9b399fbe088591a1?apiKey=6b158420ea1148c682b1835c67783cca&"
+          ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/6655cded37a0d184135bb1e86f283624fb3cd1f0647a52aa9b399fbe088591a1?apiKey=6b158420ea1148c682b1835c67783cca&"
+          priority
+          width="157"
+          height="120"
           alt="Singapore cityscape"
-          class="object-contain w-full rounded-xl aspect-[1.3]"
+          class="rounded-xl"
         />
         <figcaption class="mt-2.5">Singapore</figcaption>
       </figure>
@@ -370,5 +296,109 @@
         {{ result.presentation.title }}
       </li>
     </ul>
+  </div>
+</ng-template>
+
+<ng-template #oneWayCalendar>
+  <div
+    [formGroup]="flightSearchForm"
+    class="flex items-center justify-center px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
+  >
+    <label class="form-control w-full max-w-xs">
+      <div class="label flex gap-2 justify-start">
+        <span class="label-text">Departure Date</span>
+        <span class="material-symbols-outlined"> calendar_today </span>
+      </div>
+      <input
+        type="date"
+        placeholder="Today"
+        class="input input-bordered w-full max-w-xs"
+        id="date"
+        formControlName="date"
+        name="date"
+        required
+      />
+      <div class="label">
+        <span
+          class="error-message label-text-alt text-red-600"
+          *ngIf="
+            flightSearchForm.get('date')?.invalid &&
+            (flightSearchForm.get('date')?.dirty ||
+              flightSearchForm.get('date')?.touched)
+          "
+        >
+          {{ getErrorMessage("date") }}
+        </span>
+      </div>
+    </label>
+  </div>
+</ng-template>
+
+<ng-template #roundTripCalendar>
+  <div
+    [formGroup]="flightSearchForm"
+    class="flex items-center justify-between px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
+  >
+    <div class="flex flex-col my-auto">
+      <label class="form-control w-full max-w-xs">
+        <div class="label flex gap-2 justify-start">
+          <span class="label-text">Departure Date</span>
+          <span class="material-symbols-outlined"> calendar_today </span>
+        </div>
+        <input
+          type="date"
+          placeholder="Today"
+          class="input input-bordered w-full max-w-xs"
+          id="date"
+          formControlName="date"
+          name="date"
+          required
+        />
+        <div class="label">
+          <span
+            class="error-message label-text-alt text-red-600"
+            *ngIf="
+              flightSearchForm.get('date')?.invalid &&
+              (flightSearchForm.get('date')?.dirty ||
+                flightSearchForm.get('date')?.touched)
+            "
+          >
+            {{ getErrorMessage("date") }}
+          </span>
+        </div>
+      </label>
+    </div>
+
+    <div class="divider divider-horizontal"></div>
+
+    <div class="flex flex-col my-auto">
+      <label class="form-control w-full max-w-xs">
+        <div class="label flex gap-2 justify-start">
+          <span class="label-text">Landing Date</span>
+          <span class="material-symbols-outlined"> calendar_today </span>
+        </div>
+        <input
+          type="date"
+          placeholder="Today"
+          class="input input-bordered w-full max-w-xs"
+          id="date"
+          formControlName="date"
+          name="date"
+          required
+        />
+        <div class="label">
+          <span
+            class="error-message label-text-alt text-red-600"
+            *ngIf="
+              flightSearchForm.get('date')?.invalid &&
+              (flightSearchForm.get('date')?.dirty ||
+                flightSearchForm.get('date')?.touched)
+            "
+          >
+            {{ getErrorMessage("date") }}
+          </span>
+        </div>
+      </label>
+    </div>
   </div>
 </ng-template>

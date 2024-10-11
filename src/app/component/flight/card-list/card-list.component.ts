@@ -50,6 +50,7 @@ export class CardListComponent {
     this.isDetailVisible = !this.isDetailVisible;
   }
 
+
   formatBrandFlight(brandFlight: any) {
     this.brandNameFlight = brandFlight
       .map((brand: BrandFlight) => brand.name)

@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { tap } from 'rxjs';
 import { FlightService } from 'src/app/services/flight.service';
 import {
   calculateLayoverDuration,
@@ -47,26 +48,32 @@ export class CardDetailComponent {
 
   loadFlightDetails(segments: any) {
     this.isLoading = true;
+
     this.isDetailSegmentAmenities = new Array(
       this.flightSegmentInfo.length
     ).fill(false);
 
-    this.flightService.searchDetail(segments).subscribe(
-      (res) => {
-        if (res.status) {
-          this.createCommonFlightInfo(res.data.itinerary);
+    this.flightService
+      .searchDetail(segments)
+      .pipe(
+        tap(
+          (res) => {
+            if (res.status) {
+              this.createCommonFlightInfo(res.data.itinerary);
 
-          this.flightSegmentInfo = this.createFlightSegment(
-            res.data.itinerary.legs[0].segments
-          );
-        }
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error(error);
-        this.isLoading = false;
-      }
-    );
+              this.flightSegmentInfo = this.createFlightSegment(
+                res.data.itinerary.legs[0].segments
+              );
+            }
+            this.isLoading = false;
+          },
+          (error) => {
+            console.error(error);
+            this.isLoading = false;
+          }
+        )
+      )
+      .subscribe();
   }
 
   createCommonFlightInfo(itinerary: any) {
