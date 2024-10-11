@@ -349,21 +349,21 @@
           type="date"
           placeholder="Today"
           class="input input-bordered w-full max-w-xs"
-          id="date"
-          formControlName="date"
-          name="date"
+          id="depart_date"
+          formControlName="depart_date"
+          name="depart_date"
           required
         />
         <div class="label">
           <span
             class="error-message label-text-alt text-red-600"
             *ngIf="
-              flightSearchForm.get('date')?.invalid &&
-              (flightSearchForm.get('date')?.dirty ||
-                flightSearchForm.get('date')?.touched)
+              flightSearchForm.get('depart_date')?.invalid &&
+              (flightSearchForm.get('depart_date')?.dirty ||
+                flightSearchForm.get('depart_date')?.touched)
             "
           >
-            {{ getErrorMessage("date") }}
+            {{ getErrorMessage("depart_date") }}
           </span>
         </div>
       </label>
@@ -381,21 +381,21 @@
           type="date"
           placeholder="Today"
           class="input input-bordered w-full max-w-xs"
-          id="date"
-          formControlName="date"
-          name="date"
+          id="return_date"
+          formControlName="return_date"
+          name="return_date"
           required
         />
         <div class="label">
           <span
             class="error-message label-text-alt text-red-600"
             *ngIf="
-              flightSearchForm.get('date')?.invalid &&
-              (flightSearchForm.get('date')?.dirty ||
-                flightSearchForm.get('date')?.touched)
+              flightSearchForm.get('return_date')?.invalid &&
+              (flightSearchForm.get('return_date')?.dirty ||
+                flightSearchForm.get('return_date')?.touched)
             "
           >
-            {{ getErrorMessage("date") }}
+            {{ getErrorMessage("return_date") }}
           </span>
         </div>
       </label>

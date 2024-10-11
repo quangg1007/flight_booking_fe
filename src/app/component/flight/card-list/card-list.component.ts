@@ -10,6 +10,15 @@ interface BrandFlight {
   name: string;
 }
 
+interface FlightLegInfo {
+  timeDeparture: string;
+  timeArrival: string;
+  duration: string;
+  stopCount: number;
+  brandFlight: BrandFlight[];
+  brandNameFlight: string;
+  formatedDepDesCode: string;
+}
 @Component({
   selector: 'app-card-list',
   templateUrl: './card-list.component.html',
@@ -19,47 +28,43 @@ export class CardListComponent {
   @Input() flightCard: any;
   isDetailVisible: boolean = false;
 
-  brandFlight: BrandFlight[] = [];
-  brandNameFlight: string = '';
-
-  formatedDepDesCode: string = '';
-
-  timeDeparture: string = '';
-  timeArrival: string = '';
-  duration: string = '';
-  stopCount: number = 0;
+  legs: FlightLegInfo[] = [];
 
   constructor() {}
 
   ngOnInit() {
-    this.timeDeparture = convertToAMPMFormat(
-      this.flightCard?.legs[0]?.departure
-    );
-    this.timeArrival = convertToAMPMFormat(this.flightCard?.legs[0]?.arrival);
-    this.duration = convertMinutesToHoursAndMinutes(
-      this.flightCard?.legs[0]?.durationInMinutes
-    );
+    this.legs = this.flightCard?.legs.map((leg: any) => {
+      const timeDeparture = convertToAMPMFormat(leg.departure);
+      const timeArrival = convertToAMPMFormat(leg.arrival);
+      const duration = convertMinutesToHoursAndMinutes(leg.durationInMinutes);
+      const stopCount = leg.stopCount;
+      const brandFlight = leg.carriers.marketing;
+      const brandNameFlight = this.formatBrandFlight(brandFlight);
+      const formatedDepDesCode = this.formatDepDesCode(leg);
 
-    this.stopCount = this.flightCard?.legs[0]?.stopCount;
-    this.brandFlight = this.flightCard?.legs[0]?.carriers?.marketing;
-    this.formatBrandFlight(this.brandFlight);
-    this.formatedDepDesCode = this.formatDepDesCode();
+      return {
+        timeDeparture,
+        timeArrival,
+        duration,
+        stopCount,
+        brandFlight,
+        brandNameFlight,
+        formatedDepDesCode,
+      };
+    });
   }
 
   toggleDetail() {
     this.isDetailVisible = !this.isDetailVisible;
   }
 
-
   formatBrandFlight(brandFlight: any) {
-    this.brandNameFlight = brandFlight
-      .map((brand: BrandFlight) => brand.name)
-      .join(', ');
+    return brandFlight.map((brand: BrandFlight) => brand.name).join(', ');
 
     // return brandFlight.join(', ');
   }
 
-  formatDepDesCode(): string {
-    return `${this.flightCard?.legs[0]?.origin.id} - ${this.flightCard?.legs[0]?.destination.id}`;
+  formatDepDesCode(leg: any): string {
+    return `${leg?.origin.id} - ${leg?.destination.id}`;
   }
 }

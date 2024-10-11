@@ -1,5 +1,6 @@
 <div
-  class="flex flex-row max-w-[800px] min-h-[200px] bg-red-300 z-0 flex-wrap justify-center rounded-xl ml-40 mt-10 max-md:max-w-full"
+  class="flex flex-row max-w-[800px] min-h-[200px] bg-red-300 z-0 flex-wrap justify-center ml-40 mt-10 max-md:max-w-full"
+  ngClass="{{ isDetailVisible ? 'rounded-t-xl' : 'rounded-xl' }}"
 >
   <section
     class="flex flex-col grow shrink text-base font-bold min-w-[240px] w-[600px] max-md:max-w-full"
@@ -19,18 +20,16 @@
     </header>
 
     <!-- From Departure -->
+    @for (leg of legs; track $index) {
     <div
-      class="flex flex-wrap gap-10 justify-between items-center px-6 py-3 w-full max-md:px-5 max-md:max-w-full"
+      class="flex gap-10 justify-between items-start px-6 py-3 w-full max-md:px-5 max-md:max-w-full"
     >
-      <div
-        class="flex gap-2 items-start self-stretch my-auto min-w-[240px] relative"
-      >
+      <div class="flex gap-2 items-start self-stretch min-w-[240px] relative">
         <!-- flight brand logo -->
 
-        @if (flightCard.legs[0].carriers. marketing.length > 1){
+        @if (leg.brandFlight.length > 1){
         <div class="flex justify-between flex-wrap w-10 h-10 relative">
-          @for (logo of flightCard.legs[0].carriers.marketing; track $index; let
-          o = $odd) {
+          @for (logo of leg.brandFlight; track $index; let o = $odd) {
           <img
             ngSrc="{{ logo.logoUrl }}"
             width="20"
@@ -42,9 +41,9 @@
           }
         </div>
         }@else {
-        <div class="w-20 h-5">
+        <div class="w-10 h-10">
           <img
-            ngSrc="{{ flightCard.legs[0].carriers.marketing[0].logoUrl }}"
+            ngSrc="{{ leg.brandFlight[0].logoUrl }}"
             class="object-contain shrink-0"
             width="40"
             height="40"
@@ -54,23 +53,26 @@
 
         <!-- Time to takeoff -->
         <div class="flex flex-col w-[187px]">
-          <div class="text-black">{{ timeDeparture }} - {{ timeArrival }}</div>
+          <div class="text-black">
+            {{ leg.timeDeparture }} - {{ leg.timeArrival }}
+          </div>
           <!-- Flight brand -->
           <div class="mt-2 text-black text-opacity-50">
-            {{ brandNameFlight }}
+            {{ leg.brandNameFlight }}
           </div>
         </div>
       </div>
       <!-- Flight type -->
-      <div class="self-stretch my-auto text-black">
-        {{ stopCount > 0 ? stopCount + " stop" : "Non-stop" }}
+      <div class="self-stretch text-black">
+        {{ leg.stopCount > 0 ? leg.stopCount + " stop" : "Non-stop" }}
       </div>
-      <div class="flex flex-col self-stretch my-auto text-black w-[72px]">
+      <div class="flex flex-col self-stretch text-black w-[72px]">
         <!-- Time and airport -->
-        <div>{{ duration }}</div>
-        <div class="mt-2 whitespace-nowrap">{{ formatedDepDesCode }}</div>
+        <div>{{ leg.duration }}</div>
+        <div class="mt-2 whitespace-nowrap">{{ leg.formatedDepDesCode }}</div>
       </div>
     </div>
+    }
   </section>
 
   <div

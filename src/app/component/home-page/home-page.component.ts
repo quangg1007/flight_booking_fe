@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -37,7 +37,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   constructor(
     private _fb: FormBuilder,
     private _flightService: FlightService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
   ngOnInit(): void {
     this.initForm();
@@ -65,6 +66,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
         to_destination: ['', [Validators.required, Validators.minLength(3)]],
         to_destination_skyID: [''],
         date: ['', [Validators.required]],
+        depart_date: ['0', [Validators.required]],
+        return_date: ['0', [Validators.required]],
       },
       { validator: this.differentDestinationsValidator }
     );
@@ -75,16 +78,34 @@ export class HomePageComponent implements OnInit, OnDestroy {
       'from_departure_skyID'
     )!.value;
     const toEntityId = this.flightSearchForm.get('to_destination_skyID')!.value;
-    const date = this.flightSearchForm.get('date')!.value;
+
+    if (this.selectedFlightType === 'oneWay') {
+      const date = this.flightSearchForm.get('date')!.value;
+
+      console.log(fromEntityId, toEntityId, date);
+
+      this.router.navigate(['/flight'], {
+        queryParams: {
+          from_departure: fromEntityId,
+          to_destination: toEntityId,
+          date: date,
+        },
+      });
+    } else {
+      const departDate = this.flightSearchForm.get('depart_date')!.value;
+      const returnDate = this.flightSearchForm.get('return_date')!.value;
+
+      this.router.navigate(['/flight'], {
+        queryParams: {
+          from_departure: fromEntityId,
+          to_destination: toEntityId,
+          depart_date: departDate,
+          return_date: returnDate,
+        },
+      });
+    }
 
     // Navigate to /flight with query parameters
-    this.router.navigate(['/flight'], {
-      queryParams: {
-        from_departure: fromEntityId,
-        to_destination: toEntityId,
-        date: date,
-      },
-    });
   }
 
   setupAutocomplete() {
@@ -149,6 +170,30 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   selectFlightType(type: 'oneWay' | 'roundTrip'): void {
     this.selectedFlightType = type;
+
+    if (type === 'oneWay') {
+      const departDateControl = this.flightSearchForm.get('depart_date');
+      const returnDateControl = this.flightSearchForm.get('return_date');
+
+      departDateControl?.setValue('0');
+      departDateControl?.setErrors(null);
+      departDateControl?.updateValueAndValidity();
+
+      returnDateControl?.setValue('0');
+      returnDateControl?.setErrors(null);
+      returnDateControl?.updateValueAndValidity();
+    } else {
+      const dateControl = this.flightSearchForm.get('date');
+
+      dateControl?.setValue('0');
+      dateControl?.setErrors(null);
+      dateControl?.updateValueAndValidity();
+
+      console.log(dateControl!.value);
+    }
+
+    this.flightSearchForm.updateValueAndValidity();
+    this.cdr.detectChanges();
   }
 
   toggleMultiCity() {
@@ -185,7 +230,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   getErrorMessage(controlName: string): string {
     const control = this.flightSearchForm.get(controlName);
-    if (control?.errors) {
+
+    // console.log(control?.errors);
+    if (control?.errors && Object.keys(control?.errors).length > 0) {
       if (control.errors['required']) {
         return 'This field is required';
       }

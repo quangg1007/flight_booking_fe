@@ -23,6 +23,14 @@ export interface LayoverInfo {
   layoverAirport: string;
 }
 
+export interface LegInfo {
+  isDetailSegmentAmenities: boolean[];
+  flightSegmentInfo: FlightSegmentInfo[];
+  layoverInfo: LayoverInfo[];
+  fullDurationSegment: string;
+  headerDate: string;
+}
+
 @Component({
   selector: 'app-card-detail',
   templateUrl: './card-detail.component.html',
@@ -32,13 +40,13 @@ export class CardDetailComponent {
   @Input() itineraryId: string = '';
   isLoading: boolean = true;
 
-  isDetailSegmentAmenities: boolean[] = [];
-
   flightSegmentInfo: FlightSegmentInfo[] = [];
   layoverInfo: LayoverInfo[] = [];
 
   fullDurationSegment: string = '';
   departureDate: string = '';
+
+  legInfo: LegInfo[] = [];
 
   constructor(private flightService: FlightService) {}
 
@@ -46,24 +54,34 @@ export class CardDetailComponent {
     this.loadFlightDetails(this.itineraryId);
   }
 
-  loadFlightDetails(segments: any) {
+  loadFlightDetails(itineraryId: string) {
     this.isLoading = true;
 
-    this.isDetailSegmentAmenities = new Array(
-      this.flightSegmentInfo.length
-    ).fill(false);
-
     this.flightService
-      .searchDetail(segments)
+      .searchDetail(itineraryId)
       .pipe(
         tap(
           (res) => {
             if (res.status) {
-              this.createCommonFlightInfo(res.data.itinerary);
+              this.legInfo = res.data.itinerary.legs.map((leg: any) => {
+                const { fullDurationSegment, headerDate } =
+                  this.createCommonFlightInfo(leg);
 
-              this.flightSegmentInfo = this.createFlightSegment(
-                res.data.itinerary.legs[0].segments
-              );
+                const { flightSegmentInfo, layoverInfo } =
+                  this.createFlightSegment(leg.segments);
+
+                const isDetailSegmentAmenities = new Array(
+                  this.flightSegmentInfo.length
+                ).fill(false);
+
+                return {
+                  flightSegmentInfo,
+                  layoverInfo,
+                  fullDurationSegment,
+                  headerDate,
+                  isDetailSegmentAmenities,
+                };
+              });
             }
             this.isLoading = false;
           },
@@ -76,53 +94,61 @@ export class CardDetailComponent {
       .subscribe();
   }
 
-  createCommonFlightInfo(itinerary: any) {
-    this.fullDurationSegment = convertMinutesToHoursAndMinutes(
-      itinerary.legs[0].duration
-    );
-    this.departureDate = formatDateToShortString(itinerary.legs[0].departure);
+  createCommonFlightInfo(leg: any) {
+    const fullDurationSegment = convertMinutesToHoursAndMinutes(leg.duration);
+    const headerDate = formatDateToShortString(leg.departure);
+    return {
+      fullDurationSegment,
+      headerDate,
+    };
   }
 
   createFlightSegment(segments: any) {
-    this.layoverInfo = [];
+    const layoverInfo: LayoverInfo[] = [];
+    let flightSegmentInfo: FlightSegmentInfo[];
 
-    return segments.map((segment: any, index: number, array: any[]) => {
-      const departureTime = convertToAMPMFormat(segment.departure);
-      const arrivalTime = convertToAMPMFormat(segment.arrival);
-      const duration = convertMinutesToHoursAndMinutes(segment.duration);
-      const flightLogoBrand = segment.marketingCarrier.logo;
-      const flightLogoBrandName = segment.marketingCarrier.name;
-      const departureAirport =
-        segment.origin.name + ' (' + segment.origin.displayCode + ')';
-      const arrivalAirport =
-        segment.destination.name + ' (' + segment.destination.displayCode + ')';
+    flightSegmentInfo = segments.map(
+      (segment: any, index: number, array: any[]) => {
+        const departureTime = convertToAMPMFormat(segment.departure);
+        const arrivalTime = convertToAMPMFormat(segment.arrival);
+        const duration = convertMinutesToHoursAndMinutes(segment.duration);
+        const flightLogoBrand = segment.marketingCarrier.logo;
+        const flightLogoBrandName = segment.marketingCarrier.name;
+        const departureAirport =
+          segment.origin.name + ' (' + segment.origin.displayCode + ')';
+        const arrivalAirport =
+          segment.destination.name +
+          ' (' +
+          segment.destination.displayCode +
+          ')';
 
-      if (index < array.length - 1) {
-        const nextSegment = array[index + 1];
-        const layoverDuration = calculateLayoverDuration(
-          nextSegment.departure,
-          segment.arrival
-        );
-        this.layoverInfo.push({
-          duration: layoverDuration,
-          layoverAirport: arrivalAirport,
-        });
+        if (index < array.length - 1) {
+          const nextSegment = array[index + 1];
+          const layoverDuration = calculateLayoverDuration(
+            nextSegment.departure,
+            segment.arrival
+          );
+          layoverInfo.push({
+            duration: layoverDuration,
+            layoverAirport: arrivalAirport,
+          });
+        }
+
+        return {
+          departureTime,
+          departureAirport,
+          arrivalTime,
+          arrivalAirport,
+          duration,
+          flightLogoBrand,
+          flightLogoBrandName,
+        };
       }
+    );
 
-      return {
-        departureTime,
-        departureAirport,
-        arrivalTime,
-        arrivalAirport,
-        duration,
-        flightLogoBrand,
-        flightLogoBrandName,
-      };
-    });
-  }
-
-  toggleDetail(index: number) {
-    this.isDetailSegmentAmenities[index] =
-      !this.isDetailSegmentAmenities[index];
+    return {
+      flightSegmentInfo,
+      layoverInfo,
+    };
   }
 }
