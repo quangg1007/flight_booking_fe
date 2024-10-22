@@ -46,7 +46,6 @@ export class CardSearchComponent {
 
   ngOnInit(): void {
     if (this.paramSearch) {
-      console.log(this.paramSearch);
       this.initForm(this.paramSearch);
 
       if (this.paramSearch.return_date) {

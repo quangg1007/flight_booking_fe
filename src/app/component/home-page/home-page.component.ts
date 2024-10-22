@@ -144,7 +144,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.flightSearchForm
       .get(fieldName)!
       .valueChanges.pipe(
-        debounceTime(500),
+        debounceTime(300),
         distinctUntilChanged(),
         tap((value) => {
           if (value.length < 3) {

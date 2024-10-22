@@ -1,38 +1,12 @@
 import { LabelType, Options } from '@angular-slider/ngx-slider/options';
-import { Component, signal } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { DateSliderComponent } from '../../common/date-slider/date-slider.component';
 import { CommonModule } from '@angular/common';
-import { convertToAMPMFormat } from 'src/app/util/time';
+import { convertTimestampToISOString } from 'src/app/util/time';
 import { SliderComponent } from '../../common/slider/slider.component';
-
-interface Airlines {
-  id: string;
-  name: string;
-  price: string;
-}
-
-interface Airport {
-  id: string;
-  name: string;
-  price: string;
-}
-
-interface Stop {
-  id: string;
-  name: string;
-  price: string;
-}
-
-interface FlightTimeDuration {
-  minTime: Date;
-  maxTime: Date;
-  duration: number;
-}
-
-interface Price {
-  minPrice: number;
-  maxPrice: number;
-}
+import { Airlines, Airport, Stop } from 'src/app/models/cardFilter.model';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-card-filter',
@@ -42,38 +16,84 @@ interface Price {
   styleUrl: './card-filter.component.css',
 })
 export class CardFilterComponent {
-  selectedStop: Stop[] = [
-    {
-      id: '1',
-      name: 'Non-stop',
-      price: '1',
-    },
-    {
-      id: '2',
-      name: '1 Stop',
-      price: '2',
-    },
-    {
-      id: '3',
-      name: '2 Stops +',
-      price: '3',
-    },
-  ];
+  stops = input<Stop[]>();
+  airlines = input<Airlines[]>();
+  airports = input<Airport[]>();
+  prices = input.required<{ min: number; max: number }>();
+  takeOffTime = input.required<{
+    minTimeDeparture: string;
+    maxTimeDeparture: string;
+  }>();
+  landingTime = input.required<{
+    minTimeLanding: string;
+    maxTimeLanding: string;
+  }>();
 
-  minTimeDeparture = signal('2024-10-30T01:40:00');
-  maxTimeDeparture = signal('2024-10-30T23:40:00');
+  timeDepartureRangeChange = output<{
+    minTimeDeparture: string;
+    maxTimeDeparture: string;
+  }>();
+  timeLandingRangeChange = output<{
+    minTimeLanding: string;
+    maxTimeLanding: string;
+  }>();
 
-  minPrice = signal(0);
-  maxPrice = signal(10000);
+  minTimeDeparture = signal<string>('');
+  maxTimeDeparture = signal<string>('');
+
+  minTimeLanding = signal<string>('');
+  maxTimeLanding = signal<string>('');
+
+  allStateDeparture = signal([this.minTimeDeparture, this.maxTimeDeparture]);
+  latestStateDeparture = computed(() =>
+    this.allStateDeparture().map((x) => x())
+  );
+  latestStateDeparture$ = toObservable(this.latestStateDeparture);
+
+  allStateLanding = signal([this.minTimeLanding, this.maxTimeLanding]);
+  latestStateLanding = computed(() => this.allStateLanding().map((x) => x()));
+  latestStateLanding$ = toObservable(this.latestStateLanding);
+
+  ngOnInit(): void {
+    this.minTimeDeparture.set(this.takeOffTime().minTimeDeparture);
+    this.maxTimeDeparture.set(this.takeOffTime().maxTimeDeparture);
+
+    this.minTimeLanding.set(this.landingTime().minTimeLanding);
+    this.maxTimeLanding.set(this.landingTime().maxTimeLanding);
+
+    this.latestStateLanding$
+      .pipe(skip(1), debounceTime(300), distinctUntilChanged())
+      .subscribe(() => {
+        this.timeLandingRangeChange.emit({
+          minTimeLanding: this.minTimeLanding(),
+          maxTimeLanding: this.maxTimeLanding(),
+        });
+      });
+
+    this.latestStateDeparture$
+      .pipe(skip(1), debounceTime(300), distinctUntilChanged())
+      .subscribe(() => {
+        this.timeDepartureRangeChange.emit({
+          minTimeDeparture: this.minTimeDeparture(),
+          maxTimeDeparture: this.maxTimeDeparture(),
+        });
+      });
+  }
 
   handleMinTimeValueChange(valueTime: number) {
-    console.log('Min Time:', convertToAMPMFormat(valueTime));
-    // Do something with the new time value
+    this.minTimeDeparture.set(convertTimestampToISOString(valueTime));
   }
 
   handleMaxTimeValueChange(valueTime: number) {
-    // this.maxTimeValue.set(valueTime);
-    console.log('Max Time:', convertToAMPMFormat(valueTime));
+    this.maxTimeDeparture.set(convertTimestampToISOString(valueTime));
+  }
+
+  handleMinTimeLandingValueChange(valueTime: number) {
+    this.minTimeLanding.set(convertTimestampToISOString(valueTime));
+  }
+
+  handleMaxTimeLandingValueChange(valueTime: number) {
+    this.maxTimeLanding.set(convertTimestampToISOString(valueTime));
   }
 
   handlePriceChange(value: number) {

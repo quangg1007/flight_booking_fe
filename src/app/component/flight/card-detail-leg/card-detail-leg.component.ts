@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { LegInfo } from '../card-detail/card-detail.component';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { LegInfo } from 'src/app/models/cardDetail.model';
 
 @Component({
   selector: 'app-card-detail-leg',

@@ -63,3 +63,8 @@ export const formatDateToShortStringWithTime = (
     minute: '2-digit',
   });
 };
+
+export const convertTimestampToISOString = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  return date.toISOString().slice(0, 19);
+};

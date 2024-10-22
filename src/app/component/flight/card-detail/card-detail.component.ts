@@ -1,5 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { tap } from 'rxjs';
+import {
+  FlightSegmentInfo,
+  LayoverInfo,
+  LegInfo,
+} from 'src/app/models/cardDetail.model';
 import { FlightService } from 'src/app/services/flight.service';
 import {
   calculateDuration,
@@ -7,29 +12,6 @@ import {
   convertToAMPMFormat,
   formatDateToShortString,
 } from 'src/app/util/time';
-
-export interface FlightSegmentInfo {
-  departureTime: string;
-  departureAirport: string;
-  arrivalTime: string;
-  arrivalAirport: string;
-  duration: string;
-  flightLogoBrand: string;
-  flightLogoBrandName: string;
-}
-
-export interface LayoverInfo {
-  duration: string;
-  layoverAirport: string;
-}
-
-export interface LegInfo {
-  isDetailSegmentAmenities: boolean[];
-  flightSegmentInfo: FlightSegmentInfo[];
-  layoverInfo: LayoverInfo[];
-  fullDurationSegment: string;
-  headerDate: string;
-}
 
 @Component({
   selector: 'app-card-detail',

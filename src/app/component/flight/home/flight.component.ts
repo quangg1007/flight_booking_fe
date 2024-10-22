@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Stop, Airlines, Airport } from 'src/app/models/cardFilter.model';
 import { FlightService } from 'src/app/services/flight.service';
 
 @Component({
@@ -12,12 +13,85 @@ export class FlightComponent implements OnInit {
   searchResults: any;
   paramSearch: any;
 
+  selectedStop: Stop[] = [
+    {
+      id: '1',
+      name: 'Non-stop',
+      price: '$200',
+    },
+    {
+      id: '2',
+      name: '1 Stop',
+      price: '$234',
+    },
+    {
+      id: '3',
+      name: '2 Stops +',
+      price: '$355',
+    },
+  ];
+
+  selectedAirline: Airlines[] = [
+    {
+      id: '1',
+      name: 'Air Asia',
+      price: '$200',
+    },
+    {
+      id: '2',
+      name: 'Indigo',
+      price: '$234',
+    },
+    {
+      id: '3',
+      name: 'SpiceJet',
+      price: '$355',
+    },
+  ];
+
+  selectedAirport: Airport[] = [
+    {
+      id: '1',
+      name: 'Banglore',
+      price: '$200',
+    },
+    {
+      id: '2',
+      name: 'Delhi',
+      price: '$234',
+    },
+    {
+      id: '3',
+      name: 'Mumbai',
+      price: '$355',
+    },
+  ];
+
+  selectedPrice = {
+    min: 100,
+    max: 1000,
+  };
+
+  selectedTakeOffTime = {
+    minTimeDeparture: '2024-10-30T01:40:00',
+    maxTimeDeparture: '2024-10-30T23:59:00',
+  };
+
+  selectedLandingTime = {
+    minTimeLanding: '2024-10-31T02:40:00',
+    maxTimeLanding: '2024-10-31T23:59:00',
+  };
+
   constructor(
     private route: ActivatedRoute,
     private _flightService: FlightService
   ) {}
 
   ngOnInit() {
+    this.initData();
+  }
+
+  initData() {
     this.route.queryParams.subscribe((params) => {
       const {
         from_departure_id,
@@ -116,5 +190,13 @@ export class FlightComponent implements OnInit {
           // Handle error (e.g., show error message)
         }
       );
+  }
+
+  onTimeDepartureRangeChange(value: any) {
+    console.log(value);
+  }
+
+  onTimeLandingRangeChange(value: any) {
+    console.log(value);
   }
 }
