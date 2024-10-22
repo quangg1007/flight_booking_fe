@@ -1,0 +1,142 @@
+<form
+  [formGroup]="flightSearchForm"
+  class="flex flex-row gap-4 items-end my-10"
+>
+  <div class="row-control">
+    <div class="label flex gap-2 justify-start">
+      <span class="label-text">Depature</span>
+    </div>
+
+    <label class="input input-bordered flex items-center gap-2">
+      <span class="material-symbols-outlined"> flight_takeoff </span>
+      <input
+        type="text"
+        placeholder="Ha Noi"
+        class="grow"
+        formControlName="from_departure"
+        id="from_departure"
+      />
+    </label>
+
+    <ng-container
+      *ngTemplateOutlet="
+        autocompleteTemplate;
+        context: { results: fromResults, field: 'from_departure' }
+      "
+    ></ng-container>
+  </div>
+
+  <div class="row-control">
+    <div class="label flex gap-2 justify-start">
+      <span class="label-text">Arrival</span>
+    </div>
+    <label class="input input-bordered flex items-center gap-2">
+      <span class="material-symbols-outlined"> flight_land </span>
+      <input
+        type="text"
+        placeholder="New york city"
+        class="grow h-[52px]"
+        id="to_destination"
+        formControlName="to_destination"
+      />
+    </label>
+    <ng-container
+      *ngTemplateOutlet="
+        autocompleteTemplate;
+        context: { results: toResults, field: 'to_destination' }
+      "
+    ></ng-container>
+  </div>
+
+  <div
+    class="row-control"
+    *ngIf="
+      selectedFlightType == 'oneWay';
+      then oneWayCalendar;
+      else roundTripCalendar
+    "
+  ></div>
+
+  <!--  Search Button -->
+  <button
+    class="flex items-center justify-center px-6 py-3.5 bg-slate-400 rounded-lg m-0"
+    aria-label="Search flights"
+    type="submit"
+  >
+    <span class="material-symbols-outlined text-white"> search </span>
+  </button>
+</form>
+
+<ng-template #oneWayCalendar>
+  <label [formGroup]="flightSearchForm" class="form-control w-full max-w-xs">
+    <div class="label flex gap-2 justify-start">
+      <span class="label-text">Departure Date</span>
+    </div>
+    <input
+      type="date"
+      placeholder="Today"
+      class="input input-bordered w-full max-w-xs"
+      id="depart_date"
+      formControlName="depart_date"
+      name="depart_date"
+      required
+    />
+  </label>
+</ng-template>
+
+<ng-template #roundTripCalendar>
+  <div [formGroup]="flightSearchForm" class="flex items-center">
+    <div class="flex flex-col">
+      <label class="form-control w-full max-w-xs">
+        <div class="label flex gap-2 justify-start">
+          <span class="label-text">Departure Date</span>
+        </div>
+        <input
+          type="date"
+          placeholder="Today"
+          class="input input-bordered w-full max-w-xs"
+          id="depart_date"
+          formControlName="depart_date"
+          name="depart_date"
+          required
+        />
+      </label>
+    </div>
+
+    <span class="material-symbols-outlined mt-8"> swap_horiz </span>
+
+    <div class="flex flex-col">
+      <label class="form-control w-full max-w-xs">
+        <div class="label flex gap-2 justify-start">
+          <span class="label-text">Return Date</span>
+        </div>
+        <input
+          type="date"
+          placeholder="Today"
+          class="input input-bordered w-full max-w-xs"
+          id="return_date"
+          formControlName="return_date"
+          name="return_date"
+          required
+        />
+      </label>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #autocompleteTemplate let-results="results" let-field="field">
+  <div
+    *ngIf="results && results.length > 0"
+    class="absolute z-10 w-[252px] bg-white shadow-lg rounded-md"
+  >
+    <ul class="py-1">
+      <li
+        *ngFor="let result of results"
+        class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        (click)="selectResult(field, result)"
+      >
+        {{ result.presentation.title }}
+      </li>
+    </ul>
+  </div>
+</ng-template>

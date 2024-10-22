@@ -7,7 +7,7 @@ import { LoginResponse } from '../models/auth.model';
 
 @Injectable()
 export class userService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8081/api';
   public $refreshToken = new Subject<boolean>();
   public $refreshTokenReceived = new Subject<boolean>();
   constructor(private http: HttpClient) {}

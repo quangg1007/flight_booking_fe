@@ -1,26 +1,83 @@
-import { Options } from '@angular-slider/ngx-slider/options';
-import { Component } from '@angular/core';
-import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { LabelType, Options } from '@angular-slider/ngx-slider/options';
+import { Component, signal } from '@angular/core';
+import { DateSliderComponent } from '../../common/date-slider/date-slider.component';
+import { CommonModule } from '@angular/common';
+import { convertToAMPMFormat } from 'src/app/util/time';
+import { SliderComponent } from '../../common/slider/slider.component';
+
+interface Airlines {
+  id: string;
+  name: string;
+  price: string;
+}
+
+interface Airport {
+  id: string;
+  name: string;
+  price: string;
+}
+
+interface Stop {
+  id: string;
+  name: string;
+  price: string;
+}
+
+interface FlightTimeDuration {
+  minTime: Date;
+  maxTime: Date;
+  duration: number;
+}
+
+interface Price {
+  minPrice: number;
+  maxPrice: number;
+}
 
 @Component({
   selector: 'app-card-filter',
   standalone: true,
-  imports: [NgxSliderModule],
+  imports: [CommonModule, DateSliderComponent, SliderComponent],
   templateUrl: './card-filter.component.html',
   styleUrl: './card-filter.component.css',
 })
 export class CardFilterComponent {
-  minValue: number = 1;
-  maxValue: number = 8;
-  options: Options = {
-    floor: 0,
-    ceil: 10,
-    draggableRange: true,
-  };
+  selectedStop: Stop[] = [
+    {
+      id: '1',
+      name: 'Non-stop',
+      price: '1',
+    },
+    {
+      id: '2',
+      name: '1 Stop',
+      price: '2',
+    },
+    {
+      id: '3',
+      name: '2 Stops +',
+      price: '3',
+    },
+  ];
 
-  value2: number = 100;
-  options2: Options = {
-    floor: 0,
-    ceil: 250,
-  };
+  minTimeDeparture = signal('2024-10-30T01:40:00');
+  maxTimeDeparture = signal('2024-10-30T23:40:00');
+
+  minPrice = signal(0);
+  maxPrice = signal(10000);
+
+  handleMinTimeValueChange(valueTime: number) {
+    console.log('Min Time:', convertToAMPMFormat(valueTime));
+    // Do something with the new time value
+  }
+
+  handleMaxTimeValueChange(valueTime: number) {
+    // this.maxTimeValue.set(valueTime);
+    console.log('Max Time:', convertToAMPMFormat(valueTime));
+  }
+
+  handlePriceChange(value: number) {
+    console.log('Price:', value);
+    // Do something with the new price value
+  }
 }

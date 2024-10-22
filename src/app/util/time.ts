@@ -1,3 +1,4 @@
+// @Input: 600m
 // @Output: 12h30m
 export const convertMinutesToHoursAndMinutes = (
   durationInMinutes: number
@@ -12,9 +13,10 @@ export const convertMinutesToHoursAndMinutes = (
   return `${hours}h${minutes.toString().padStart(2, '0')}m`;
 };
 
+// @Input: 2024-10-30T01:40:00
 // @Output: 12:00 AM
-export const convertToAMPMFormat = (dateTimeString: string): string => {
-  const date = new Date(dateTimeString);
+export const convertToAMPMFormat = (dateTime: string | number): string => {
+  const date = new Date(dateTime);
   return date
     .toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -24,6 +26,7 @@ export const convertToAMPMFormat = (dateTimeString: string): string => {
     .toUpperCase();
 };
 
+// @Input: 2024-10-30T01:40:00
 // @Output: Thu, Oct 31
 export const formatDateToShortString = (dateTimeString: string): string => {
   const date = new Date(dateTimeString);
@@ -34,7 +37,10 @@ export const formatDateToShortString = (dateTimeString: string): string => {
   });
 };
 
-export const calculateLayoverDuration = (
+// @Input: startTime: 2024-10-30T01:40:00
+// @Input: endTime: 2024-10-30T05:00:00
+// @Output: 3h20m
+export const calculateDuration = (
   endTime: string,
   startTime: string
 ): string => {
@@ -42,11 +48,18 @@ export const calculateLayoverDuration = (
   const start = new Date(startTime);
   const durationMs = end.getTime() - start.getTime();
 
-  const hours = Math.floor(durationMs / (1000 * 60 * 60));
-  const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-  if (minutes === 0) {
-    return `${hours}h`;
-  }
+  return convertMinutesToHoursAndMinutes(durationMs / (1000 * 60));
+};
 
-  return `${hours}h${minutes}m`;
+// @Input: 2024-10-30T01:40:00
+// @Output: Wed 01:40 AM
+export const formatDateToShortStringWithTime = (
+  dateTimeString: string
+): string => {
+  const date = new Date(dateTimeString);
+  return date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
