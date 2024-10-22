@@ -9,7 +9,7 @@ import { LoginComponent } from './component/login/login/login.component';
 import { PasswordResetComponent } from './component/login/password-reset/password-reset.component';
 import { RegisterComponent } from './component/login/register/register.component';
 import { userService } from './services/user.service';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   HTTP_INTERCEPTORS,
   provideHttpClient,
@@ -23,7 +23,7 @@ import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { CacheInterceptor } from './interceptor/cache.interceptor';
 import { RetryInterceptor } from './interceptor/retry.interceptor';
 import { AppRoutingModule } from './app-routing.module';
-import { NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -37,11 +37,13 @@ import { NgOptimizedImage } from '@angular/common';
   ],
   bootstrap: [AppComponent],
   imports: [
+    FormsModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     RouterModule,
     NgOptimizedImage,
+    NgTemplateOutlet
   ],
   providers: [
     userService,

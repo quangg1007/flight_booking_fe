@@ -1,5 +1,5 @@
 <div
-  class="flex flex-row max-w-[800px] min-h-[200px] bg-red-300 z-0 flex-wrap justify-center ml-40 mt-10 max-md:max-w-full"
+  class="flex flex-row max-w-[800px] min-h-[200px] bg-red-300 z-0 flex-wrap justify-center mb-10 max-md:max-w-full"
   ngClass="{{ isDetailVisible ? 'rounded-t-xl' : 'rounded-xl' }}"
 >
   <section
@@ -7,14 +7,18 @@
   >
     <header
       class="flex flex-wrap gap-10 justify-end items-center p-3 w-full text-xl text-cyan-600 whitespace-nowrap max-md:max-w-full"
-      [ngClass]="flightCard.tags ? 'justify-between' : 'justify-end'"
+      [ngClass]="tagsFlight.length ? 'justify-between' : 'justify-end'"
     >
       <!-- Badge tags -->
-      <div
-        class="gap-2.5 self-stretch px-6 py-3 my-auto bg-green-100 rounded-xl max-md:px-5"
-        [ngClass]="flightCard.tags ? 'flex' : 'hidden'"
-      >
-        {{ flightCard.tags }}
+      <div class="flex flex-row gap-2">
+        @for (tag of tagsFlight; track $index) {
+
+        <div
+          class="gap-2.5 self-stretch px-6 py-3 my-auto bg-green-100 rounded-xl max-md:px-5"
+        >
+          {{ tag }}
+        </div>
+        }
       </div>
       <span class="material-symbols-outlined text-black"> favorite </span>
     </header>

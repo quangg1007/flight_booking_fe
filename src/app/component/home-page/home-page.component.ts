@@ -34,6 +34,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
   selectedFlightType: 'oneWay' | 'roundTrip' = 'oneWay';
   selectedMultiCity: boolean = false;
 
+  selectedClassType = ['Economy', 'Premium Economy', 'Business', 'First'];
+
+  selectedTravellerType = ['Adult', 'Children', 'Infant', 'Senior', 'Student'];
+
   constructor(
     private _fb: FormBuilder,
     private _flightService: FlightService,
@@ -43,14 +47,22 @@ export class HomePageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initForm();
     this.setupAutocomplete();
+    this.selectFlightType('oneWay');
+
     this.formSubmit$
       .pipe(
         tap(() => this.flightSearchForm.markAsDirty()),
         switchMap(() => validateForm(this.flightSearchForm)),
-        filter((isValid) => isValid),
+        filter((isValid) => {
+          console.log(isValid);
+          return isValid;
+        }),
         takeUntil(this.destroy$)
       )
       .subscribe(() => this.submitForm());
+
+    console.log(this.formSubmit$);
+    console.log(this.flightSearchForm);
   }
 
   ngOnDestroy(): void {
@@ -65,47 +77,60 @@ export class HomePageComponent implements OnInit, OnDestroy {
         from_departure_skyID: [''],
         to_destination: ['', [Validators.required, Validators.minLength(3)]],
         to_destination_skyID: [''],
-        date: ['', [Validators.required]],
-        depart_date: ['0', [Validators.required]],
-        return_date: ['0', [Validators.required]],
+        depart_date: ['', [Validators.required]],
+        return_date: ['', [Validators.required]],
+        class_type: ['Economy'],
+        traveller_type: ['Adult'],
       },
       { validator: this.differentDestinationsValidator }
     );
   }
 
   submitForm() {
-    const fromEntityId = this.flightSearchForm.get(
+    const departureEntityId = this.flightSearchForm.get(
       'from_departure_skyID'
     )!.value;
+
     const toEntityId = this.flightSearchForm.get('to_destination_skyID')!.value;
 
+    const departureEntity = this.flightSearchForm.get('from_departure')!.value;
+
+    const toEntity = this.flightSearchForm.get('to_destination')!.value;
+
+    const classType = this.flightSearchForm.get('class_type')!.value;
+
+    const travellerType = this.flightSearchForm.get('traveller_type')!.value;
+
+    const departDate = this.flightSearchForm.get('depart_date')!.value;
+
     if (this.selectedFlightType === 'oneWay') {
-      const date = this.flightSearchForm.get('date')!.value;
-
-      console.log(fromEntityId, toEntityId, date);
-
       this.router.navigate(['/flight'], {
         queryParams: {
-          from_departure: fromEntityId,
-          to_destination: toEntityId,
-          date: date,
+          from_departure_id: departureEntityId,
+          to_destination_id: toEntityId,
+          from_departure: departureEntity,
+          to_destination: toEntity,
+          depart_date: departDate,
+          class_type: classType,
+          traveller_type: travellerType,
         },
       });
     } else {
-      const departDate = this.flightSearchForm.get('depart_date')!.value;
       const returnDate = this.flightSearchForm.get('return_date')!.value;
 
       this.router.navigate(['/flight'], {
         queryParams: {
-          from_departure: fromEntityId,
-          to_destination: toEntityId,
+          from_departure_id: departureEntityId,
+          to_destination_id: toEntityId,
+          from_departure: departureEntity,
+          to_destination: toEntity,
           depart_date: departDate,
           return_date: returnDate,
+          class_type: classType,
+          traveller_type: travellerType,
         },
       });
     }
-
-    // Navigate to /flight with query parameters
   }
 
   setupAutocomplete() {
@@ -172,24 +197,15 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.selectedFlightType = type;
 
     if (type === 'oneWay') {
+      const returnDateControl = this.flightSearchForm.get('return_date');
+      returnDateControl?.clearValidators();
+      returnDateControl?.setValue('');
+    } else {
       const departDateControl = this.flightSearchForm.get('depart_date');
       const returnDateControl = this.flightSearchForm.get('return_date');
 
-      departDateControl?.setValue('0');
-      departDateControl?.setErrors(null);
-      departDateControl?.updateValueAndValidity();
-
-      returnDateControl?.setValue('0');
-      returnDateControl?.setErrors(null);
-      returnDateControl?.updateValueAndValidity();
-    } else {
-      const dateControl = this.flightSearchForm.get('date');
-
-      dateControl?.setValue('0');
-      dateControl?.setErrors(null);
-      dateControl?.updateValueAndValidity();
-
-      console.log(dateControl!.value);
+      departDateControl?.setValidators([Validators.required]);
+      returnDateControl?.setValidators([Validators.required]);
     }
 
     this.flightSearchForm.updateValueAndValidity();

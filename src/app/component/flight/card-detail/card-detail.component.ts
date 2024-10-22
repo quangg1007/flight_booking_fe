@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { tap } from 'rxjs';
 import { FlightService } from 'src/app/services/flight.service';
 import {
-  calculateLayoverDuration,
+  calculateDuration,
   convertMinutesToHoursAndMinutes,
   convertToAMPMFormat,
   formatDateToShortString,
@@ -124,7 +124,7 @@ export class CardDetailComponent {
 
         if (index < array.length - 1) {
           const nextSegment = array[index + 1];
-          const layoverDuration = calculateLayoverDuration(
+          const layoverDuration = calculateDuration(
             nextSegment.departure,
             segment.arrival
           );

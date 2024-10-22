@@ -7,7 +7,7 @@ import { TokenService } from './token.service';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8081/api';
   constructor(private http: HttpClient, private tokenService: TokenService) {}
 
   sendEmailResetPassword(userEmail: string): Observable<any> {

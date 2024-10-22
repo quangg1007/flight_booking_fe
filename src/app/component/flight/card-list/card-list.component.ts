@@ -27,12 +27,15 @@ interface FlightLegInfo {
 export class CardListComponent {
   @Input() flightCard: any;
   isDetailVisible: boolean = false;
+  tagsFlight: string[] = [];
 
   legs: FlightLegInfo[] = [];
 
   constructor() {}
 
   ngOnInit() {
+    this.formatTagFlight(this.flightCard.tags);
+
     this.legs = this.flightCard?.legs.map((leg: any) => {
       const timeDeparture = convertToAMPMFormat(leg.departure);
       const timeArrival = convertToAMPMFormat(leg.arrival);
@@ -56,6 +59,12 @@ export class CardListComponent {
 
   toggleDetail() {
     this.isDetailVisible = !this.isDetailVisible;
+  }
+
+  formatTagFlight(tags: any) {
+    tags?.map((tag: any) => {
+      this.tagsFlight.push(tag);
+    });
   }
 
   formatBrandFlight(brandFlight: any) {

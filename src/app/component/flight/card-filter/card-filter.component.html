@@ -1,5 +1,5 @@
 <div
-  class="flex flex-col mx-auto w-full text-xs bg-white rounded-xl border border-black border-solid"
+  class="flex flex-col mx-auto mb-10 w-full text-xs bg-white rounded-xl border border-black border-solid"
 >
   <!-- Stops -->
   <section class="flex flex-col w-auto">
@@ -14,24 +14,17 @@
 
       <div class="collapse-content">
         <ul>
+          @for (stop of selectedStop; track $index) {
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
             <div class="flex gap-3 items-center">
               <input type="checkbox" checked="checked" class="checkbox" />
-              <span class="self-stretch my-auto">Non-stop</span>
+              <span class="self-stretch my-auto">{{ stop.name }}</span>
             </div>
-            <span>$307</span>
+            <span>{{ stop.price }}</span>
           </li>
-          <li
-            class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
-          >
-            <div class="flex gap-3 items-center">
-              <input type="checkbox" checked="checked" class="checkbox" />
-              <span class="self-stretch my-auto">1 Stop</span>
-            </div>
-            <span>$322</span>
-          </li>
+          }
         </ul>
       </div>
     </div>
@@ -54,19 +47,13 @@
           <div class="gap-2 self-stretch px-4 py-2 w-full text-base text-black">
             <strong>Take-off from {{ "Hanoi (HNA)" }}</strong>
           </div>
-          <div
-            class="flex gap-10 justify-between items-center px-4 py-2 w-full text-base text-black"
-          >
-            <time class="self-stretch my-auto">{{ "SAT" }}{{ " 1:00AM" }}</time>
-            <time class="self-stretch my-auto">{{ "11:30PM" }}</time>
-          </div>
-          <div class="custom-slider px-4 py-2 w-full">
-            <ngx-slider
-              [(value)]="minValue"
-              [(highValue)]="maxValue"
-              [options]="options"
-              class="w-full"
-            ></ngx-slider>
+          <div class="custom-slider px-4 w-full">
+            <app-date-slider
+              [minTime]="minTimeDeparture()"
+              [maxTime]="maxTimeDeparture()"
+              (minTimeValueChanged)="handleMinTimeValueChange($event)"
+              (maxTimeValueChanged)="handleMaxTimeValueChange($event)"
+            ></app-date-slider>
           </div>
         </div>
 
@@ -83,12 +70,12 @@
             <time class="self-stretch my-auto">{{ "11:30PM" }}</time>
           </div>
           <div class="custom-slider px-4 py-2 w-full">
-            <ngx-slider
-              [(value)]="minValue"
-              [(highValue)]="maxValue"
-              [options]="options"
-              class="w-full"
-            ></ngx-slider>
+            <app-date-slider
+              [minTime]="minTimeDeparture()"
+              [maxTime]="maxTimeDeparture()"
+              (minTimeValueChanged)="handleMinTimeValueChange($event)"
+              (maxTimeValueChanged)="handleMaxTimeValueChange($event)"
+            ></app-date-slider>
           </div>
         </div>
       </div>
@@ -143,16 +130,12 @@
       </div>
 
       <div class="collapse-content">
-        <div>
-          <div
-            class="flex gap-10 justify-between items-center px-4 py-2 w-full text-base text-black"
-          >
-            <time class="self-stretch my-auto">{{ "1:00AM" }}</time>
-            <time class="self-stretch my-auto">{{ "11:30PM" }}</time>
-          </div>
-          <div class="custom-slider px-4 py-2 w-full">
-            <ngx-slider [(value)]="value2" [options]="options2"></ngx-slider>
-          </div>
+        <div class="custom-slider px-4 py-2 w-full">
+          <app-slider
+            [minPrice]="minPrice()"
+            [maxPrice]="maxPrice()"
+            (priceChange)="handlePriceChange($event)"
+          ></app-slider>
         </div>
       </div>
     </div>
