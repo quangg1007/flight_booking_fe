@@ -14,15 +14,53 @@
 
       <div class="collapse-content">
         <ul>
-          @for (stop of stops(); track $index) {
+          @if(filterStats().stopPrices.direct.isPresent){
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
             <div class="flex gap-3 items-center">
-              <input type="checkbox" checked="checked" class="checkbox" />
-              <span class="self-stretch my-auto">{{ stop.name }}</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                [value]="'direct'"
+                (change)="onStopSelect($event)"
+                class="checkbox"
+              />
+              <span class="self-stretch my-auto">Non Stop</span>
             </div>
-            <span>{{ stop.price }}</span>
+            <span>{{ filterStats().stopPrices.direct.formattedPrice }}</span>
+          </li>
+          } @if(filterStats().stopPrices.one.isPresent){
+          <li
+            class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
+          >
+            <div class="flex gap-3 items-center">
+              <input
+                type="checkbox"
+                checked="checked"
+                [value]="'direct'"
+                (change)="onStopSelect($event)"
+                class="checkbox"
+              />
+              <span class="self-stretch my-auto">1 Stop</span>
+            </div>
+            <span>{{ filterStats().stopPrices.one.formattedPrice }}</span>
+          </li>
+          } @if(filterStats().stopPrices.twoOrMore.isPresent){
+          <li
+            class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
+          >
+            <div class="flex gap-3 items-center">
+              <input
+                type="checkbox"
+                checked="checked"
+                [value]="'direct'"
+                (change)="onStopSelect($event)"
+                class="checkbox"
+              />
+              <span class="self-stretch my-auto">2 Stops+</span>
+            </div>
+            <span>{{ filterStats().stopPrices.twoOrMore.formattedPrice }}</span>
           </li>
           }
         </ul>
@@ -89,15 +127,20 @@
 
     <div class="collapse-content">
       <ul>
-        @for (airline of airlines(); track $index) {
+        @for (airline of filterStats().carriers; track $index) {
         <li
           class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black whitespace-nowrap"
         >
           <div class="flex gap-3 items-center">
-            <input type="checkbox" checked="checked" class="checkbox" />
+            <input
+              type="checkbox"
+              checked="checked"
+              class="checkbox"
+              [value]="airline.id"
+              (change)="onAirlinesSelect($event)"
+            />
             <span class="self-stretch my-auto">{{ airline.name }}</span>
           </div>
-          <span>{{ airline.price }}</span>
         </li>
         }
       </ul>
@@ -119,9 +162,10 @@
       <div class="collapse-content">
         <div class="custom-slider px-4 py-2 w-full">
           <app-slider
-            [minPrice]="prices().min"
-            [maxPrice]="prices().max"
-            (priceChange)="handlePriceChange($event)"
+            [min]="filterStats().priceRange.minPrice"
+            [max]="filterStats().priceRange.maxPrice"
+            [label]="'$'"
+            (dataChange)="handlePriceChange($event)"
           ></app-slider>
         </div>
       </div>
@@ -147,15 +191,20 @@
         </div>
 
         <ul>
-          @for (airport of airports(); track $index) {
+          @for (airport of filterStats().airports; track $index) {
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
             <div class="flex gap-3 items-center">
-              <input type="checkbox" checked="checked" class="checkbox" />
-              <span class="self-stretch my-auto">{{ airport.name }}</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox"
+                [value]="airport.city"
+                (change)="onAirportSelect($event)"
+              />
+              <span class="self-stretch my-auto">{{ airport.city }}</span>
             </div>
-            <span>{{ airport.price }}</span>
           </li>
           }
         </ul>

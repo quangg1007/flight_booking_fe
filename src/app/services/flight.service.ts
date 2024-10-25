@@ -1,23 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-
-interface OneWaySearchParams {
-  departureEntityId: string;
-  arrivalEntityId: string;
-  departDate: string;
-  classType?: string;
-  travellerType?: string;
-}
-
-interface RoundTripSearchParams {
-  departureEntityId: string;
-  arrivalEntityId: string;
-  departDate: string;
-  returnDate: string;
-  classType?: string;
-  travellerType?: string;
-}
+import { OneWaySearchParams, RoundTripSearchParams } from '../models/flightService.model';
 
 @Injectable()
 export class FlightService {

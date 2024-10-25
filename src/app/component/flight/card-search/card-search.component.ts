@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, input, Input } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -17,6 +17,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { CardSearch } from 'src/app/models/cardSearch.model';
 import { FlightService } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
 
@@ -28,7 +29,7 @@ import { validateForm } from 'src/app/util/validation';
   styleUrl: './card-search.component.css',
 })
 export class CardSearchComponent {
-  @Input() paramSearch: any;
+  paramSearch = input.required<CardSearch>();
 
   formSubmit$ = new Subject<any>();
   flightSearchForm!: FormGroup;
@@ -45,12 +46,10 @@ export class CardSearchComponent {
   ) {}
 
   ngOnInit(): void {
-    if (this.paramSearch) {
-      this.initForm(this.paramSearch);
+    this.initForm(this.paramSearch());
 
-      if (this.paramSearch.return_date) {
-        this.selectedFlightType = 'roundTrip';
-      }
+    if (this.paramSearch().return_date) {
+      this.selectedFlightType = 'roundTrip';
     }
     this.setupAutocomplete();
 

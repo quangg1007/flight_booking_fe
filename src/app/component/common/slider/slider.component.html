@@ -1,1 +1,5 @@
-<ngx-slider [(value)]="value" [options]="options"></ngx-slider>
+<ngx-slider
+  [(value)]="value"
+  [options]="options"
+  (valueChange)="onChange()"
+></ngx-slider>

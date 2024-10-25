@@ -9,17 +9,19 @@
   <app-card-search [paramSearch]="paramSearch"></app-card-search>
   <div class="flex flex-row w-full gap-10 justify-center items-start mx-auto">
     <app-card-filter
-      [stops]="selectedStop"
-      [airlines]="selectedAirline"
-      [airports]="selectedAirport"
-      [prices]="selectedPrice"
-      [takeOffTime]="selectedTakeOffTime"
-      [landingTime]="selectedLandingTime"
+      [filterStats]="filterStats()"
+      (pricesChange)="onPriceChange($event)"
       (timeDepartureRangeChange)="onTimeDepartureRangeChange($event)"
       (timeLandingRangeChange)="onTimeLandingRangeChange($event)"
     ></app-card-filter>
-    <div>
-      @for (item of searchResults?.data?.itineraries; track $index) {
+    <div
+      class="search-results"
+      infinite-scroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="300"
+      (scrolled)="onScroll()"
+    >
+      @for (item of flightListResult(); track $index) {
       <app-card-list [flightCard]="item"></app-card-list>
       }
     </div>

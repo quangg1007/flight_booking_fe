@@ -4,7 +4,18 @@ import {
   Options,
 } from '@angular-slider/ngx-slider';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  input,
+  Input,
+  output,
+  Output,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 
 @Component({
   selector: 'app-date-slider',
@@ -14,16 +25,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './date-slider.component.css',
 })
 export class DateSliderComponent {
-  @Input() minTime: string = '';
-  @Input() maxTime: string = '';
+  minTime = input.required<string>();
+  maxTime = input.required<string>();
 
-  @Output() minTimeValueChanged = new EventEmitter<number>();
-  @Output() maxTimeValueChanged = new EventEmitter<number>();
-
-  // options: Options;
-
-  constructor() {}
-  dateRange: Date[] = [];
+  minTimeValueChanged = output<number>();
+  maxTimeValueChanged = output<number>();
 
   minTimeValue: number = 0;
   maxTimeValue: number = 0;
@@ -31,14 +37,14 @@ export class DateSliderComponent {
   options!: Options;
 
   ngOnInit(): void {
-    this.dateRange = this.createDateRange(this.minTime, this.maxTime);
+    const dateRange = computed(() => this.createDateRange());
 
-    this.minTimeValue = this.dateRange[0].getTime();
+    this.minTimeValue = dateRange()[0].getTime();
 
-    this.maxTimeValue = this.dateRange[this.dateRange.length - 1].getTime();
+    this.maxTimeValue = dateRange()[dateRange().length - 1].getTime();
 
     this.options = {
-      stepsArray: this.dateRange.map((date: Date) => {
+      stepsArray: dateRange().map((date: Date) => {
         return { value: date.getTime() };
       }),
       translate: (value: number, label: LabelType): string => {
@@ -54,15 +60,14 @@ export class DateSliderComponent {
       noSwitching: true,
     };
   }
-
   onChange(): void {
     this.minTimeValueChanged.emit(this.minTimeValue);
     this.maxTimeValueChanged.emit(this.maxTimeValue);
   }
 
-  createDateRange(minTime: string, maxTime: string): Date[] {
-    const minDate = new Date(minTime);
-    const maxDate = new Date(maxTime);
+  createDateRange() {
+    const minDate = new Date(this.minTime());
+    const maxDate = new Date(this.maxTime());
 
     const range: Date[] = [];
     let current = new Date(minDate);

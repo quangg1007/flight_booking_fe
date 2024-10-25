@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, Input } from '@angular/core';
 import { tap } from 'rxjs';
 import {
   FlightSegmentInfo,
@@ -19,7 +19,7 @@ import {
   styleUrl: './card-detail.component.css',
 })
 export class CardDetailComponent {
-  @Input() itineraryId: string = '';
+  itineraryId = input<string>('');
   isLoading: boolean = true;
 
   flightSegmentInfo: FlightSegmentInfo[] = [];
@@ -33,14 +33,14 @@ export class CardDetailComponent {
   constructor(private flightService: FlightService) {}
 
   ngOnInit() {
-    this.loadFlightDetails(this.itineraryId);
+    this.loadFlightDetails();
   }
 
-  loadFlightDetails(itineraryId: string) {
+  loadFlightDetails() {
     this.isLoading = true;
 
     this.flightService
-      .searchDetail(itineraryId)
+      .searchDetail(this.itineraryId())
       .pipe(
         tap(
           (res) => {

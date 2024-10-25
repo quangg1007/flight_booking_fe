@@ -24,9 +24,8 @@ export class CacheInterceptor implements HttpInterceptor {
 
     const cachedResponse = this.caching.get(request.urlWithParams);
 
-    if (cachedResponse) {
+    if (cachedResponse instanceof HttpResponse) {
       console.log('Serving from cache:', request.urlWithParams);
-      // console.log(cachedResponse.clone());
       return of(cachedResponse);
     }
 
@@ -34,7 +33,7 @@ export class CacheInterceptor implements HttpInterceptor {
       tap((event) => {
         if (event instanceof HttpResponse) {
           console.log('Caching response for:', request.urlWithParams);
-          this.caching.set(request.urlWithParams, event.clone());
+          this.caching.set(request.urlWithParams, event);
         }
       }),
       shareReplay(1)

@@ -14,6 +14,8 @@ import { CardSearchComponent } from './card-search/card-search.component';
 import { DateSliderComponent } from '../common/date-slider/date-slider.component';
 import { SliderComponent } from '../common/slider/slider.component';
 
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+
 @NgModule({
   declarations: [
     FlightComponent,
@@ -32,7 +34,8 @@ import { SliderComponent } from '../common/slider/slider.component';
     CardDetailLegComponent,
     CardSearchComponent,
     DateSliderComponent,
-    SliderComponent
+    SliderComponent,
+    InfiniteScrollModule,
   ],
 })
 export class FlightModule {}
