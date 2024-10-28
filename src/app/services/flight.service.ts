@@ -4,7 +4,7 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
 import { OneWaySearchParams, RoundTripSearchParams } from '../models/flightService.model';
 
 @Injectable()
-export class FlightService {
+export class FlightServiceAPI {
   private apiUrl = 'http://localhost:8081/api';
 
   constructor(private http: HttpClient) {}

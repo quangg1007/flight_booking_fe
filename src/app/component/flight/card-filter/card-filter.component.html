@@ -14,7 +14,6 @@
 
       <div class="collapse-content">
         <ul>
-          @if(filterStats().stopPrices.direct.isPresent){
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
@@ -25,12 +24,12 @@
                 [value]="'direct'"
                 (change)="onStopSelect($event)"
                 class="checkbox"
+                [disabled]="!filterStats().stopPrices.direct.isPresent"
               />
               <span class="self-stretch my-auto">Non Stop</span>
             </div>
             <span>{{ filterStats().stopPrices.direct.formattedPrice }}</span>
           </li>
-          } @if(filterStats().stopPrices.one.isPresent){
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
@@ -38,15 +37,15 @@
               <input
                 type="checkbox"
                 checked="checked"
-                [value]="'direct'"
+                [value]="'one'"
                 (change)="onStopSelect($event)"
                 class="checkbox"
+                [disabled]="!filterStats().stopPrices.one.isPresent"
               />
               <span class="self-stretch my-auto">1 Stop</span>
             </div>
             <span>{{ filterStats().stopPrices.one.formattedPrice }}</span>
           </li>
-          } @if(filterStats().stopPrices.twoOrMore.isPresent){
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
@@ -54,15 +53,15 @@
               <input
                 type="checkbox"
                 checked="checked"
-                [value]="'direct'"
+                [value]="'twoOrMore'"
                 (change)="onStopSelect($event)"
                 class="checkbox"
+                [disabled]="!filterStats().stopPrices.twoOrMore.isPresent"
               />
               <span class="self-stretch my-auto">2 Stops+</span>
             </div>
             <span>{{ filterStats().stopPrices.twoOrMore.formattedPrice }}</span>
           </li>
-          }
         </ul>
       </div>
     </div>
@@ -83,14 +82,14 @@
       <div class="collapse-content">
         <div>
           <div class="gap-2 self-stretch px-4 py-2 w-full text-base text-black">
-            <strong>Take-off from {{ "Hanoi (HNA)" }}</strong>
+            <strong>Departure from {{ filterStats().airports[0].city }}</strong>
           </div>
           <div class="custom-slider px-4 w-full">
             <app-date-slider
               [minTime]="minTimeDeparture()"
               [maxTime]="maxTimeDeparture()"
-              (minTimeValueChanged)="handleMinTimeValueChange($event)"
-              (maxTimeValueChanged)="handleMaxTimeValueChange($event)"
+              (minTimeValueChanged)="handleMinTimeDepartureValueChange($event)"
+              (maxTimeValueChanged)="handleMaxTimeDepartureValueChange($event)"
             ></app-date-slider>
           </div>
         </div>
@@ -99,7 +98,7 @@
           <div
             class="gap-2.5 self-stretch px-4 py-2 w-full text-base text-black"
           >
-            <strong>Landing at {{ "ICN" }}</strong>
+            <strong>Landing at {{ filterStats().airports[1].city }}</strong>
           </div>
           <div class="custom-slider px-4 py-2 w-full">
             <app-date-slider
@@ -187,7 +186,7 @@
 
       <div class="collapse-content">
         <div class="gap-1 self-stretch px-4 py-2 w-full text-base text-black">
-          <strong>Take-off from {{ "Hanoi (HNA)" }}</strong>
+          <strong>Departure from {{ filterStats().airports[0].city }}</strong>
         </div>
 
         <ul>
@@ -200,10 +199,12 @@
                 type="checkbox"
                 checked="checked"
                 class="checkbox"
-                [value]="airport.city"
+                [value]="airport.airports[0].entityId"
                 (change)="onAirportSelect($event)"
               />
-              <span class="self-stretch my-auto">{{ airport.city }}</span>
+              <span class="self-stretch my-auto">{{
+                airport.airports[0].name
+              }}</span>
             </div>
           </li>
           }

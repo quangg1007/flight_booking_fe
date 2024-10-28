@@ -2,6 +2,7 @@ export interface Airlines {
   id: number;
   logoUrl: string;
   name: string;
+  isActive: boolean;
 }
 
 export interface Duration {
@@ -17,14 +18,17 @@ export interface Stop {
   direct: {
     isPresent: boolean;
     formattedPrice?: string;
+    isActive: boolean;
   };
   one: {
     isPresent: boolean;
     formattedPrice?: string;
+    isActive: boolean;
   };
   twoOrMore: {
     isPresent: boolean;
     formattedPrice?: string;
+    isActive: boolean;
   };
 }
 export interface Airport {
@@ -36,6 +40,7 @@ export interface Airport {
 export interface Location {
   city: string;
   airports: Airport[];
+  isActive: boolean;
 }
 
 export interface PriceRange {

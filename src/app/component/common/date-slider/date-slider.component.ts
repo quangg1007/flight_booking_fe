@@ -4,18 +4,7 @@ import {
   Options,
 } from '@angular-slider/ngx-slider';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  computed,
-  EventEmitter,
-  input,
-  Input,
-  output,
-  Output,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-date-slider',
@@ -49,18 +38,22 @@ export class DateSliderComponent {
       }),
       translate: (value: number, label: LabelType): string => {
         const date = new Date(value);
-        return date.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-        });
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+
+        return `${day}/${month} - ${hours}:${minutes}`;
       },
       hideLimitLabels: true,
       hidePointerLabels: false,
       draggableRange: true,
+      enforceRange: false,
+      enforceStep: true,
       noSwitching: true,
     };
   }
-  onChange(): void {
+  onChange(event: any): void {
     this.minTimeValueChanged.emit(this.minTimeValue);
     this.maxTimeValueChanged.emit(this.maxTimeValue);
   }
@@ -74,7 +67,7 @@ export class DateSliderComponent {
 
     while (current <= maxDate) {
       range.push(new Date(current));
-      current.setMinutes(current.getMinutes() + 15); // 15-minute intervals
+      current.setMinutes(current.getMinutes() + 1); // 15-minute intervals
     }
 
     return range;

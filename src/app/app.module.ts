@@ -18,7 +18,7 @@ import {
 import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { EmailResetPasswordComponent } from './component/login/email-reset-password/email-reset-password.component';
 import { NotFoundComponent } from './component/not-found/not-found.component';
-import { FlightService } from './services/flight.service';
+import { FlightServiceAPI } from './services/flight.service';
 import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { CacheInterceptor } from './interceptor/cache.interceptor';
 import { RetryInterceptor } from './interceptor/retry.interceptor';
@@ -43,11 +43,11 @@ import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
     ReactiveFormsModule,
     RouterModule,
     NgOptimizedImage,
-    NgTemplateOutlet
+    NgTemplateOutlet,
   ],
   providers: [
     userService,
-    FlightService,
+    FlightServiceAPI,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

@@ -5,7 +5,7 @@ import {
   LayoverInfo,
   LegInfo,
 } from 'src/app/models/cardDetail.model';
-import { FlightService } from 'src/app/services/flight.service';
+import { FlightServiceAPI } from 'src/app/services/flight.service';
 import {
   calculateDuration,
   convertMinutesToHoursAndMinutes,
@@ -30,7 +30,7 @@ export class CardDetailComponent {
 
   legInfo: LegInfo[] = [];
 
-  constructor(private flightService: FlightService) {}
+  constructor(private flightServiceAPI: FlightServiceAPI) {}
 
   ngOnInit() {
     this.loadFlightDetails();
@@ -39,7 +39,7 @@ export class CardDetailComponent {
   loadFlightDetails() {
     this.isLoading = true;
 
-    this.flightService
+    this.flightServiceAPI
       .searchDetail(this.itineraryId())
       .pipe(
         tap(

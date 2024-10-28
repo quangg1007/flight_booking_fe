@@ -18,7 +18,7 @@ import {
   tap,
 } from 'rxjs';
 import { CardSearch } from 'src/app/models/cardSearch.model';
-import { FlightService } from 'src/app/services/flight.service';
+import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
 
 @Component({
@@ -40,7 +40,7 @@ export class CardSearchComponent {
   selectedFlightType: 'oneWay' | 'roundTrip' = 'oneWay';
 
   constructor(
-    private _flightService: FlightService,
+    private _flightServiceAPI: FlightServiceAPI,
     private _fb: FormBuilder,
     private cdr: ChangeDetectorRef
   ) {}
@@ -123,7 +123,7 @@ export class CardSearchComponent {
         filter((value) => value.length >= 3),
         switchMap((value) => {
           const formattedValue = value.replace(/\s+/g, '-').toLowerCase();
-          return this._flightService.getLocations(formattedValue).pipe(
+          return this._flightServiceAPI.getLocations(formattedValue).pipe(
             catchError((error) => {
               console.error(`Error fetching ${fieldName} locations:`, error);
               return of({ data: [] });

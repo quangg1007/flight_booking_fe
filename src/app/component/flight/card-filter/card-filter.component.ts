@@ -3,7 +3,7 @@ import { DateSliderComponent } from '../../common/date-slider/date-slider.compon
 import { CommonModule } from '@angular/common';
 import { convertTimestampToISOString } from 'src/app/util/time';
 import { SliderComponent } from '../../common/slider/slider.component';
-import { FilterStats } from 'src/app/models/cardFilter.model';
+import { Airlines, FilterStats, Stop } from 'src/app/models/cardFilter.model';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -17,34 +17,41 @@ import { toObservable } from '@angular/core/rxjs-interop';
 export class CardFilterComponent {
   filterStats = input.required<FilterStats>();
 
+  // Stop Data
+  stopData = signal<Stop>({} as Stop);
+
+  // Airport Data
+  airportData = signal<Location[]>([]);
+
+  // Airline Data
+
+  airlineData = signal<Airlines[]>([]);
+
   // Price Change
   priceData = signal<number>(0);
-  priceData$ = toObservable(this.priceData);
-  pricesChange = output<number>();
 
   // State Departure Time Range
   minTimeDeparture = signal<string>('');
   maxTimeDeparture = signal<string>('');
-  allStateDeparture = signal([this.minTimeDeparture, this.maxTimeDeparture]);
-  latestStateDeparture = computed(() =>
-    this.allStateDeparture().map((x) => x())
-  );
-  latestStateDeparture$ = toObservable(this.latestStateDeparture);
-  timeDepartureRangeChange = output<{
-    minTimeDeparture: string;
-    maxTimeDeparture: string;
-  }>();
 
   // State Landing Time Range
   minTimeLanding = signal<string>('');
   maxTimeLanding = signal<string>('');
-  allStateLanding = signal([this.minTimeLanding, this.maxTimeLanding]);
-  latestStateLanding = computed(() => this.allStateLanding().map((x) => x()));
-  latestStateLanding$ = toObservable(this.latestStateLanding);
-  timeLandingRangeChange = output<{
-    minTimeLanding: string;
-    maxTimeLanding: string;
-  }>();
+
+  allState = signal([
+    this.priceData,
+    this.minTimeDeparture,
+    this.maxTimeDeparture,
+    this.minTimeLanding,
+    this.maxTimeLanding,
+    this.stopData,
+    this.airlineData,
+  ]);
+
+  latestState = computed(() => this.allState().map((x) => x()));
+  latestState$ = toObservable(this.latestState);
+
+  filterChange = output<FilterStats>();
 
   ngOnInit(): void {
     this.minTimeDeparture.set(this.filterStats().timeRange.minTimeDeparture);
@@ -53,50 +60,45 @@ export class CardFilterComponent {
     this.minTimeLanding.set(this.filterStats().timeRange.minTimeLanding);
     this.maxTimeLanding.set(this.filterStats().timeRange.maxTimeLanding);
 
-    this.handleEmitChange();
+    this.stopData.set(this.filterStats().stopPrices);
+
+    this.airlineData.set(this.filterStats().carriers);
+
+    this.handleFilterSecondChange();
   }
 
-  handleEmitChange() {
-    this.handleEmitLanding();
-    this.handleEmitDeparture();
-    this.handleEmitPriceChange();
-  }
-
-  handleEmitLanding() {
-    this.latestStateLanding$
-      .pipe(skip(1), debounceTime(300), distinctUntilChanged())
+  handleFilterSecondChange() {
+    this.latestState$
+      .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => {
-        this.timeLandingRangeChange.emit({
-          minTimeLanding: this.minTimeLanding(),
-          maxTimeLanding: this.maxTimeLanding(),
-        });
+        this.handleFiterChange();
       });
   }
 
-  handleEmitDeparture() {
-    this.latestStateDeparture$
-      .pipe(skip(1), debounceTime(300), distinctUntilChanged())
-      .subscribe(() => {
-        this.timeDepartureRangeChange.emit({
-          minTimeDeparture: this.minTimeDeparture(),
-          maxTimeDeparture: this.maxTimeDeparture(),
-        });
-      });
+  handleFiterChange() {
+    this.filterChange.emit({
+      duration: this.filterStats().duration,
+      airports: this.filterStats().airports,
+      carriers: this.airlineData(),
+      stopPrices: this.stopData(),
+      timeRange: {
+        minTimeDeparture: this.minTimeDeparture(),
+        maxTimeDeparture: this.maxTimeDeparture(),
+        minTimeLanding: this.minTimeLanding(),
+        maxTimeLanding: this.maxTimeLanding(),
+      },
+      priceRange: {
+        minPrice: this.filterStats().priceRange.minPrice,
+        maxPrice: this.priceData(),
+      },
+    });
   }
 
-  handleEmitPriceChange() {
-    this.priceData$
-      .pipe(skip(2), debounceTime(300), distinctUntilChanged())
-      .subscribe(() => {
-        this.pricesChange.emit(this.priceData());
-      });
-  }
-
-  handleMinTimeValueChange(valueTime: number) {
+  handleMinTimeDepartureValueChange(valueTime: number) {
     this.minTimeDeparture.set(convertTimestampToISOString(valueTime));
   }
 
-  handleMaxTimeValueChange(valueTime: number) {
+  handleMaxTimeDepartureValueChange(valueTime: number) {
     this.maxTimeDeparture.set(convertTimestampToISOString(valueTime));
   }
 
@@ -113,13 +115,28 @@ export class CardFilterComponent {
   }
 
   onStopSelect(event: any) {
-    console.log(event.target.value);
-    console.log(event.target.checked);
+    const stopType = event.target.value as keyof Stop;
+
+    this.stopData.update((prev) => {
+      prev[stopType].isActive = event.target.checked;
+      return prev;
+    });
   }
 
   onAirlinesSelect(event: any) {
     console.log(event.target.value);
     console.log(event.target.checked);
+
+    this.airlineData.update((airlines) => {
+      airlines.forEach((airline) => {
+        if (airline.id == event.target.value) {
+          console.log('something');
+          airline.isActive = event.target.checked;
+        }
+      });
+
+      return airlines;
+    });
   }
 
   onAirportSelect(event: any) {

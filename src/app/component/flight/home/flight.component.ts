@@ -1,7 +1,12 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FilterStats, PriceRange } from 'src/app/models/cardFilter.model';
-import { FlightService } from 'src/app/services/flight.service';
+import {
+  Airlines,
+  FilterStats,
+  Location,
+  PriceRange,
+} from 'src/app/models/cardFilter.model';
+import { FlightServiceAPI } from 'src/app/services/flight.service';
 
 @Component({
   selector: 'app-flight',
@@ -22,21 +27,9 @@ export class FlightComponent implements OnInit {
   scrollDistance = 1;
   throttle = 300;
 
-  selectedPrice = signal<PriceRange>({} as PriceRange);
-
-  selectedDepartureTime = {
-    minTimeDeparture: '2024-10-30T01:40:00',
-    maxTimeDeparture: '2024-10-30T23:59:00',
-  };
-
-  selectedLandingTime = {
-    minTimeLanding: '2024-10-31T02:40:00',
-    maxTimeLanding: '2024-10-31T23:59:00',
-  };
-
   constructor(
     private route: ActivatedRoute,
-    private _flightService: FlightService
+    private _flightServiceAPI: FlightServiceAPI
   ) {}
 
   ngOnInit() {
@@ -94,7 +87,7 @@ export class FlightComponent implements OnInit {
     classType: string,
     travellerType: string
   ) {
-    this._flightService
+    this._flightServiceAPI
       .searchRoundTrip({
         departureEntityId,
         arrivalEntityId,
@@ -127,7 +120,7 @@ export class FlightComponent implements OnInit {
     classType: string,
     travellerType: string
   ) {
-    this._flightService
+    this._flightServiceAPI
       .searchOneWay({
         departureEntityId,
         arrivalEntityId,
@@ -140,6 +133,8 @@ export class FlightComponent implements OnInit {
           this.allFlights = results.data.itineraries;
 
           this.setFilterStats(results);
+
+          console.log(this.filterStats());
 
           this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
 
@@ -155,8 +150,20 @@ export class FlightComponent implements OnInit {
 
   setFilterStats(results: any) {
     this.filterStats.update(() => {
-      const { duration, airports, carriers, stopPrices } =
-        results.data.filterStats;
+      const { duration, airports, carriers } = results.data.filterStats;
+
+      const stopPrices = results.data.filterStats.stopPrices;
+      stopPrices.direct.isActive = stopPrices.direct.isPresent;
+      stopPrices.one.isActive = stopPrices.one.isPresent;
+      stopPrices.twoOrMore.isActive = stopPrices.twoOrMore.isPresent;
+
+      carriers.forEach((carrier: Airlines) => {
+        carrier.isActive = true;
+      });
+
+      airports.forEach((airport: Location) => {
+        airport.isActive = true;
+      });
 
       const { minTime: minTimeDeparture, maxTime: maxTimeDeparture } =
         this.getMinMaxTimes(results.data.itineraries, 'departure');
@@ -167,16 +174,6 @@ export class FlightComponent implements OnInit {
       const timeRange = {
         minTimeDeparture,
         maxTimeDeparture,
-        minTimeLanding,
-        maxTimeLanding,
-      };
-
-      this.selectedDepartureTime = {
-        minTimeDeparture,
-        maxTimeDeparture,
-      };
-
-      this.selectedLandingTime = {
         minTimeLanding,
         maxTimeLanding,
       };
@@ -193,8 +190,6 @@ export class FlightComponent implements OnInit {
         priceRange,
       };
     });
-
-    this.selectedPrice.set(this.getMinMaxPrice(results.data.itineraries));
   }
 
   getMinMaxTimes(
@@ -228,18 +223,11 @@ export class FlightComponent implements OnInit {
     };
   }
 
-  onTimeDepartureRangeChange(value: any) {
+  filterStatsChange(value: any) {
     console.log(value);
   }
 
-  onTimeLandingRangeChange(value: any) {
-    console.log(value);
-  }
-
-  onPriceChange(value: any) {
-    console.log(value);
-  }
-
+  // Handle infinity scrolling.
   onScroll() {
     const nextPage = this.currentPage + 1;
     const startIndex = this.currentPage * this.pageSize;
