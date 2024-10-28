@@ -3,7 +3,12 @@ import { DateSliderComponent } from '../../common/date-slider/date-slider.compon
 import { CommonModule } from '@angular/common';
 import { convertTimestampToISOString } from 'src/app/util/time';
 import { SliderComponent } from '../../common/slider/slider.component';
-import { Airlines, FilterStats, Stop } from 'src/app/models/cardFilter.model';
+import {
+  Airlines,
+  FilterStats,
+  Location,
+  Stop,
+} from 'src/app/models/cardFilter.model';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -45,6 +50,7 @@ export class CardFilterComponent {
     this.minTimeLanding,
     this.maxTimeLanding,
     this.stopData,
+    this.airportData,
     this.airlineData,
   ]);
 
@@ -64,12 +70,14 @@ export class CardFilterComponent {
 
     this.airlineData.set(this.filterStats().carriers);
 
-    this.handleFilterSecondChange();
+    this.airportData.set(this.filterStats().airports);
+
+    this.handleFilterChange();
   }
 
-  handleFilterSecondChange() {
+  handleFilterChange() {
     this.latestState$
-      .pipe(debounceTime(300), distinctUntilChanged())
+      .pipe(skip(2), debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
         this.handleFiterChange();
       });
@@ -78,7 +86,7 @@ export class CardFilterComponent {
   handleFiterChange() {
     this.filterChange.emit({
       duration: this.filterStats().duration,
-      airports: this.filterStats().airports,
+      airports: this.airportData(),
       carriers: this.airlineData(),
       stopPrices: this.stopData(),
       timeRange: {
@@ -117,30 +125,47 @@ export class CardFilterComponent {
   onStopSelect(event: any) {
     const stopType = event.target.value as keyof Stop;
 
-    this.stopData.update((prev) => {
-      prev[stopType].isActive = event.target.checked;
-      return prev;
+    this.stopData.set({
+      ...this.stopData(),
+      [stopType]: {
+        ...this.stopData()[stopType],
+        isActive: event.target.checked,
+      },
     });
   }
 
   onAirlinesSelect(event: any) {
-    console.log(event.target.value);
+    console.log(parseInt(event.target.value) === -32690);
     console.log(event.target.checked);
-
-    this.airlineData.update((airlines) => {
-      airlines.forEach((airline) => {
-        if (airline.id == event.target.value) {
-          console.log('something');
-          airline.isActive = event.target.checked;
-        }
-      });
-
-      return airlines;
-    });
+    this.airlineData.set(
+      this.airlineData().map((airline) =>
+        airline.id === parseInt(event.target.value)
+          ? { ...airline, isActive: event.target.checked }
+          : airline
+      )
+    );
   }
 
   onAirportSelect(event: any) {
     console.log(event.target.value);
     console.log(event.target.checked);
+
+    this.airportData.set(
+      this.airportData().map((location: Location) => {
+        const hasMatchingAirport = location.airports.some((airport) => {
+          return parseInt(airport.entityId) === parseInt(event.target.value);
+        });
+
+        console.log(
+          hasMatchingAirport
+            ? { ...location, isActive: event.target.checked }
+            : location
+        );
+
+        return hasMatchingAirport
+          ? { ...location, isActive: event.target.checked }
+          : location;
+      })
+    );
   }
 }

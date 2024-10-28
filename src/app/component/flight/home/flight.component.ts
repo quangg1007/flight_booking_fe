@@ -6,6 +6,7 @@ import {
   Location,
   PriceRange,
 } from 'src/app/models/cardFilter.model';
+import { FlightSearchService } from 'src/app/services/flight-search.service';
 import { FlightServiceAPI } from 'src/app/services/flight.service';
 
 @Component({
@@ -15,6 +16,7 @@ import { FlightServiceAPI } from 'src/app/services/flight.service';
 })
 export class FlightComponent implements OnInit {
   isLoading = true;
+  isLoadingFlight: boolean = false;
   flightListResult = signal<any[]>([]);
   filterStats = signal<FilterStats>({} as FilterStats);
 
@@ -23,13 +25,15 @@ export class FlightComponent implements OnInit {
   pageSize = 10;
   currentPage = 1;
   allFlights: any[] = [];
+  filteredFlights: any[] = [];
 
   scrollDistance = 1;
   throttle = 300;
 
   constructor(
     private route: ActivatedRoute,
-    private _flightServiceAPI: FlightServiceAPI
+    private _flightServiceAPI: FlightServiceAPI,
+    private _flightSearchService: FlightSearchService
   ) {}
 
   ngOnInit() {
@@ -99,6 +103,7 @@ export class FlightComponent implements OnInit {
       .subscribe(
         (results) => {
           this.allFlights = results.data.itineraries;
+          this.filteredFlights = this.allFlights;
 
           this.setFilterStats(results);
 
@@ -131,10 +136,9 @@ export class FlightComponent implements OnInit {
       .subscribe(
         (results) => {
           this.allFlights = results.data.itineraries;
+          this.filteredFlights = this.allFlights;
 
           this.setFilterStats(results);
-
-          console.log(this.filterStats());
 
           this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
 
@@ -223,8 +227,23 @@ export class FlightComponent implements OnInit {
     };
   }
 
-  filterStatsChange(value: any) {
-    console.log(value);
+  filterStatsChange(filterStats: FilterStats) {
+    console.log(filterStats);
+    this.isLoadingFlight = true;
+    // window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    setTimeout(() => {
+      this.filteredFlights = this._flightSearchService.filterFlights(
+        this.allFlights,
+        filterStats
+      );
+
+      console.log(this.filteredFlights);
+
+      this.currentPage = 1;
+      this.flightListResult.set(this.filteredFlights.slice(0, this.pageSize));
+      this.isLoadingFlight = false;
+    }, 1000);
   }
 
   // Handle infinity scrolling.
@@ -233,7 +252,7 @@ export class FlightComponent implements OnInit {
     const startIndex = this.currentPage * this.pageSize;
     const endIndex = startIndex + this.pageSize;
 
-    const nextFlights = this.allFlights.slice(startIndex, endIndex);
+    const nextFlights = this.filteredFlights.slice(startIndex, endIndex);
 
     if (nextFlights.length > 0) {
       this.currentPage = nextPage;

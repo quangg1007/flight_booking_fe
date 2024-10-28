@@ -1,5 +1,5 @@
 <div
-  class="flex flex-col mx-auto mb-10 w-full text-xs bg-white rounded-xl border border-black border-solid"
+  class="flex flex-col mx-auto mb-10 w-full min-w-16 text-xs bg-white rounded-xl border border-black border-solid"
 >
   <!-- Stops -->
   <section class="flex flex-col w-auto">
@@ -190,7 +190,7 @@
         </div>
 
         <ul>
-          @for (airport of filterStats().airports; track $index) {
+          @for (airport of filterStats().airports[0].airports; track $index) {
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
@@ -199,12 +199,33 @@
                 type="checkbox"
                 checked="checked"
                 class="checkbox"
-                [value]="airport.airports[0].entityId"
+                [value]="airport.entityId"
                 (change)="onAirportSelect($event)"
               />
-              <span class="self-stretch my-auto">{{
-                airport.airports[0].name
-              }}</span>
+              <span class="self-stretch my-auto">{{ airport.name }}</span>
+            </div>
+          </li>
+          }
+        </ul>
+
+        <div class="gap-1 self-stretch px-4 py-2 w-full text-base text-black">
+          <strong>Return at {{ filterStats().airports[1].city }}</strong>
+        </div>
+
+        <ul>
+          @for (airport of filterStats().airports[1].airports; track $index) {
+          <li
+            class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
+          >
+            <div class="flex gap-3 items-center">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox"
+                [value]="airport.entityId"
+                (change)="onAirportSelect($event)"
+              />
+              <span class="self-stretch my-auto">{{ airport.name }}</span>
             </div>
           </li>
           }
