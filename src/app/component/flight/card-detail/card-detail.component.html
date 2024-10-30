@@ -17,7 +17,7 @@
     [headerText]="even ? 'Depart' : 'Return'"
   ></app-card-detail-leg>
   }
-  <button *ngIf="legInfo.length" class="btn btn-accent">Accent</button>
+  <button (click)="navigateToBooking()" *ngIf="legInfo.length" class="btn btn-accent">Book</button>
   }@else {
   <div>Check network connection...</div>
   }

@@ -1,16 +1,21 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { OneWaySearchParams, RoundTripSearchParams } from '../models/flightService.model';
+import {
+  OneWaySearchParams,
+  RoundTripSearchParams,
+} from '../models/flightService.model';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class FlightServiceAPI {
   private apiUrl = 'http://localhost:8081/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private tokenService: TokenService) {}
 
   getLocations(location: string): Observable<any> {
     console.log('API call initiated for:', location);
+    const token = this.tokenService.getAccessToken();
     const results = this.http.get<any>(
       `${this.apiUrl}/flights/search/auto-complete`,
       {

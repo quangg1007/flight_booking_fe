@@ -3,7 +3,6 @@ import { Observable, of, Subject } from 'rxjs';
 import { catchError, delay, map, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { UserModel } from '../models';
-import { LoginResponse } from '../models/auth.model';
 
 @Injectable()
 export class userService {
@@ -34,24 +33,19 @@ export class userService {
   }
 
   login(user: UserModel): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, user);
-  }
-
-  getRefreshToken() {
-    let loggedUserData: any;
-    const localData = localStorage.getItem('tookenData');
-    if (localData != null) {
-      loggedUserData = JSON.parse(localData);
-    }
-    const obj = {
-      emailId: localStorage.getItem('tookenEmail'),
-      token: '',
-      refreshToken: loggedUserData.refreshToken,
-    };
-    this.http.post(`${this.apiUrl}/users`, obj).subscribe((Res: any) => {
-      localStorage.setItem('tookenData', JSON.stringify(Res.data));
-      this.$refreshTokenReceived.next(true);
+    return this.http.post(`${this.apiUrl}/auth/login`, user, {
+      withCredentials: true,
     });
   }
 
+  logout(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/logout`, email, {
+      withCredentials: true,
+    });
+  }
+  getUserByEmail(email: string) {
+    return this.http.get<UserModel>(`${this.apiUrl}/users/search`, {
+      params: { email: email },
+    });
+  }
 }

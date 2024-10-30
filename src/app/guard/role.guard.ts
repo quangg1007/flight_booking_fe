@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import {
+  ActivatedRouteSnapshot,
+  Router,
+  RouterStateSnapshot,
+  UrlTree,
+} from '@angular/router';
+import { map, Observable, switchMap } from 'rxjs';
 import { TokenService } from '../services/token.service';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class RoleGuard  {
-  constructor(
-    private tokenService: TokenService,
-    private auth: AuthService,
-    private router: Router
-  ) {}
+export class RoleGuard {
+  constructor(private authService: AuthService, private router: Router) {}
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -21,20 +22,21 @@ export class RoleGuard  {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    const expectedRole = route.data['expectedRole'];
-    const token = this.tokenService.getAccessToken();
+    return this.authService.isAuthenticated().pipe(
+      switchMap((isAuth) => {
+        return this.authService.getDataFromAccessToken().pipe(
+          map((data) => {
+            console.log(data);
+            const expectedRole = route.data['expectedRole'];
 
-    if (!token) {
-      return false;
-    }
-    // decode the token to get its payload
-    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-
-    if (!this.auth.isAuthenticated() || tokenPayload.isAdmin !== expectedRole) {
-      this.router.navigate(['login']);
-      return false;
-    }
-
-    return true;
+            if (!isAuth || data.isAdmin !== expectedRole) {
+              this.router.navigate(['/login']);
+              return false;
+            }
+            return true;
+          })
+        );
+      })
+    );
   }
 }

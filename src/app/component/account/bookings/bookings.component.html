@@ -1,0 +1,215 @@
+<div class="space-y-8">
+  <!-- Tabs for Booking Types -->
+  <div class="tabs tabs-boxed">
+    <a
+      class="tab tab-lg"
+      [class.tab-active]="activeTab === 'upcoming'"
+      (click)="activeTab = 'upcoming'"
+      >Upcoming Bookings</a
+    >
+    <a
+      class="tab tab-lg"
+      [class.tab-active]="activeTab === 'past'"
+      (click)="activeTab = 'past'"
+      >Past Bookings</a
+    >
+  </div>
+
+  <!-- Upcoming Bookings Table -->
+  <div *ngIf="activeTab === 'upcoming'" class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr>
+          <th>Flight</th>
+          <th>Date & Time</th>
+          <th>Route</th>
+          <th>Status</th>
+          <th>Gate</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="flex items-center space-x-3">
+              <div class="avatar">
+                <div class="mask mask-squircle w-12 h-12">
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSva2UovmV8b1mCc9ooc-g4K5OaObZi8Eetcw&s"
+                    alt="Airline"
+                  />
+                </div>
+              </div>
+              <div>
+                <div class="font-bold">VN123</div>
+                <div class="badge bg-red-300 text-sm opacity-50">
+                  Vietnam Airlines
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div>Dec 25, 2023</div>
+            <div class="text-sm opacity-50">10:30 AM</div>
+          </td>
+          <td>HAN → SGN</td>
+          <td>
+            <div class="badge badge-success text-white">On Time</div>
+          </td>
+          <td>A12</td>
+          <!-- <td class="drawer drawer-end">
+            <input
+              id="booking-detail-drawer"
+              type="checkbox"
+              class="drawer-toggle"
+            />
+            <div class="drawer-content flex space-x-2">
+              <button
+                for="booking-detail-drawer"
+                class="btn btn-sm btn-primary drawer-button"
+              >
+                Modify
+              </button>
+              <button class="btn btn-sm btn-error">Cancel</button>
+            </div>
+            <div class="drawer-side">
+              <label
+                for="booking-detail-drawer"
+                aria-label="close sidebar"
+                class="drawer-overlay"
+              ></label>
+              <app-booking-detail></app-booking-detail>
+            </div>
+          </td> -->
+          <div class="drawer drawer-end">
+            <input
+              id="booking-detail-drawer"
+              type="checkbox"
+              class="drawer-toggle"
+            />
+
+            <!-- Main Content -->
+            <div class="drawer-content">
+              <div class="space-y-8">
+                <!-- Your existing table content -->
+                <td>
+                  <div class="flex space-x-2">
+                    <label
+                      for="booking-detail-drawer"
+                      class="btn btn-sm drawer-button btn-primary"
+                      >Modify</label
+                    >
+                    <button class="btn btn-sm btn-error">Cancel</button>
+                  </div>
+                </td>
+              </div>
+            </div>
+
+            <!-- Drawer Side -->
+            <div class="drawer-side">
+              <label for="booking-detail-drawer" class="drawer-overlay"></label>
+              <div class="menu p-4 w-[1000px] min-h-full bg-base-200">
+                <app-booking-detail></app-booking-detail>
+              </div>
+            </div>
+          </div>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Past Bookings Table -->
+  <div *ngIf="activeTab === 'past'" class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr>
+          <th>Flight</th>
+          <th>Date & Time</th>
+          <th>Route</th>
+          <th>Status</th>
+          <th>Documents</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="flex items-center space-x-3">
+              <div class="avatar">
+                <div class="mask mask-squircle w-12 h-12">
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXpekkNGqhGpUqhXA24hluYBTi8nAP3SrVPA&s"
+                    alt="Airline"
+                  />
+                </div>
+              </div>
+              <div>
+                <div class="font-bold">VN456</div>
+                <div class="text-sm opacity-50">Vietnam Airlines</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div>Nov 15, 2023</div>
+            <div class="text-sm opacity-50">2:45 PM</div>
+          </td>
+          <td>SGN → HAN</td>
+          <td>
+            <div class="badge badge-neutral">Completed</div>
+          </td>
+          <td>
+            <div class="flex space-x-2">
+              <button
+                class="btn btn-sm btn-outline"
+                onclick="ticket_modal.showModal()"
+              >
+                <span class="material-symbols-outlined"> airplane_ticket </span>
+                E-Ticket
+              </button>
+              <button class="btn btn-sm btn-outline">
+                <span class="material-symbols-outlined"> credit_card </span>
+                Invoice
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Flight Status Alert -->
+  <div class="alert alert-info shadow-lg" *ngIf="activeTab === 'upcoming'">
+    <div>
+      <i class="fas fa-info-circle"></i>
+      <span
+        >Flight VN123 is scheduled to depart on time. Please arrive at the
+        airport at least 2 hours before departure.</span
+      >
+    </div>
+  </div>
+</div>
+
+<dialog id="ticket_modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl">
+    <h3 class="font-bold text-lg mb-4">E-Ticket #VN456</h3>
+    <!-- For PDF -->
+    <!-- <iframe
+      class="w-full h-[10vh]"
+      src="
+        https://www.shutterstock.com/image-vector/airplane-ticket-flight-boarding-pass-260nw-2278553741.jpg
+      "
+    ></iframe> -->
+    <!-- Or for Image -->
+    <img
+      src="
+        https://www.shutterstock.com/image-vector/airplane-ticket-flight-boarding-pass-260nw-2278553741.jpg
+      "
+      alt="E-Ticket"
+      class="w-full"
+    />
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>

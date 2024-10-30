@@ -1,4 +1,5 @@
 import { Component, input, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import {
   FlightSegmentInfo,
@@ -30,7 +31,10 @@ export class CardDetailComponent {
 
   legInfo: LegInfo[] = [];
 
-  constructor(private flightServiceAPI: FlightServiceAPI) {}
+  constructor(
+    private flightServiceAPI: FlightServiceAPI,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadFlightDetails();
@@ -132,5 +136,9 @@ export class CardDetailComponent {
       flightSegmentInfo,
       layoverInfo,
     };
+  }
+
+  navigateToBooking() {
+    this.router.navigate(['/booking']);
   }
 }

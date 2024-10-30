@@ -6,11 +6,17 @@ import { ProfileComponent } from './profile/profile.component';
 import { AccountRoutingModule } from './account-routing.module';
 import { AccountComponent } from './account/account.component';
 import { PaymentsComponent } from './payments/payments.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  imports: [CommonModule, AccountRoutingModule],
+  imports: [
+    CommonModule,
+    AccountRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BookingDetailComponent
+],
   declarations: [
-    BookingDetailComponent,
     BookingsComponent,
     ProfileComponent,
     AccountComponent,

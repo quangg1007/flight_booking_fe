@@ -17,6 +17,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
 
@@ -60,9 +61,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(() => this.submitForm());
-
-    console.log(this.formSubmit$);
-    console.log(this.flightSearchForm);
   }
 
   ngOnDestroy(): void {

@@ -1,1 +1,121 @@
-<p>booking-detail works!</p>
+<div class="drawer--content">
+  <!-- Back Button -->
+  <button
+    class="btn btn-ghost btn-circle absolute top-4 left-4"
+    routerLink="../"
+  >
+    <i class="fas fa-arrow-left text-xl"></i>
+  </button>
+
+  <!-- Main Content -->
+  <div class="p-8 max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">Booking Reference: #VN123456</h2>
+
+    <!-- Flight Information Card -->
+    <div class="card bg-base-100 shadow-xl mb-6">
+      <div class="card-body">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-xl font-bold">Vietnam Airlines VN123</h3>
+            <p class="text-sm opacity-70">HAN → SGN</p>
+          </div>
+          <div class="text-right">
+            <p class="font-bold">Dec 25, 2023</p>
+            <p class="text-sm opacity-70">10:30 AM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modification Options -->
+    <div class="space-y-4">
+      <!-- Flight Date/Time Change -->
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <i class="fas fa-calendar-alt mr-2"></i> Change Flight Date/Time
+        </div>
+        <div class="collapse-content">
+          <div class="form-control">
+            <label class="label">New Flight Date</label>
+            <input type="date" class="input input-bordered" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Class Upgrade -->
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <i class="fas fa-level-up-alt mr-2"></i> Upgrade Class
+        </div>
+        <div class="collapse-content">
+          <select class="select select-bordered w-full">
+            <option>Economy Class</option>
+            <option>Business Class</option>
+            <option>First Class</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Passenger Details -->
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <i class="fas fa-user mr-2"></i> Passenger Details
+        </div>
+        <div class="collapse-content">
+          <div class="form-control">
+            <label class="label">Passenger Name</label>
+            <input type="text" class="input input-bordered" value="John Doe" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Seat Selection -->
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <i class="fas fa-chair mr-2"></i> Seat Selection
+        </div>
+        <div class="collapse-content">
+          <div class="grid grid-cols-3 gap-2">
+            <button class="btn btn-outline">12A (Window)</button>
+            <button class="btn btn-outline">12B (Middle)</button>
+            <button class="btn btn-outline">12C (Aisle)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add-on Services -->
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">
+          <i class="fas fa-plus-circle mr-2"></i> Add-on Services
+        </div>
+        <div class="collapse-content">
+          <div class="form-control">
+            <label class="cursor-pointer label">
+              <span class="label-text">Extra Baggage (23kg)</span>
+              <input type="checkbox" class="checkbox" />
+            </label>
+            <label class="cursor-pointer label">
+              <span class="label-text">Priority Boarding</span>
+              <input type="checkbox" class="checkbox" />
+            </label>
+            <label class="cursor-pointer label">
+              <span class="label-text">Special Meal</span>
+              <input type="checkbox" class="checkbox" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end space-x-4 mt-6">
+      <button class="btn btn-error">Cancel Changes</button>
+      <button class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+</div>
