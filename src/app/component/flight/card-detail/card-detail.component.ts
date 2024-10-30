@@ -1,6 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { tap } from 'rxjs';
-import { FlightService } from 'src/app/services/flight.service';
+import {
+  FlightSegmentInfo,
+  LayoverInfo,
+  LegInfo,
+} from 'src/app/models/cardDetail.model';
+import { FlightServiceAPI } from 'src/app/services/flight.service';
 import {
   calculateDuration,
   convertMinutesToHoursAndMinutes,
@@ -8,36 +14,13 @@ import {
   formatDateToShortString,
 } from 'src/app/util/time';
 
-export interface FlightSegmentInfo {
-  departureTime: string;
-  departureAirport: string;
-  arrivalTime: string;
-  arrivalAirport: string;
-  duration: string;
-  flightLogoBrand: string;
-  flightLogoBrandName: string;
-}
-
-export interface LayoverInfo {
-  duration: string;
-  layoverAirport: string;
-}
-
-export interface LegInfo {
-  isDetailSegmentAmenities: boolean[];
-  flightSegmentInfo: FlightSegmentInfo[];
-  layoverInfo: LayoverInfo[];
-  fullDurationSegment: string;
-  headerDate: string;
-}
-
 @Component({
   selector: 'app-card-detail',
   templateUrl: './card-detail.component.html',
   styleUrl: './card-detail.component.css',
 })
 export class CardDetailComponent {
-  @Input() itineraryId: string = '';
+  itineraryId = input<string>('');
   isLoading: boolean = true;
 
   flightSegmentInfo: FlightSegmentInfo[] = [];
@@ -48,17 +31,20 @@ export class CardDetailComponent {
 
   legInfo: LegInfo[] = [];
 
-  constructor(private flightService: FlightService) {}
+  constructor(
+    private flightServiceAPI: FlightServiceAPI,
+    private router: Router
+  ) {}
 
   ngOnInit() {
-    this.loadFlightDetails(this.itineraryId);
+    this.loadFlightDetails();
   }
 
-  loadFlightDetails(itineraryId: string) {
+  loadFlightDetails() {
     this.isLoading = true;
 
-    this.flightService
-      .searchDetail(itineraryId)
+    this.flightServiceAPI
+      .searchDetail(this.itineraryId())
       .pipe(
         tap(
           (res) => {
@@ -150,5 +136,9 @@ export class CardDetailComponent {
       flightSegmentInfo,
       layoverInfo,
     };
+  }
+
+  navigateToBooking() {
+    this.router.navigate(['/booking']);
   }
 }

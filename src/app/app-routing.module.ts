@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './component/home-page/home-page.component';
-import { LoginComponent } from './component/login/login/login.component';
 import { RegisterComponent } from './component/login/register/register.component';
 import { PasswordResetComponent } from './component/login/password-reset/password-reset.component';
 import { EmailResetPasswordComponent } from './component/login/email-reset-password/email-reset-password.component';
 import { NotFoundComponent } from './component/not-found/not-found.component';
 import { AuthGuard } from './guard/auth.guard';
-import { LoadingPageComponent } from './component/loading-page/loading-page.component';
+import { BookingFormComponent } from './component/booking/booking-form/booking-form.component';
+import { LoginPageComponent } from './component/login/login-page/login-page.component';
+import { LoginGuard } from './guard/login.guard';
 
 const routes: Routes = [
   {
@@ -26,8 +27,13 @@ const routes: Routes = [
       import('./component/account/account.module').then((m) => m.AccountModule),
   },
   {
+    path: 'booking',
+    component: BookingFormComponent,
+  },
+  {
     path: 'login',
-    component: LoginComponent,
+    component: LoginPageComponent,
+    canActivate: [LoginGuard],
   },
   {
     path: 'register',

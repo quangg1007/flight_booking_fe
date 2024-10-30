@@ -17,7 +17,8 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { FlightService } from 'src/app/services/flight.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
 
 @Component({
@@ -40,7 +41,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   constructor(
     private _fb: FormBuilder,
-    private _flightService: FlightService,
+    private _flightServiceAPI: FlightServiceAPI,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -60,9 +61,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(() => this.submitForm());
-
-    console.log(this.formSubmit$);
-    console.log(this.flightSearchForm);
   }
 
   ngOnDestroy(): void {
@@ -144,7 +142,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.flightSearchForm
       .get(fieldName)!
       .valueChanges.pipe(
-        debounceTime(500),
+        debounceTime(300),
         distinctUntilChanged(),
         tap((value) => {
           if (value.length < 3) {
@@ -155,7 +153,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         filter((value) => value.length >= 3),
         switchMap((value) => {
           const formattedValue = value.replace(/\s+/g, '-').toLowerCase();
-          return this._flightService.getLocations(formattedValue).pipe(
+          return this._flightServiceAPI.getLocations(formattedValue).pipe(
             catchError((error) => {
               console.error(`Error fetching ${fieldName} locations:`, error);
               return of({ data: [] });

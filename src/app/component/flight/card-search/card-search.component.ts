@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, input, Input } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -17,7 +17,8 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { FlightService } from 'src/app/services/flight.service';
+import { CardSearch } from 'src/app/models/cardSearch.model';
+import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
 
 @Component({
@@ -28,7 +29,7 @@ import { validateForm } from 'src/app/util/validation';
   styleUrl: './card-search.component.css',
 })
 export class CardSearchComponent {
-  @Input() paramSearch: any;
+  paramSearch = input.required<CardSearch>();
 
   formSubmit$ = new Subject<any>();
   flightSearchForm!: FormGroup;
@@ -39,19 +40,16 @@ export class CardSearchComponent {
   selectedFlightType: 'oneWay' | 'roundTrip' = 'oneWay';
 
   constructor(
-    private _flightService: FlightService,
+    private _flightServiceAPI: FlightServiceAPI,
     private _fb: FormBuilder,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    if (this.paramSearch) {
-      console.log(this.paramSearch);
-      this.initForm(this.paramSearch);
+    this.initForm(this.paramSearch());
 
-      if (this.paramSearch.return_date) {
-        this.selectedFlightType = 'roundTrip';
-      }
+    if (this.paramSearch().return_date) {
+      this.selectedFlightType = 'roundTrip';
     }
     this.setupAutocomplete();
 
@@ -125,7 +123,7 @@ export class CardSearchComponent {
         filter((value) => value.length >= 3),
         switchMap((value) => {
           const formattedValue = value.replace(/\s+/g, '-').toLowerCase();
-          return this._flightService.getLocations(formattedValue).pipe(
+          return this._flightServiceAPI.getLocations(formattedValue).pipe(
             catchError((error) => {
               console.error(`Error fetching ${fieldName} locations:`, error);
               return of({ data: [] });

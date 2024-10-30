@@ -107,7 +107,7 @@
 
       <!-- Total price, class, website  -->
       <div class="flex flex-col mt-1.5 w-full">
-        <div class="text-3xl font-bold">{{ flightCard.price.formatted }}</div>
+        <div class="text-3xl font-bold">{{ flightCard().price.formatted }}</div>
         <div class="flex flex-col mt-2 text-base w-[70px]">
           <div>Economy</div>
           <div>eDream</div>
@@ -126,5 +126,5 @@
 
 <app-card-detail
   *ngIf="isDetailVisible"
-  [itineraryId]="flightCard.id"
+  [itineraryId]="flightCard().id"
 ></app-card-detail>

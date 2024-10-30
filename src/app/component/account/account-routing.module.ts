@@ -17,6 +17,11 @@ const routes: Routes = [
     },
     children: [
       {
+        path: '',
+        redirectTo: 'profile',
+        pathMatch: 'full',
+      },
+      {
         path: 'profile',
         component: ProfileComponent,
       },
@@ -24,10 +29,10 @@ const routes: Routes = [
         path: 'bookings',
         component: BookingsComponent,
       },
-      {
-        path: 'bookings/:id',
-        component: BookingDetailComponent,
-      },
+      // {
+      //   path: 'bookings/:id',
+      //   component: BookingDetailComponent,
+      // },
       {
         path: 'payment-methods',
         component: PaymentsComponent,

@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { LegInfo } from '../card-detail/card-detail.component';
+import { Component, input, Input } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { LegInfo } from 'src/app/models/cardDetail.model';
 
 @Component({
   selector: 'app-card-detail-leg',
@@ -11,8 +11,8 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 })
 export class CardDetailLegComponent {
   @Input() legInfo: LegInfo | undefined;
-  @Input() isLoading: boolean = false;
-  @Input() headerText: 'Depart' | 'Return' = 'Depart';
+  isLoading = input<boolean>(false);
+  headerText = input<'Depart' | 'Return'>('Depart');
   constructor() {}
 
   ngOnInit() {}

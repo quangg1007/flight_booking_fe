@@ -1,31 +1,17 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, input, Input, signal } from '@angular/core';
+import { BrandFlight, FlightLegInfo } from 'src/app/models/cardList.model';
 import {
   convertMinutesToHoursAndMinutes,
   convertToAMPMFormat,
 } from 'src/app/util/time';
 
-interface BrandFlight {
-  id: number;
-  logoUrl: string;
-  name: string;
-}
-
-interface FlightLegInfo {
-  timeDeparture: string;
-  timeArrival: string;
-  duration: string;
-  stopCount: number;
-  brandFlight: BrandFlight[];
-  brandNameFlight: string;
-  formatedDepDesCode: string;
-}
 @Component({
   selector: 'app-card-list',
   templateUrl: './card-list.component.html',
   styleUrl: './card-list.component.css',
 })
 export class CardListComponent {
-  @Input() flightCard: any;
+  flightCard = input.required<any>();
   isDetailVisible: boolean = false;
   tagsFlight: string[] = [];
 
@@ -34,9 +20,10 @@ export class CardListComponent {
   constructor() {}
 
   ngOnInit() {
-    this.formatTagFlight(this.flightCard.tags);
+    // console.log(this.flightCard());
+    this.formatTagFlight(this.flightCard().tags);
 
-    this.legs = this.flightCard?.legs.map((leg: any) => {
+    this.legs = this.flightCard().legs.map((leg: any) => {
       const timeDeparture = convertToAMPMFormat(leg.departure);
       const timeArrival = convertToAMPMFormat(leg.arrival);
       const duration = convertMinutesToHoursAndMinutes(leg.durationInMinutes);

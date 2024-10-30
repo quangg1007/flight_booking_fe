@@ -1,5 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   catchError,
@@ -18,9 +23,13 @@ import { userService } from 'src/app/services/user.service';
 import { validateForm } from 'src/app/util/validation';
 import { TokenService } from 'src/app/services/token.service';
 import { LoginResponse } from 'src/app/models/auth.model';
+import { CommonModule } from '@angular/common';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
@@ -71,10 +80,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       .pipe(
         map((res: LoginResponse) => {
           // console.log(res);
-          if (res.user && res.accessToken && res.refreshToken && res.isAdmin) {
+          if (res.accessToken && res.isAdmin) {
             // Save the user data to local storage
-            this.tokenService.setTokens(res.accessToken, res.refreshToken);
-            // console.log(res);
+            this.tokenService.setAccessToken(res.accessToken);
 
             // Create a successfull notification
             console.log('Login successful');
@@ -92,7 +100,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       )
       .subscribe();
   }
-
   getCommonError(): string {
     return this.commonError;
   }
