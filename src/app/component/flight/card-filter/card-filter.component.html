@@ -117,6 +117,13 @@
 
   <!-- Airline -->
   <div class="collapse collapse-arrow collapse-open">
+    <!-- Clear checkbox button -->
+    <div class="px-6 py-2">
+      <button class="btn btn-sm btn-outline" (click)="clearAirlineCheckboxes()">
+        Clear All Airlines
+      </button>
+    </div>
+
     <input type="checkbox" />
     <div
       class="collapse-title flex justify-between items-center px-6 py-3 w-full text-xl font-bold text-black whitespace-nowrap"
@@ -126,14 +133,14 @@
 
     <div class="collapse-content">
       <ul>
-        @for (airline of filterStats().carriers; track $index) {
+        @for (airline of airlineData() ; track $index) {
         <li
           class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black whitespace-nowrap"
         >
           <div class="flex gap-3 items-center">
             <input
               type="checkbox"
-              checked="checked"
+              checked="{{ airline.isActive ? 'checked' : '' }}"
               class="checkbox"
               [value]="airline.id"
               (change)="onAirlinesSelect($event)"
@@ -177,6 +184,16 @@
   <section class="flex flex-col w-auto">
     <!-- Stops -->
     <div class="collapse collapse-arrow collapse-open">
+      <!-- Clear checkbox button -->
+      <div class="px-6 py-2">
+        <button
+          class="btn btn-sm btn-outline"
+          (click)="clearAirportCheckboxes()"
+        >
+          Clear All Airlines
+        </button>
+      </div>
+
       <input type="checkbox" />
       <div
         class="collapse-title flex justify-between items-center px-6 py-3 w-full text-xl font-bold text-black whitespace-nowrap"
@@ -186,18 +203,18 @@
 
       <div class="collapse-content">
         <div class="gap-1 self-stretch px-4 py-2 w-full text-base text-black">
-          <strong>Departure from {{ filterStats().airports[0].city }}</strong>
+          <strong>Departure from {{ airportData()[0].city }}</strong>
         </div>
 
         <ul>
-          @for (airport of filterStats().airports[0].airports; track $index) {
+          @for (airport of airportData()[0].airports; track $index) {
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
             <div class="flex gap-3 items-center">
               <input
                 type="checkbox"
-                checked="checked"
+                checked="{{ airport.isActive ? 'checked' : '' }}"
                 class="checkbox"
                 [value]="airport.entityId"
                 (change)="onAirportSelect($event)"
@@ -209,18 +226,18 @@
         </ul>
 
         <div class="gap-1 self-stretch px-4 py-2 w-full text-base text-black">
-          <strong>Return at {{ filterStats().airports[1].city }}</strong>
+          <strong>Return at {{ airportData()[0].city }}</strong>
         </div>
 
         <ul>
-          @for (airport of filterStats().airports[1].airports; track $index) {
+          @for (airport of airportData()[1].airports; track $index) {
           <li
             class="flex gap-10 justify-between items-start px-6 py-2 w-auto text-sm text-black"
           >
             <div class="flex gap-3 items-center">
               <input
                 type="checkbox"
-                checked="checked"
+                checked="{{ airport.isActive ? 'checked' : '' }}"
                 class="checkbox"
                 [value]="airport.entityId"
                 (change)="onAirportSelect($event)"

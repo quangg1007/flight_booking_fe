@@ -43,8 +43,16 @@ export class userService {
       withCredentials: true,
     });
   }
+
   getUserByEmail(email: string) {
     return this.http.get<UserModel>(`${this.apiUrl}/users/search`, {
+      params: { email: email },
+    });
+  }
+
+  updateUser(email: string, user: any): Observable<any> {
+    console.log(email);
+    return this.http.patch<any>(`${this.apiUrl}/users`, user, {
       params: { email: email },
     });
   }

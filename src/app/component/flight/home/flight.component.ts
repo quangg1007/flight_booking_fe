@@ -165,8 +165,10 @@ export class FlightComponent implements OnInit {
         carrier.isActive = true;
       });
 
-      airports.forEach((airport: Location) => {
-        airport.isActive = true;
+      airports.forEach((location: Location) => {
+        location.airports.forEach((airport) => {
+          airport.isActive = true;
+        });
       });
 
       const { minTime: minTimeDeparture, maxTime: maxTimeDeparture } =

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { map, switchMap, tap } from 'rxjs';
+import { filter, map, pipe, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { TokenService } from 'src/app/services/token.service';
 import { userService } from 'src/app/services/user.service';
+import { validateForm } from 'src/app/util/validation';
 
 @Component({
   selector: 'app-profile',
@@ -12,13 +13,17 @@ import { userService } from 'src/app/services/user.service';
 })
 export class ProfileComponent {
   isEditing: boolean = false;
+
   passwordForm!: FormGroup;
+  formSubmit$ = new Subject<any>();
+  destroy$ = new Subject<void>();
+
   userForm!: FormGroup;
   data: any;
+  dataEmail: string = '';
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private tokenService: TokenService,
     private userService: userService
   ) {}
 
@@ -26,6 +31,23 @@ export class ProfileComponent {
     this.initPasswordForm();
     this.initUserForm();
     this.getUserProfile();
+
+    this.formSubmit$
+      .pipe(
+        tap(() => this.userForm.markAsDirty()),
+        switchMap(() => validateForm(this.userForm)),
+        filter((isValid) => {
+          console.log(isValid);
+          return isValid;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => this.saveChanges());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   patchUserForm(userData: any) {
@@ -83,10 +105,64 @@ export class ProfileComponent {
   }
 
   saveChanges() {
-    if (this.userForm.valid) {
-      console.log('Saving profile changes:', this.userForm.value);
-      // Implement API call to save changes
+    console.log('submit form');
+
+    const firstName = this.userForm.get('firstName')?.value;
+    const lastName = this.userForm.get('lastName')?.value;
+    const dateOfBirth = this.userForm.get('dateOfBirth')?.value;
+    const gender = this.userForm.get('gender')?.value;
+    const email = this.userForm.get('email')?.value;
+    const phoneNumber = this.userForm.get('phoneNumber')?.value;
+    const passportNumber = this.userForm.get('passportNumber')?.value;
+    const passportExpiry = this.userForm.get('passportExpiry')?.value;
+    const nationality = this.userForm.get('nationality')?.value;
+    const streetAddress = this.userForm.get('streetAddress')?.value;
+    const city = this.userForm.get('city')?.value;
+    const country = this.userForm.get('country')?.value;
+    const postalCode = this.userForm.get('postalCode')?.value;
+
+    // this.userService.updateUser({
+    //   first_name: firstName,
+    //   last_name: lastName,
+    //   date_of_birth: dateOfBirth,
+    //   gender: gender,
+    //   email: email,
+    //   phone_number: phoneNumber,
+    //   passport_number: passportNumber,
+    //   passport_expiry: passportExpiry,
+    //   nationality: nationality,
+    //   street_address: streetAddress,
+    //   city: city,
+    //   country: country,
+    //   postal_code: postalCode,
+    // });
+
+
+    const dirtyControls = Object.keys(this.userForm.controls)
+      .filter((key) => this.userForm.get(key)?.dirty)
+      .reduce((acc: any, key) => {
+        // Convert form control names to backend field names
+        const backendFieldName = this.getBackendFieldName(key);
+        acc[backendFieldName] = this.userForm.get(key)?.value;
+        return acc;
+      }, {});
+
+    if (Object.keys(dirtyControls).length > 0) {
+      console.log(this.dataEmail);
+      this.userService
+        .updateUser(email, dirtyControls)
+        .subscribe((userData) => {
+          console.log(dirtyControls);
+          console.log(userData);
+        });
     }
+  }
+
+  private getBackendFieldName(controlName: string): string {
+    return controlName.replace(
+      /[A-Z]/g,
+      (letter) => `_${letter.toLowerCase()}`
+    );
   }
 
   getUserProfile() {
@@ -94,6 +170,7 @@ export class ProfileComponent {
       .getDataFromAccessToken()
       .pipe(
         map((data) => {
+          this.dataEmail = data.email;
           return data.email;
         }),
         switchMap((email) => {

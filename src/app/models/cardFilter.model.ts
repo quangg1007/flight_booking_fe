@@ -35,12 +35,12 @@ export interface Airport {
   id: string;
   entityId: string;
   name: string;
+  isActive: boolean;
 }
 
 export interface Location {
   city: string;
   airports: Airport[];
-  isActive: boolean;
 }
 
 export interface PriceRange {

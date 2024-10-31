@@ -152,20 +152,55 @@ export class CardFilterComponent {
 
     this.airportData.set(
       this.airportData().map((location: Location) => {
-        const hasMatchingAirport = location.airports.some((airport) => {
-          return parseInt(airport.entityId) === parseInt(event.target.value);
+        const airportData = location.airports.map((airport) => {
+          if (parseInt(airport.entityId) === parseInt(event.target.value)) {
+            return {
+              ...airport,
+              isActive: event.target.checked,
+            };
+          }
+          return airport;
         });
 
-        console.log(
-          hasMatchingAirport
-            ? { ...location, isActive: event.target.checked }
-            : location
-        );
-
-        return hasMatchingAirport
-          ? { ...location, isActive: event.target.checked }
-          : location;
+        return {
+          ...location,
+          airports: airportData,
+        };
       })
     );
+
+    console.log('airportData', this.airportData());
+  }
+
+  clearAirlineCheckboxes() {
+    this.airlineData.set(
+      this.airlineData().map((airline) => ({
+        ...airline,
+        isActive: false,
+      }))
+    );
+
+    // Trigger filter change after clearing
+    this.handleFiterChange();
+  }
+
+  clearAirportCheckboxes() {
+    this.airportData.set(
+      this.airportData().map((location: Location) => {
+        const airportdata = location.airports.map((airport) => ({
+          ...airport,
+          isActive: false,
+        }));
+        return {
+          ...location,
+          airports: airportdata,
+        };
+      })
+    );
+
+    console.log(this.airportData());
+
+    // Trigger filter change after clearing
+    this.handleFiterChange();
   }
 }

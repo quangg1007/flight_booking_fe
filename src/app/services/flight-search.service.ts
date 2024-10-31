@@ -60,8 +60,6 @@ export class FlightSearchService {
     const minLanding = new Date(timeRange.minTimeLanding);
     const maxLanding = new Date(timeRange.maxTimeLanding);
 
-    console.log('departureTime', departureTime > minDeparture);
-
     return (
       departureTime >= minDeparture &&
       departureTime <= maxDeparture &&
@@ -75,13 +73,16 @@ export class FlightSearchService {
     const arrivalAirport = flight.legs[0].destination.entityId;
 
     return locations.every((location: Location) => {
-      const hasMatchingAirport = location.airports.some(
-        (airport) =>
+      const isValid = location.airports.some((airport) => {
+        const hasMatchingAirport =
           parseInt(airport.entityId) === parseInt(departureAirport) ||
-          parseInt(airport.entityId) === parseInt(arrivalAirport)
-      );
+          parseInt(airport.entityId) === parseInt(arrivalAirport);
 
-      return hasMatchingAirport ? location.isActive : true;
+        console.log(hasMatchingAirport, airport.isActive);
+        return hasMatchingAirport ? airport.isActive : true;
+      });
+      console.log('isvalid', isValid);
+      return isValid;
     });
   }
 }
