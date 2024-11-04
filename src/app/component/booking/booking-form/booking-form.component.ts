@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { LoginComponent } from '../../login/login/login.component';
 import { AuthService } from 'src/app/services/auth.service';
-import { switchMap, tap } from 'rxjs';
+import { filter, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { userService } from 'src/app/services/user.service';
 import { PassengerService } from 'src/app/services/passenger.service';
 import { TimerService } from 'src/app/services/timer.service';
@@ -16,6 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { convertSecondsToTime } from 'src/app/util/time';
 import { BookingService } from 'src/app/services/booking.service';
 import { BookingModel } from 'src/app/models';
+import { validateForm } from 'src/app/util/validation';
 
 @Component({
   selector: 'app-booking-form',
@@ -28,13 +29,16 @@ export class BookingFormComponent {
   recentPassengers: any[] = [];
   timeRemainingDisplay: string = '';
 
-  bookingForm!: FormGroup;
   currentStep = 1;
   isAuth: boolean = false;
   hasFormChanged = false;
 
   dataEmail: string = '';
   user_id: string = '';
+
+  formSubmit$ = new Subject<any>();
+  bookingForm!: FormGroup;
+  destroy$ = new Subject<void>();
 
   booking: any;
   passenger: any;
@@ -53,7 +57,6 @@ export class BookingFormComponent {
     private router: Router,
     private bookingService: BookingService,
     private route: ActivatedRoute,
-    private userService: userService,
     private passengerService: PassengerService
   ) {
     this.initEmptyForm();
@@ -81,6 +84,18 @@ export class BookingFormComponent {
     this.checkAuthAndInitForm();
     this.getItineraryID();
     this.startBookingTimer();
+
+    this.formSubmit$
+      .pipe(
+        tap(() => this.bookingForm.markAsDirty()),
+        switchMap(() => validateForm(this.bookingForm)),
+        filter((isValid) => {
+          console.log(isValid);
+          return isValid;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => this.confirmBooking());
   }
 
   ngOnDestroy() {

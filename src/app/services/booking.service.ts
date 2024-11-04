@@ -14,7 +14,7 @@ export class BookingService {
   }
 
   getBookingById(bookingId: number) {
-    return this.http.get<any[]>(`${this.apiUrl}/bookings/${bookingId}`);
+    return this.http.get<any>(`${this.apiUrl}/bookings/${bookingId}`);
   }
 
   getBookingByUserId(userId: number) {

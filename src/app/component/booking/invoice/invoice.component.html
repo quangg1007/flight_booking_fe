@@ -13,25 +13,25 @@
         <div>
           <p class="font-normal">From:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ flightInfo.departure }}
+            {{ flightInfo?.departure }}
           </p>
         </div>
         <div>
           <p class="font-normal">To:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ flightInfo.arrival }}
+            {{ flightInfo?.arrival }}
           </p>
         </div>
         <div>
           <p class="font-normal">Date:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ flightInfo.date }}
+            {{ flightInfo?.date }}
           </p>
         </div>
         <div>
           <p class="font-normal">Flight Number:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ flightInfo.flightNumber }}
+            {{ flightInfo?.flightNumber }}
           </p>
         </div>
       </div>
@@ -52,7 +52,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let passenger of passengers">
+            <tr *ngFor="let passenger of passengersInfo">
               <td class="text-lg text-neutral-950 font-bold">
                 {{ passenger.name }}
               </td>
@@ -77,19 +77,19 @@
         <div>
           <p class="font-normal">Booking Reference:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ bookingInfo.reference }}
+            {{ bookingInfo?.reference }}
           </p>
         </div>
         <div>
           <p class="font-normal">Booking Date:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ bookingInfo.date }}
+            {{ bookingInfo?.date }}
           </p>
         </div>
         <div>
           <p class="font-normal">Payment Status:</p>
           <div class="badge badge-success badge-lg text-white">
-            {{ bookingInfo.status }}
+            {{ bookingInfo?.status }}
           </div>
         </div>
       </div>
@@ -104,13 +104,13 @@
         <div>
           <p class="font-normal">Email:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ contactInfo.email }}
+            {{ contactInfo?.email }}
           </p>
         </div>
         <div>
           <p class="font-normal">Phone:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ contactInfo.phone }}
+            {{ contactInfo?.phone }}
           </p>
         </div>
       </div>
