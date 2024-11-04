@@ -9,11 +9,16 @@ import { AuthGuard } from './guard/auth.guard';
 import { BookingFormComponent } from './component/booking/booking-form/booking-form.component';
 import { LoginPageComponent } from './component/login/login-page/login-page.component';
 import { LoginGuard } from './guard/login.guard';
+import { InvoiceComponent } from './component/booking/invoice/invoice.component';
 
 const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
+  },
+  {
     path: 'home',
-    canActivate: [AuthGuard],
     component: HomePageComponent,
   },
   {
@@ -29,6 +34,10 @@ const routes: Routes = [
   {
     path: 'booking',
     component: BookingFormComponent,
+  },
+  {
+    path: 'invoice',
+    component: InvoiceComponent,
   },
   {
     path: 'login',

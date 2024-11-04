@@ -139,6 +139,10 @@ export class CardDetailComponent {
   }
 
   navigateToBooking() {
-    this.router.navigate(['/booking']);
+    this.router.navigate(['/booking'], {
+      queryParams: {
+        itineraryId: this.itineraryId(),
+      }
+    });
   }
 }

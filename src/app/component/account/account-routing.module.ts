@@ -6,12 +6,13 @@ import { BookingDetailComponent } from './booking-detail/booking-detail.componen
 import { AccountComponent } from './account/account.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { RoleGuard } from 'src/app/guard/role.guard';
+import { AuthGuard } from 'src/app/guard/auth.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: AccountComponent,
-    canActivate: [RoleGuard],
+    canActivate: [RoleGuard, AuthGuard],
     data: {
       expectedRole: 'admin',
     },

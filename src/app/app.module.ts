@@ -26,6 +26,8 @@ import { LoginComponent } from './component/login/login/login.component';
 import { CacheInterceptor } from './interceptor/cache.interceptor';
 import { RetryInterceptor } from './interceptor/retry.interceptor';
 import { TokenInterceptor } from './interceptor/token.interceptor';
+import { InvoiceComponent } from './component/booking/invoice/invoice.component';
+import { BookingFormComponent } from './component/booking/booking-form/booking-form.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +50,7 @@ import { TokenInterceptor } from './interceptor/token.interceptor';
     NgTemplateOutlet,
     NgClass,
     LoginComponent,
+    InvoiceComponent,
   ],
   providers: [
     userService,

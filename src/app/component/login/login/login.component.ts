@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -38,6 +38,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
   commonError: string = '';
   destroy$ = new Subject<void>();
+
+  isAuth: boolean = false;
+  isAuthChanged = output<boolean>();
 
   constructor(
     private _fb: FormBuilder,
@@ -87,8 +90,11 @@ export class LoginComponent implements OnInit, OnDestroy {
             // Create a successfull notification
             console.log('Login successful');
 
+            this.isAuth = true;
+            this.isAuthChanged.emit(this.isAuth);
+
             // Redirect to the home page
-            this.router.navigate(['/home']);
+            // this.router.navigate(['/home']);
           }
         }),
         catchError((err) => {

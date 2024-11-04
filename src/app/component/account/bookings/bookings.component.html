@@ -35,52 +35,40 @@
               <div class="avatar">
                 <div class="mask mask-squircle w-12 h-12">
                   <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSva2UovmV8b1mCc9ooc-g4K5OaObZi8Eetcw&s"
+                    ngSrc="{{
+                      bookings[0]?.itinerary?.legs[0]?.segments[0]?.aircrafts
+                        .logoUrl
+                    }}"
+                    fill
                     alt="Airline"
                   />
                 </div>
               </div>
               <div>
-                <div class="font-bold">VN123</div>
+                <div class="font-bold">
+                  {{
+                    bookings[0]?.itinerary?.legs[0]?.segments[0]?.fligh_number
+                  }}
+                </div>
                 <div class="badge bg-red-300 text-sm opacity-50">
-                  Vietnam Airlines
+                  {{
+                    bookings[0]?.itinerary?.legs[0]?.segments[0]?.aircrafts.name
+                  }}
                 </div>
               </div>
             </div>
           </td>
           <td>
-            <div>Dec 25, 2023</div>
-            <div class="text-sm opacity-50">10:30 AM</div>
+            <div>{{ formatedDate[0] }}</div>
+            <div class="text-sm opacity-50">{{ formatedTime[0] }}</div>
           </td>
-          <td>HAN → SGN</td>
+          <td>{{ formatedDepDes[0] }}</td>
           <td>
-            <div class="badge badge-success text-white">On Time</div>
+            <div class="badge badge-success text-white">
+              {{ bookings[0]?.status }}
+            </div>
           </td>
-          <td>A12</td>
-          <!-- <td class="drawer drawer-end">
-            <input
-              id="booking-detail-drawer"
-              type="checkbox"
-              class="drawer-toggle"
-            />
-            <div class="drawer-content flex space-x-2">
-              <button
-                for="booking-detail-drawer"
-                class="btn btn-sm btn-primary drawer-button"
-              >
-                Modify
-              </button>
-              <button class="btn btn-sm btn-error">Cancel</button>
-            </div>
-            <div class="drawer-side">
-              <label
-                for="booking-detail-drawer"
-                aria-label="close sidebar"
-                class="drawer-overlay"
-              ></label>
-              <app-booking-detail></app-booking-detail>
-            </div>
-          </td> -->
+          <td>{{ "A12" }}</td>
           <div class="drawer drawer-end">
             <input
               id="booking-detail-drawer"

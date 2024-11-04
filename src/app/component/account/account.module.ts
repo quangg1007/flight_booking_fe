@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { BookingDetailComponent } from './booking-detail/booking-detail.component';
 import { BookingsComponent } from './bookings/bookings.component';
 import { ProfileComponent } from './profile/profile.component';
@@ -14,8 +14,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AccountRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    BookingDetailComponent
-],
+    NgOptimizedImage,
+    BookingDetailComponent,
+  ],
   declarations: [
     BookingsComponent,
     ProfileComponent,

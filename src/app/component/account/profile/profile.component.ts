@@ -107,36 +107,7 @@ export class ProfileComponent {
   saveChanges() {
     console.log('submit form');
 
-    const firstName = this.userForm.get('firstName')?.value;
-    const lastName = this.userForm.get('lastName')?.value;
-    const dateOfBirth = this.userForm.get('dateOfBirth')?.value;
-    const gender = this.userForm.get('gender')?.value;
     const email = this.userForm.get('email')?.value;
-    const phoneNumber = this.userForm.get('phoneNumber')?.value;
-    const passportNumber = this.userForm.get('passportNumber')?.value;
-    const passportExpiry = this.userForm.get('passportExpiry')?.value;
-    const nationality = this.userForm.get('nationality')?.value;
-    const streetAddress = this.userForm.get('streetAddress')?.value;
-    const city = this.userForm.get('city')?.value;
-    const country = this.userForm.get('country')?.value;
-    const postalCode = this.userForm.get('postalCode')?.value;
-
-    // this.userService.updateUser({
-    //   first_name: firstName,
-    //   last_name: lastName,
-    //   date_of_birth: dateOfBirth,
-    //   gender: gender,
-    //   email: email,
-    //   phone_number: phoneNumber,
-    //   passport_number: passportNumber,
-    //   passport_expiry: passportExpiry,
-    //   nationality: nationality,
-    //   street_address: streetAddress,
-    //   city: city,
-    //   country: country,
-    //   postal_code: postalCode,
-    // });
-
 
     const dirtyControls = Object.keys(this.userForm.controls)
       .filter((key) => this.userForm.get(key)?.dirty)
