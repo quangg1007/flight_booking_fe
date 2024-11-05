@@ -1,152 +1,200 @@
 <div class="flex justify-between gap-8 px-20 py-10 mx-auto">
   <!-- Left side - Booking Form -->
   <div class="w-2/3">
-    <ul class="steps steps-vertical lg:steps-horizontal w-full mb-8">
-      <li class="step" [ngClass]="{ 'step-primary': currentStep >= 1 }">
-        Personal Information
-      </li>
-      <li class="step" [ngClass]="{ 'step-primary': currentStep >= 2 }">
-        Travel Document
-      </li>
-      <li class="step" [ngClass]="{ 'step-primary': currentStep >= 3 }">
-        Contact Information
-      </li>
-    </ul>
-
     <form [formGroup]="bookingForm">
-      <!-- Step 1: Personal Information -->
-      <div *ngIf="currentStep === 1">
-        <div class="form-control">
-          <label class="label">First Name</label>
-          <input
-            type="text"
-            formControlName="firstName"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">Last Name</label>
-          <input
-            type="text"
-            formControlName="lastName"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">Date of Birth</label>
-          <input
-            type="date"
-            formControlName="dateOfBirth"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">Gender</label>
-          <select formControlName="gender" class="select select-bordered">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Step 2: Travel Document -->
-      <div *ngIf="currentStep === 2">
-        <div class="form-control">
-          <label class="label">Passport Number</label>
-          <input
-            type="text"
-            formControlName="passportNumber"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">Passport Expiry Date</label>
-          <input
-            type="date"
-            formControlName="passportExpiry"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">Nationality</label>
-          <input
-            type="text"
-            formControlName="nationality"
-            class="input input-bordered"
-          />
-        </div>
-      </div>
-
-      <!-- Step 3: Contact Information -->
-      <div *ngIf="currentStep === 3">
-        <div class="form-control">
-          <label class="label">Street Address</label>
-          <input
-            type="text"
-            formControlName="address"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">City</label>
-          <input
-            type="text"
-            formControlName="city"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">Country</label>
-          <input
-            type="text"
-            formControlName="country"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">Postal Code</label>
-          <input
-            type="text"
-            formControlName="postalCode"
-            class="input input-bordered"
-          />
-        </div>
-      </div>
-
-      <!-- Navigation Buttons -->
-      <div
-        class="flex mt-4"
-        [ngClass]="currentStep === 1 ? 'justify-end' : 'justify-between'"
-      >
-        <button class="btn" *ngIf="currentStep > 1" (click)="previousStep()">
-          Previous
+      <!-- Add/Remove Passenger buttons -->
+      <div class="flex justify-between mb-4">
+        <button type="button" class="btn btn-primary" (click)="addPassenger()">
+          Add Passenger
         </button>
-        <button
-          class="btn btn-primary"
-          *ngIf="currentStep < 3"
-          (click)="nextStep()"
-          [disabled]="!isCurrentStepValid()"
+      </div>
+
+      <div formArrayName="passengers">
+        <div
+          *ngFor="let passenger of passengersFormArray.controls; let i = index"
+          [formGroupName]="i"
         >
-          Next
-        </button>
+          <ul class="steps steps-vertical lg:steps-horizontal w-full mb-8">
+            <li
+              class="step"
+              [ngClass]="{ 'step-primary': currentStep[i] >= 1 }"
+            >
+              Personal Information
+            </li>
+            <li
+              class="step"
+              [ngClass]="{ 'step-primary': currentStep[i] >= 2 }"
+            >
+              Travel Document
+            </li>
+            <li
+              class="step"
+              [ngClass]="{ 'step-primary': currentStep[i] >= 3 }"
+            >
+              Contact Information
+            </li>
+          </ul>
 
-        <button
-          class="btn btn-primary"
-          *ngIf="currentStep === 3"
-          (click)="openConfirmDialog()"
-        >
-          Submit
-        </button>
+          <div class="card bg-base-200 mb-4">
+            <div class="card-body">
+              <div class="flex justify-between">
+                <h3 class="card-title">Passenger {{ i + 1 }}</h3>
+                <button
+                  *ngIf="passengersFormArray.length > 1"
+                  type="button"
+                  class="btn btn-error"
+                  (click)="removePassenger(i)"
+                >
+                  Remove
+                </button>
+              </div>
 
-        <dialog id="my_modal_1" class="modal">
-          <div class="modal-box w-5/6 max-w-xl">
-            <h3 class="font-bold text-lg">Confirm Booking</h3>
-            <ng-container
-              *ngTemplateOutlet="confirmBookingTemplate"
-            ></ng-container>
+              <!-- Step 1: Personal Information -->
+              <div *ngIf="currentStep[i] === 1">
+                <div class="form-control">
+                  <label class="label">First Name</label>
+                  <input
+                    type="text"
+                    formControlName="firstName"
+                    class="input input-bordered"
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label">Last Name</label>
+                  <input
+                    type="text"
+                    formControlName="lastName"
+                    class="input input-bordered"
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label">Date of Birth</label>
+                  <input
+                    type="date"
+                    formControlName="dateOfBirth"
+                    class="input input-bordered"
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label">Gender</label>
+                  <select
+                    formControlName="gender"
+                    class="select select-bordered"
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Step 2: Travel Document -->
+              <div *ngIf="currentStep[i] === 2">
+                <div class="form-control">
+                  <label class="label">Passport Number</label>
+                  <input
+                    type="text"
+                    formControlName="passportNumber"
+                    class="input input-bordered"
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label">Passport Expiry Date</label>
+                  <input
+                    type="date"
+                    formControlName="passportExpiry"
+                    class="input input-bordered"
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label">Nationality</label>
+                  <input
+                    type="text"
+                    formControlName="nationality"
+                    class="input input-bordered"
+                  />
+                </div>
+              </div>
+
+              <!-- Step 3: Contact Information -->
+              <div *ngIf="currentStep[i] === 3">
+                <div class="form-control">
+                  <label class="label">Street Address</label>
+                  <input
+                    type="text"
+                    formControlName="address"
+                    class="input input-bordered"
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label">City</label>
+                  <input
+                    type="text"
+                    formControlName="city"
+                    class="input input-bordered"
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label">Country</label>
+                  <input
+                    type="text"
+                    formControlName="country"
+                    class="input input-bordered"
+                  />
+                </div>
+                <div class="form-control">
+                  <label class="label">Postal Code</label>
+                  <input
+                    type="text"
+                    formControlName="postalCode"
+                    class="input input-bordered"
+                  />
+                </div>
+              </div>
+
+              <!-- Navigation Buttons -->
+              <div
+                class="flex mt-4"
+                [ngClass]="
+                  currentStep[i] === 1 ? 'justify-end' : 'justify-between'
+                "
+              >
+                <button
+                  class="btn"
+                  *ngIf="currentStep[i] > 1"
+                  (click)="previousStep(i)"
+                >
+                  Previous
+                </button>
+                <button
+                  class="btn btn-primary"
+                  *ngIf="currentStep[i] < 3"
+                  (click)="nextStep(i)"
+                  [disabled]="!isCurrentStepValid(i)"
+                >
+                  Next
+                </button>
+
+                <button
+                  class="btn btn-primary"
+                  *ngIf="currentStep[i] === 3"
+                  (click)="openConfirmDialog()"
+                >
+                  Submit
+                </button>
+
+                <dialog id="my_modal_1" class="modal">
+                  <div class="modal-box w-5/6 max-w-xl">
+                    <h3 class="font-bold text-lg">Confirm Booking</h3>
+                    <ng-container
+                      *ngTemplateOutlet="confirmBookingTemplate"
+                    ></ng-container>
+                  </div>
+                </dialog>
+              </div>
+            </div>
           </div>
-        </dialog>
+        </div>
       </div>
     </form>
     <div *ngIf="isAuth && recentPassengers.length > 0" class="mt-8">
@@ -175,12 +223,16 @@
   <div class="w-1/3">
     <div class="timer-display">Time remaining: {{ timeRemainingDisplay }}</div>
     @if (isAuth) {
+    <!-- Display user profile -->
     <div class="card bg-base-200">
       <div class="card-body">
         <h2 class="card-title">Already have an account</h2>
       </div>
     </div>
+
+    <ng-container *ngTemplateOutlet="flightItineraryInformation"></ng-container>
     }@else {
+    <!-- Display login form -->
     <div class="card bg-base-200">
       <div class="card-body">
         <h2 class="card-title">Already have an account?</h2>
@@ -188,6 +240,8 @@
         <app-login (isAuthChanged)="routeToBookingForm()"></app-login>
       </div>
     </div>
+
+    <ng-container *ngTemplateOutlet="flightItineraryInformation"></ng-container>
     }
   </div>
 </div>
@@ -214,3 +268,179 @@
     </div>
   </div>
 </dialog>
+
+<ng-template #flightItineraryInformation let-flight>
+  <!-- Flight Information Card -->
+  <div class="card bg-base-200 mt-4">
+    <div class="card-body">
+      <h2 class="card-title flex items-center">
+        <span class="material-symbols-outlined"> flight </span>
+
+        Flight Overview
+      </h2>
+
+      <!-- Outbound Flight -->
+
+      @for (leg of legInfo; track leg; let isEven = $even) {
+      <div class="mb-6 border-l-4 border-primary pl-4">
+        <h3 class="text-lg font-bold mb-3 flex items-center">
+          <span class="material-symbols-outlined">
+            {{ isEven ? "flight_takeoff" : "flight_land" }}
+          </span>
+
+          {{ isEven ? "Outbound Flight" : "Inbound Flight" }} -
+          {{ leg.headerDate }}
+        </h3>
+
+        @for (segment of leg.flightSegmentInfo; track $index) {
+        <div class="segment my-4">
+          <!-- Airline Info -->
+          <div class="flex items-center my-2">
+            <span class="material-symbols-outlined pr-2"> travel </span>
+            <div class="flex items-center">
+              <p class="font-bold">{{ segment.flightLogoBrandName }}</p>
+              <img
+                [src]="segment.flightLogoBrand"
+                alt="Airline Logo"
+                class="h-4 ml-2"
+              />
+            </div>
+          </div>
+
+          <!-- Flight Times -->
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col w-32">
+              <div>
+                <p class="font-bold">{{ segment.departureAirport }}</p>
+                <p class="text-sm">{{ segment.departureTime }}</p>
+              </div>
+            </div>
+
+            <span class="material-symbols-outlined"> swap_horiz </span>
+
+            <div class="flex flex-col w-32">
+              <div>
+                <p class="font-bold">{{ segment.arrivalAirport }}</p>
+                <p class="text-sm">{{ segment.arrivalTime }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-2 flex items-center">
+            <!-- <i class="fas fa-clock mr-2"></i> -->
+            <span class="material-symbols-outlined pr-2"> schedule </span>
+            <span>Duration: {{ segment.duration }}</span>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div
+          class="flex w-full justify-center items-center my-2"
+          *ngIf="$index < leg.flightSegmentInfo.length - 1"
+        >
+          <div class="w-full h-0.5 bg-slate-300"></div>
+        </div>
+
+        <!-- Information for layover -->
+        <div
+          *ngIf="$index < leg.flightSegmentInfo.length - 1"
+          class="flex flex-row gap-2 whitespace-nowrap px-4"
+        >
+          <p>{{ leg.layoverInfo[$index].duration }}</p>
+          •
+          <p>
+            Change planes in
+            <strong>{{ leg.layoverInfo[$index].layoverAirport }}</strong>
+          </p>
+        </div>
+
+        <!-- Divider -->
+        <div
+          class="flex w-full justify-center items-center my-2"
+          *ngIf="$index < leg.flightSegmentInfo.length - 1"
+        >
+          <div class="w-full h-0.5 bg-slate-300"></div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Flight Number & Airline -->
+      <!-- <div class="flex items-center mb-4">
+        <i class="fas fa-plane mr-3"></i>
+        <div>
+          <p class="font-bold">{{ flight.airlineName }}</p>
+          <p class="text-sm">Flight {{ flight.flightNumber }}</p>
+        </div>
+        <img
+          [src]="flight.airlineLogo"
+          alt="Airline Logo"
+          class="h-8 ml-auto"
+        />
+      </div> -->
+
+      <!-- Departure Info -->
+      <!-- <div class="flex items-center mb-4">
+        <i class="fas fa-plane-departure mr-3"></i>
+        <div>
+          <p class="font-bold">
+            {{ flight.departureAirport }} ({{ flight.departureCode }})
+          </p>
+          <p class="text-sm">
+            {{ flight.departureDateTime | date : "medium" }}
+          </p>
+        </div>
+      </div> -->
+
+      <!-- Arrival Info -->
+      <!-- <div class="flex items-center mb-4">
+        <i class="fas fa-plane-arrival mr-3"></i>
+        <div>
+          <p class="font-bold">
+            {{ flight.arrivalAirport }} ({{ flight.arrivalCode }})
+          </p>
+          <p class="text-sm">{{ flight.arrivalDateTime | date : "medium" }}</p>
+        </div>
+      </div> -->
+
+      <!-- Duration & Layover -->
+      <!-- <div class="flex items-center mb-4">
+        <i class="fas fa-clock mr-3"></i>
+        <div>
+          <p class="font-bold">Duration: {{ flight.duration }}</p>
+          @if (flight.layover) {
+          <p class="text-sm">
+            Layover: {{ flight.layoverDuration }} at
+            {{ flight.layoverLocation }}
+          </p>
+          }
+        </div>
+      </div> -->
+
+      <!-- Baggage Info -->
+      <!-- <div class="flex items-center mb-4">
+        <i class="fas fa-suitcase mr-3"></i>
+        <div>
+          <p class="font-bold">Baggage Allowance</p>
+          <p class="text-sm">Checked: {{ flight.checkedBaggage }}</p>
+          <p class="text-sm">Carry-on: {{ flight.carryOn }}</p>
+        </div>
+      </div> -->
+
+      <!-- Additional Services -->
+      <!-- @if (flight.specialServices?.length) {
+      <div class="flex items-center">
+        <i class="fas fa-concierge-bell mr-3"></i>
+        <div>
+          <p class="font-bold">Special Services</p>
+          <ul class="list-disc list-inside text-sm">
+            @for (service of flight.specialServices; track service) {
+            <li>{{ service }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+      } -->
+    </div>
+  </div>
+</ng-template>

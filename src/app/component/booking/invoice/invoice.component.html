@@ -6,7 +6,7 @@
   </div>
 
   <!-- Flight Information Card -->
-  <div class="card bg-base-200 shadow-xl mb-6">
+  <!-- <div class="card bg-base-200 shadow-xl mb-6">
     <div class="card-body">
       <h2 class="card-title text-primary">Flight Information</h2>
       <div class="grid grid-cols-2 gap-4">
@@ -35,6 +35,124 @@
           </p>
         </div>
       </div>
+    </div>
+  </div> -->
+
+  <div class="card bg-base-200 shadow-xl mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-primary mb-4">Flight Itinerary Details</h2>
+
+      <!-- Booking Summary -->
+      <div class="bg-base-100 p-4 rounded-lg mb-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-sm">Booking Reference</p>
+            <p class="font-bold">
+              {{ booking?.booking_id }}
+            </p>
+          </div>
+          <div>
+            <p class="text-sm">Total Price</p>
+            <p class="font-bold">${{ flightItinerary.formatted_price }}</p>
+          </div>
+          <div>
+            <p class="text-sm">Status</p>
+            <span class="badge badge-success text-white">{{
+              booking?.status
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flight Legs -->
+      @for (leg of flightItinerary.legs; track leg; let i = $index) {
+      <div class="mb-8">
+        <!-- Leg Header -->
+        <div class="flex items-center mb-4">
+          <i class="fas fa-plane-departure text-primary mr-2"></i>
+          <h3 class="font-bold text-lg">
+            {{ i === 0 ? "Outbound Flight" : "Return Flight" }}
+          </h3>
+        </div>
+
+        <!-- Leg Overview -->
+        <div class="grid grid-cols-2 gap-4 bg-base-100 p-4 rounded-lg mb-4">
+          <div>
+            <p class="text-sm">From</p>
+            <p class="font-bold">
+              {{ leg.origin_name }} ({{ leg.origin_iata }})
+            </p>
+          </div>
+          <div>
+            <p class="text-sm">To</p>
+            <p class="font-bold">
+              {{ leg.destination_name }} ({{ leg.destination_iata }})
+            </p>
+          </div>
+          <div>
+            <p class="text-sm">Duration</p>
+            <p class="font-bold">
+              {{ leg.duration_in_minutes }}
+            </p>
+          </div>
+          <div>
+            <p class="text-sm">Stops</p>
+            <p class="font-bold">{{ leg.stop_count }} stop(s)</p>
+          </div>
+        </div>
+
+        <!-- Flight Segments -->
+        @for (segment of leg.segments; track segment) {
+        <div class="border-l-4 border-primary pl-4 mb-4">
+          <!-- Airline Info -->
+          <div class="flex items-center mb-2">
+            <img
+              [src]="segment.aircraft.logoUrl"
+              [alt]="segment.aircraft.name"
+              class="h-8 w-8 mr-2"
+            />
+            <div>
+              <p class="font-bold">{{ segment.aircraft.name }}</p>
+              <p class="text-sm">Flight {{ segment.flight_number }}</p>
+            </div>
+          </div>
+
+          <!-- Segment Details -->
+          <div class="grid grid-cols-3 gap-4 bg-base-100 p-3 rounded-lg">
+            <div>
+              <p class="text-sm">Departure</p>
+              <p class="font-bold">{{ segment.origin_name }}</p>
+              <p>{{ segment.depature_time | date : "short" }}</p>
+            </div>
+            <div class="flex items-center justify-center">
+              <i class="fas fa-arrow-right"></i>
+              <p class="text-sm ml-2">
+                {{ segment.duration_in_minutes }}
+              </p>
+            </div>
+            <div>
+              <p class="text-sm">Arrival</p>
+              <p class="font-bold">{{ segment.destination_name }}</p>
+              <p>{{ segment.arrival_time | date : "short" }}</p>
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- Layover Information -->
+        @if (leg.stop_count > 0 && !$last) {
+        <div
+          class="flex items-center justify-center bg-base-300 p-2 rounded-lg mb-4"
+        >
+          <i class="fas fa-clock mr-2"></i>
+          <p>
+            Layover:
+            {{ calculateLayover(leg.segments[0], leg.segments[1]) }}
+          </p>
+        </div>
+        }
+      </div>
+      }
     </div>
   </div>
 
@@ -123,35 +241,11 @@
       <h2 class="card-title text-primary">Additional Information</h2>
       <div class="space-y-2">
         <div class="alert alert-info">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            class="stroke-current shrink-0 w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
+          <span class="material-symbols-outlined"> info </span>
           <span>Check-in opens 24 hours before departure</span>
         </div>
         <div class="alert alert-warning">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
+          <span class="material-symbols-outlined"> warning </span>
           <span
             >Please arrive at the airport at least 2 hours before
             departure</span

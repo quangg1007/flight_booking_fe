@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -17,6 +18,7 @@ import { convertSecondsToTime } from 'src/app/util/time';
 import { BookingService } from 'src/app/services/booking.service';
 import { BookingModel } from 'src/app/models';
 import { validateForm } from 'src/app/util/validation';
+import { LegInfo } from 'src/app/models/cardDetail.model';
 
 @Component({
   selector: 'app-booking-form',
@@ -29,14 +31,16 @@ export class BookingFormComponent {
   recentPassengers: any[] = [];
   timeRemainingDisplay: string = '';
 
-  currentStep = 1;
+  currentStep: number[] = [1];
   isAuth: boolean = false;
   hasFormChanged = false;
 
   dataEmail: string = '';
   user_id: string = '';
+  legInfo: LegInfo[] = [];
 
   formSubmit$ = new Subject<any>();
+  passengers!: FormArray;
   bookingForm!: FormGroup;
   destroy$ = new Subject<void>();
 
@@ -58,31 +62,12 @@ export class BookingFormComponent {
     private bookingService: BookingService,
     private route: ActivatedRoute,
     private passengerService: PassengerService
-  ) {
-    this.initEmptyForm();
-  }
-
-  private initEmptyForm(): void {
-    this.bookingForm = this._fb.group({
-      itineraryId: ['', Validators.required],
-      passengerID: ['', Validators.required],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      gender: ['', Validators.required],
-      passportNumber: ['', Validators.required],
-      passportExpiry: ['', Validators.required],
-      nationality: ['', Validators.required],
-      dateOfBirth: ['', Validators.required],
-      address: ['', Validators.required],
-      city: ['', Validators.required],
-      country: ['', Validators.required],
-      postalCode: ['', Validators.required],
-    });
-  }
+  ) {}
 
   ngOnInit() {
-    this.checkAuthAndInitForm();
+    this.initEmptyForm();
     this.getItineraryID();
+    this.checkAuthAndInitForm();
     this.startBookingTimer();
 
     this.formSubmit$
@@ -99,11 +84,66 @@ export class BookingFormComponent {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.timerService.stopTimer();
+  }
+
+  private initEmptyForm(): void {
+    this.bookingForm = this._fb.group({
+      itineraryId: ['', Validators.required],
+      passengers: this._fb.array([]),
+    });
+
+    // Add first passenger by default
+    this.addPassenger();
+  }
+
+  get passengersFormArray() {
+    return this.bookingForm.get('passengers') as FormArray;
+  }
+
+  // Method to add new passenger
+  addPassenger() {
+    this.currentStep.push(1);
+    this.passengersFormArray.push(this.createPassengerForm());
+  }
+
+  // Method to remove passenger
+  removePassenger(index: number) {
+    this.passengersFormArray.removeAt(index);
+    this.currentStep.splice(index, 1);
+  }
+
+  // Method to create single passenger form group
+  createPassengerForm(): FormGroup {
+    return this._fb.group({
+      passengerID: ['', Validators.required],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      gender: ['', Validators.required],
+      passportNumber: ['', Validators.required],
+      passportExpiry: ['', Validators.required],
+      nationality: ['', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      address: ['', Validators.required],
+      city: ['', Validators.required],
+      country: ['', Validators.required],
+      postalCode: ['', Validators.required],
+    });
   }
 
   getItineraryID() {
     this.route.queryParams.subscribe((params) => {
+      const state = history.state;
+      this.legInfo = state.legInfo;
+      console.log(JSON.stringify(this.legInfo));
+
+      if (!params['itineraryId'] && this.legInfo) {
+        this.router.navigate(['/']);
+        return;
+      }
+
       const itineraryID = params['itineraryId'];
       this.bookingForm.get('itineraryId')?.setValue(itineraryID);
       console.log('itineraryId:', this.bookingForm.get('itineraryId')?.value);
@@ -163,6 +203,9 @@ export class BookingFormComponent {
   }
 
   private initFormWithPassengerData(passenger: any): void {
+    const lastIndex = this.passengersFormArray.length - 1;
+    const lastPassengerForm = this.passengersFormArray.at(lastIndex);
+
     const formValues = {
       passengerID: passenger.passenger_id,
       firstName: passenger.first_name,
@@ -180,54 +223,35 @@ export class BookingFormComponent {
       postalCode: passenger.postal_code,
     };
 
-    this.bookingForm.patchValue(formValues);
-  }
+    // const passengerForm = (this.bookingForm.get('passengers') as FormArray).at(
+    //   this.passengersFormArray.length - 1
+    // ) as FormGroup;
 
-  openConfirmDialog(): void {
-    const dialog = document.getElementById('my_modal_1') as HTMLDialogElement;
-    dialog.showModal();
-  }
-
-  closeDialog(): void {
-    const dialog = document.getElementById('my_modal_1') as HTMLDialogElement;
-    dialog.close();
+    // passengerForm.patchValue(formValues);
+    lastPassengerForm.patchValue(formValues);
   }
 
   confirmBooking(): void {
     const itinerary_id = this.bookingForm.get('itineraryId')?.value;
-    const first_name = this.bookingForm.get('firstName')?.value;
-    const last_name = this.bookingForm.get('lastName')?.value;
-    const gender = this.bookingForm.get('gender')?.value;
-    const passport_number = this.bookingForm.get('passportNumber')?.value;
-    const passport_expiry = this.bookingForm.get('passportExpiry')?.value;
-    const nationality = this.bookingForm.get('nationality')?.value;
-    const date_of_birth = this.bookingForm.get('dateOfBirth')?.value;
-    const street_address = this.bookingForm.get('address')?.value;
-    const city = this.bookingForm.get('city')?.value;
-    const country = this.bookingForm.get('country')?.value;
-    const postal_code = this.bookingForm.get('postalCode')?.value;
-
-    const passenger_data = {
-      first_name,
-      last_name,
-      gender,
-      passport_number,
-      passport_expiry,
-      nationality,
-      date_of_birth,
-      street_address,
-      city,
-      country,
-      postal_code,
-      user: this.user_id,
-    };
+    const passengers_data = this.passengersFormArray.value.map(
+      (passengerForm: any) => ({
+        first_name: passengerForm.firstName,
+        last_name: passengerForm.lastName,
+        gender: passengerForm.gender,
+        passport_number: passengerForm.passportNumber,
+        passport_expiry: passengerForm.passportExpiry,
+        nationality: passengerForm.nationality,
+        date_of_birth: passengerForm.dateOfBirth,
+        street_address: passengerForm.address,
+        city: passengerForm.city,
+        country: passengerForm.country,
+        postal_code: passengerForm.postalCode,
+      })
+    );
 
     console.log('itinerary_id:', itinerary_id);
-    this.proceedWithBooking(itinerary_id, passenger_data);
-
-    // this.passengerService.createPassenger(formValues).subscribe(() => {
-    //   this.proceedWithBooking();
-    // });
+    console.log('passengers_data:', passengers_data);
+    this.proceedWithBooking(itinerary_id, passengers_data);
   }
 
   private proceedWithBooking(itinerary_id: string, passenger_data: any) {
@@ -254,6 +278,10 @@ export class BookingFormComponent {
   }
 
   redirectToInvoicePage() {
+    console.log('booking', this.booking);
+    console.log('passenger', this.passenger);
+    console.log('itinerary', this.flightItinerary);
+
     this.router.navigate(['/invoice'], {
       state: {
         booking: this.booking,
@@ -263,11 +291,22 @@ export class BookingFormComponent {
     });
   }
 
+  openConfirmDialog(): void {
+    const dialog = document.getElementById('my_modal_1') as HTMLDialogElement;
+    dialog.showModal();
+  }
+
+  closeDialog(): void {
+    const dialog = document.getElementById('my_modal_1') as HTMLDialogElement;
+    dialog.close();
+  }
   // Add this method to check current step validation
-  isCurrentStepValid(): boolean {
+  isCurrentStepValid(index: number): boolean {
+    // console.log('index:', index);
     let fieldsToCheck: string[] = [];
 
-    switch (this.currentStep) {
+    // this.passengers
+    switch (this.currentStep[index]) {
       case 1:
         fieldsToCheck = this.step1Fields;
         break;
@@ -279,29 +318,36 @@ export class BookingFormComponent {
         break;
     }
 
+    const passengerForm = (this.bookingForm.get('passengers') as FormArray).at(
+      index
+    ) as FormGroup;
     return fieldsToCheck.every((field) => {
-      const control = this.bookingForm.get(field);
+      const control = passengerForm.get(field);
       return control && control.valid;
     });
   }
 
   // Modify your nextStep method
-  nextStep() {
-    console.log('isCurrentStepValid', this.isCurrentStepValid());
-    if (this.isCurrentStepValid()) {
-      this.currentStep++;
+  nextStep(index: number) {
+    console.log('isCurrentStepValid', this.isCurrentStepValid(index));
+    if (this.isCurrentStepValid(index)) {
+      this.currentStep[index]++;
     } else {
       // Mark all fields as touched to trigger validation messages
-      Object.keys(this.bookingForm.controls).forEach((key) => {
-        const control = this.bookingForm.get(key);
-        control?.markAsTouched();
+      const passengerForm = (
+        this.bookingForm.get('passengers') as FormArray
+      ).at(index) as FormGroup;
+      Object.keys(passengerForm.controls).forEach((key) => {
+        // const control = this.bookingForm.get(key);
+        // control?.markAsTouched();
+        passengerForm.get(key)?.markAsTouched();
       });
     }
   }
 
-  previousStep() {
-    if (this.currentStep > 1) {
-      this.currentStep--;
+  previousStep(index: number) {
+    if (this.currentStep[index] > 1) {
+      this.currentStep[index]--;
     }
   }
 

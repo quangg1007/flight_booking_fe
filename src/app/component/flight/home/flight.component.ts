@@ -105,6 +105,8 @@ export class FlightComponent implements OnInit {
           this.allFlights = results.data.itineraries;
           this.filteredFlights = this.allFlights;
 
+          console.log(this.allFlights.length);
+
           this.setFilterStats(results);
 
           this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
@@ -230,7 +232,6 @@ export class FlightComponent implements OnInit {
   }
 
   filterStatsChange(filterStats: FilterStats) {
-    console.log(filterStats);
     this.isLoadingFlight = true;
     // window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -239,8 +240,6 @@ export class FlightComponent implements OnInit {
         this.allFlights,
         filterStats
       );
-
-      console.log(this.filteredFlights);
 
       this.currentPage = 1;
       this.flightListResult.set(this.filteredFlights.slice(0, this.pageSize));

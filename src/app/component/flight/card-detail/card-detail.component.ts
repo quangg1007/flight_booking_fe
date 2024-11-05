@@ -43,6 +43,7 @@ export class CardDetailComponent {
   loadFlightDetails() {
     this.isLoading = true;
 
+    console.log(this.itineraryId());
     this.flightServiceAPI
       .searchDetail(this.itineraryId())
       .pipe(
@@ -142,7 +143,10 @@ export class CardDetailComponent {
     this.router.navigate(['/booking'], {
       queryParams: {
         itineraryId: this.itineraryId(),
-      }
+      },
+      state: {
+        legInfo: this.legInfo,
+      },
     });
   }
 }

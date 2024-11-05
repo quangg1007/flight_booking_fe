@@ -2,6 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from 'src/app/services/booking.service';
+import {
+  convertToAMPMFormat,
+  formatDateToShortString,
+} from 'src/app/util/time';
 
 @Component({
   selector: 'app-invoice',
@@ -11,7 +15,7 @@ import { BookingService } from 'src/app/services/booking.service';
   styleUrl: './invoice.component.css',
 })
 export class InvoiceComponent implements OnInit {
-  flighItinerary: any;
+  flightItinerary: any;
   booking: any;
   passengers: any;
 
@@ -32,60 +36,70 @@ export class InvoiceComponent implements OnInit {
       if (params['booking_id']) {
         const booking_id = params['booking_id'];
         this.bookingService.getBookingById(booking_id).subscribe((data) => {
+          console.log(data);
           this.booking = data;
-          this.flighItinerary = data.itinerary;
+          this.flightItinerary = data.itinerary;
           this.passengers = data.passengers;
 
           this.setInvoice();
         });
       } else {
-        const navigation = this.router.getCurrentNavigation();
-        const state = navigation?.extras.state as {
-          booking: any;
-          passenger: any;
-          itinerary: any;
-        };
-        this.flighItinerary = state.itinerary;
+        const state = history.state;
+        console.log(state);
+
+        this.flightItinerary = state.itinerary;
         this.booking = state.booking;
         this.passengers = state.passenger;
 
         this.setInvoice();
-        console.log(state);
       }
     });
   }
 
   setInvoice() {
     console.log('booking: ', this.booking);
+    console.log('itinerary: ', this.flightItinerary);
+    console.log('passenger: ', this.passengers);
     this.flightInfo = {
-      departure: this.flighItinerary.legs[0].origin_name,
-      arrival: this.flighItinerary.legs[0].destination_name,
-      date: this.flighItinerary.legs[0].departure_time,
-      flightNumber: this.flighItinerary.legs[0].segments.flight_number,
+      departure: this.flightItinerary.legs[0].origin_name,
+      arrival: this.flightItinerary.legs[0].destination_name,
+      date:
+        formatDateToShortString(this.flightItinerary.legs[0].departure_time) +
+        ' ' +
+        convertToAMPMFormat(this.flightItinerary.legs[0].departure_time),
+
+      flightNumber: this.flightItinerary.legs[0].segments[0].flight_number,
     };
 
-    this.passengersInfo = [
-      {
-        name:
-          this.passengers[0].first_name + ' ' + this.passengers[0].last_name,
+    this.passengersInfo = this.passengers.map((passenger: any) => {
+      return {
+        name: passenger.first_name + ' ' + passenger.last_name,
         type: 'Adult',
         seat: '12A',
-      },
-    ];
-    console.log('passengers info: ', this.passengersInfo);
+      };
+    });
 
     this.bookingInfo = {
       reference: '#' + this.booking.booking_id,
-      date: this.booking.booking_date,
+      date:
+        formatDateToShortString(this.booking.booking_date) +
+        ' ' +
+        convertToAMPMFormat(this.booking.booking_date),
       status: this.booking.status,
     };
-
-    console.log('booking info: ', this.bookingInfo);
 
     this.contactInfo = {
       email: this.booking.user.email,
       phone: this.booking.user.phone_number,
     };
+  }
+
+  calculateLayover(firstSegment: any, secondSegment: any): number {
+    const firstArrival = new Date(firstSegment.arrival_time);
+    const secondDeparture = new Date(secondSegment.depature_time);
+    return Math.floor(
+      (secondDeparture.getTime() - firstArrival.getTime()) / (1000 * 60)
+    );
   }
 
   downloadInvoice() {

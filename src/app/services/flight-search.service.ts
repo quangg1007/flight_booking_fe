@@ -78,10 +78,8 @@ export class FlightSearchService {
           parseInt(airport.entityId) === parseInt(departureAirport) ||
           parseInt(airport.entityId) === parseInt(arrivalAirport);
 
-        console.log(hasMatchingAirport, airport.isActive);
         return hasMatchingAirport ? airport.isActive : true;
       });
-      console.log('isvalid', isValid);
       return isValid;
     });
   }
