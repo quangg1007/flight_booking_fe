@@ -7,6 +7,9 @@ import { AccountRoutingModule } from './account-routing.module';
 import { AccountComponent } from './account/account.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DurationFormatPipe } from 'src/app/pipe/duration-format.pipe';
+import { ShortDatePipe } from 'src/app/pipe/short-date.pipe';
+import { TimeFormatPipe } from 'src/app/pipe/time-format.pipe';
 
 @NgModule({
   imports: [
@@ -14,6 +17,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AccountRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    DurationFormatPipe,
+    ShortDatePipe,
+    TimeFormatPipe,
     NgOptimizedImage,
     BookingDetailComponent,
   ],

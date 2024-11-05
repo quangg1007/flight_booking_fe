@@ -14,9 +14,6 @@ import {
 export class BookingsComponent {
   bookings: any[] = []; // Array to store bookings
 
-  formatedDate: string[] = [];
-  formatedTime: string[] = [];
-
   formatedDepDes: string[] = [];
 
   activeTab: 'upcoming' | 'past' = 'upcoming';
@@ -29,17 +26,9 @@ export class BookingsComponent {
     this.bookingService.getBookingByUserId(13).subscribe((bookingData) => {
       this.bookings = bookingData;
       bookingData.map((booking, index) => {
-        this.formatedDate[index] = formatDateToShortString(
-          booking?.itinerary?.legs[0]?.departure_time
+        this.formatedDepDes.push(
+          `${booking?.itinerary?.legs[0]?.origin_iata} - ${booking?.itinerary?.legs[0]?.destination_iata}`
         );
-
-        this.formatedTime[index] = convertToAMPMFormat(
-          booking?.itinerary?.legs[0]?.departure_time
-        );
-
-        this.formatedDepDes[
-          index
-        ] = `${booking?.itinerary?.legs[0]?.origin_iata} - ${booking?.itinerary?.legs[0]?.destination_iata}`;
       });
       console.log('Booking retrieved successfully', bookingData);
     });

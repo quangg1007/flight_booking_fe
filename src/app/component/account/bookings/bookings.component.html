@@ -29,6 +29,7 @@
         </tr>
       </thead>
       <tbody>
+        @for (booking of bookings; track $index; let i = $index) {
         <tr>
           <td>
             <div class="flex items-center space-x-3">
@@ -36,8 +37,7 @@
                 <div class="mask mask-squircle w-12 h-12">
                   <img
                     ngSrc="{{
-                      bookings[0]?.itinerary?.legs[0]?.segments[0]?.aircrafts
-                        .logoUrl
+                      booking?.itinerary?.legs[0]?.segments[0]?.aircraft.logoUrl
                     }}"
                     fill
                     alt="Airline"
@@ -46,29 +46,34 @@
               </div>
               <div>
                 <div class="font-bold">
-                  {{
-                    bookings[0]?.itinerary?.legs[0]?.segments[0]?.fligh_number
-                  }}
+                  {{ booking?.itinerary?.legs[0]?.segments[0]?.flight_number }}
                 </div>
                 <div class="badge bg-red-300 text-sm opacity-50">
-                  {{
-                    bookings[0]?.itinerary?.legs[0]?.segments[0]?.aircrafts.name
-                  }}
+                  {{ booking?.itinerary?.legs[0]?.segments[0]?.aircraft.name }}
                 </div>
               </div>
             </div>
           </td>
+
           <td>
-            <div>{{ formatedDate[0] }}</div>
-            <div class="text-sm opacity-50">{{ formatedTime[0] }}</div>
-          </td>
-          <td>{{ formatedDepDes[0] }}</td>
-          <td>
-            <div class="badge badge-success text-white">
-              {{ bookings[0]?.status }}
+            <div>
+              {{ booking?.itinerary?.legs[i]?.departure_time | shortDate }}
+            </div>
+            <div class="text-sm opacity-50">
+              {{ booking?.itinerary?.legs[0]?.departure_time | timeFormat }}
             </div>
           </td>
+
+          <td>{{ formatedDepDes[i] }}</td>
+
+          <td>
+            <div class="badge badge-success text-white">
+              {{ booking?.status }}
+            </div>
+          </td>
+
           <td>{{ "A12" }}</td>
+
           <div class="drawer drawer-end">
             <input
               id="booking-detail-drawer"
@@ -87,7 +92,9 @@
                       class="btn btn-sm drawer-button btn-primary"
                       >Modify</label
                     >
-                    <button class="btn btn-sm btn-error">Cancel</button>
+                    <button class="btn btn-sm btn-error text-white">
+                      Cancel
+                    </button>
                   </div>
                 </td>
               </div>
@@ -102,6 +109,7 @@
             </div>
           </div>
         </tr>
+        }
       </tbody>
     </table>
   </div>
