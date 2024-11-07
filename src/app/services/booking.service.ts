@@ -20,4 +20,8 @@ export class BookingService {
   getBookingByUserId(userId: number) {
     return this.http.get<any[]>(`${this.apiUrl}/bookings/user/${userId}`);
   }
+
+  removeBookingByUserIdAndBookingId(user_id: string, booking_id: string) {
+    return this.http.delete<any>(`${this.apiUrl}/bookings/${booking_id}`);
+  }
 }

@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ProfileComponent } from './profile/profile.component';
-import { BookingsComponent } from './bookings/bookings.component';
-import { BookingDetailComponent } from './booking-detail/booking-detail.component';
+import { BookingsComponent } from './booking/bookings/bookings.component';
+import { BookingDetailComponent } from './booking/booking-detail/booking-detail.component';
 import { AccountComponent } from './account/account.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { RoleGuard } from 'src/app/guard/role.guard';
@@ -28,12 +28,8 @@ const routes: Routes = [
       },
       {
         path: 'bookings',
-        component: BookingsComponent,
+        component: BookingsComponent
       },
-      // {
-      //   path: 'bookings/:id',
-      //   component: BookingDetailComponent,
-      // },
       {
         path: 'payment-methods',
         component: PaymentsComponent,

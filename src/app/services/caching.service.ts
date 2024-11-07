@@ -8,7 +8,12 @@ const TTL = 300000;
   providedIn: 'root',
 })
 export class CachingService {
-  private readonly keyword = ['auto-complete', 'one-way', 'detail'];
+  private readonly keyword = [
+    'auto-complete',
+    'one-way',
+    'detail',
+    'flightsItinerary',
+  ];
   constructor() {}
 
   readonly #cache = new Map<string, CacheEntry>();

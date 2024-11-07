@@ -1,0 +1,56 @@
+<div *ngIf="activeTab() === 'past'" class="overflow-x-auto">
+  <table class="table table-zebra w-full">
+    <thead>
+      <tr>
+        <th>Flight</th>
+        <th>Date & Time</th>
+        <th>Route</th>
+        <th>Status</th>
+        <th>Documents</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="flex items-center space-x-3">
+            <div class="avatar">
+              <div class="mask mask-squircle w-12 h-12">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXpekkNGqhGpUqhXA24hluYBTi8nAP3SrVPA&s"
+                  alt="Airline"
+                />
+              </div>
+            </div>
+            <div>
+              <div class="font-bold">VN456</div>
+              <div class="text-sm opacity-50">Vietnam Airlines</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div>Nov 15, 2023</div>
+          <div class="text-sm opacity-50">2:45 PM</div>
+        </td>
+        <td>SGN → HAN</td>
+        <td>
+          <div class="badge badge-neutral">Completed</div>
+        </td>
+        <td>
+          <div class="flex space-x-2">
+            <button
+              class="btn btn-sm btn-outline"
+              onclick="ticket_modal.showModal()"
+            >
+              <span class="material-symbols-outlined"> airplane_ticket </span>
+              E-Ticket
+            </button>
+            <button class="btn btn-sm btn-outline">
+              <span class="material-symbols-outlined"> credit_card </span>
+              Invoice
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

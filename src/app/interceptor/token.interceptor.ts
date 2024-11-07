@@ -10,7 +10,7 @@ import { TokenService } from '../services/token.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  private protectedPaths = ['/auto-complete', '/users/search'];
+  private protectedPaths = ['/auto-complete', '/users/search', 'bookings'];
 
   constructor(private tokenService: TokenService) {}
 
