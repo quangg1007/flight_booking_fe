@@ -56,7 +56,15 @@
         <td>{{ formatedDepDes()[i] }}</td>
 
         <td>
-          <div class="badge badge-success text-white">
+          <div
+            [ngClass]="{
+              'badge-success': booking?.status === 'approved',
+              'badge-warning': booking?.status === 'pending',
+              'badge-error': booking?.status === 'rejected',
+              'badge-info': booking?.status === 'complete'
+            }"
+            class="badge text-white"
+          >
             {{ booking?.status }}
           </div>
         </td>
@@ -66,6 +74,7 @@
             <label
               for="booking-detail-drawer"
               class="booking-detail-drawer btn btn-sm drawer-button btn-primary"
+              [class.btn-disabled]="booking?.status === 'rejected'"
               (click)="
                 setSelectedBooking(booking, booking?.booking_id, i);
                 $event.stopPropagation()
@@ -77,6 +86,7 @@
               class="cancel-btn btn btn-sm btn-error text-white"
               #cancelBtn
               (click)="$event.stopPropagation()"
+              [disabled]="booking?.status === 'rejected'"
             >
               Cancel
             </button>

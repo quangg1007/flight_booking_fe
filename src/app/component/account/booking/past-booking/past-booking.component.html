@@ -51,7 +51,15 @@
         <td>{{ formatedDepDes()[i] }}</td>
 
         <td>
-          <div class="badge badge-success text-white">
+          <div
+            [ngClass]="{
+              'badge-success': booking?.status === 'approved',
+              'badge-warning': booking?.status === 'pending',
+              'badge-error': booking?.status === 'rejected',
+              'badge-info': booking?.status === 'complete'
+            }"
+            class="badge text-white"
+          >
             {{ booking?.status }}
           </div>
         </td>
