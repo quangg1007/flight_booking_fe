@@ -17,13 +17,18 @@
 
   <!-- Upcoming Bookings Table -->
   <app-upcoming-booking
-    [bookings]="bookings()"
+    [bookings]="upcomingBookings()"
     (bookingsChanged)="deleteBooking($event)"
+    (BookingDetailChange)="bookingDetailChange($event)"
     [activeTab]="activeTab"
   ></app-upcoming-booking>
 
   <!-- Past Bookings Table -->
-  <app-past-booking [activeTab]="activeTab"></app-past-booking>
+  <app-past-booking
+    [activeTab]="activeTab"
+    [bookings]="pastBookings()"
+
+  ></app-past-booking>
 
   <!-- Flight Status Alert -->
   <div class="alert alert-info shadow-lg" *ngIf="activeTab === 'upcoming'">

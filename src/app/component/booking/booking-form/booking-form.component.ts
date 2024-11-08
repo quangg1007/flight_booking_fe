@@ -259,10 +259,7 @@ export class BookingFormComponent {
     this.bookingService
       .createBooking({
         itinerary_id: itinerary_id,
-        booking_date: '2024-10-30T15:50:00',
-        status: 'approved',
-        total_price: 139.23,
-        user_id: this.user_id,
+        user_id: this.  user_id,
         passenger_data: passenger_data,
       })
       .subscribe((data) => {

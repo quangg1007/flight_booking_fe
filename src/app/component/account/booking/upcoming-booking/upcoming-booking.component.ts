@@ -33,8 +33,11 @@ export class UpcomingBookingComponent {
   cancelButtons = viewChildren<ElementRef<HTMLButtonElement>>('cancelBtn');
   bookings = input.required<any[]>();
   selectedBookingId: string | null = null;
+  selectedBooking: any;
+  selectedFormatedDepDes: any;
 
   bookingsChanged = output<string>();
+  BookingDetailChange = output<any>();
 
   formatedDepDes = computed(() => {
     return this.bookings().map((booking: any) => {
@@ -89,5 +92,20 @@ export class UpcomingBookingComponent {
 
   toggleFlightDetails(index: number) {
     this.expandedIndex = this.expandedIndex === index ? -1 : index;
+  }
+
+  setSelectedBooking(booking: any, booking_id: string|null,index: number) {
+    this.selectedBooking = booking;
+    this.selectedBookingId = booking_id;
+    this.selectedFormatedDepDes = this.formatedDepDes()[index];
+  }
+
+  bookingDetailChange(bookingData: any) {
+    this.BookingDetailChange.emit({
+      booking_data: {
+        passengers: bookingData,
+      },
+      booking_id: this.selectedBookingId,
+    });
   }
 }

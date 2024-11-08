@@ -46,7 +46,7 @@
 
         <td>
           <div>
-            {{ booking?.itinerary?.legs[i]?.departure_time | shortDate }}
+            {{ booking?.itinerary?.legs[0]?.departure_time | shortDate }}
           </div>
           <div class="text-sm opacity-50">
             {{ booking?.itinerary?.legs[0]?.departure_time | timeFormat }}
@@ -66,7 +66,10 @@
             <label
               for="booking-detail-drawer"
               class="booking-detail-drawer btn btn-sm drawer-button btn-primary"
-              (click)="$event.stopPropagation()"
+              (click)="
+                setSelectedBooking(booking, booking?.booking_id, i);
+                $event.stopPropagation()
+              "
               >Modify</label
             >
             <button
@@ -109,7 +112,11 @@
   <div class="drawer-side">
     <label for="booking-detail-drawer" class="drawer-overlay"></label>
     <div class="menu p-4 w-[800px] min-h-full bg-base-200">
-      <app-booking-detail></app-booking-detail>
+      <app-booking-detail
+        [bookingData]="selectedBooking"
+        [formatedDepDes]="selectedFormatedDepDes"
+        (bookingDataChange)="bookingDetailChange($event)"
+      ></app-booking-detail>
     </div>
   </div>
 </ng-template>

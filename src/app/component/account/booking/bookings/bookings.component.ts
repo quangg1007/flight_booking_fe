@@ -1,14 +1,6 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  signal,
-  viewChildren,
-  ViewChildren,
-} from '@angular/core';
+import { Component, ElementRef, signal, viewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { BookingService } from 'src/app/services/booking.service';
-import { FlightItineraryService } from 'src/app/services/flight-itinerary.service';
 
 @Component({
   selector: 'app-bookings',
@@ -19,6 +11,8 @@ export class BookingsComponent {
   modifyButtonArray = viewChildren<ElementRef>('.booking-detail-drawer');
 
   bookings = signal<any[]>([]); // Array to store bookings
+  upcomingBookings = signal<any[]>([]);
+  pastBookings = signal<any[]>([]);
 
   activeTab: 'upcoming' | 'past' = 'upcoming';
   ticketUrl =
@@ -28,6 +22,31 @@ export class BookingsComponent {
 
   ngOnInit(): void {
     this.bookingService.getBookingByUserId(13).subscribe((bookingData) => {
+      const now = new Date();
+
+      const filteredBookings = bookingData.reduce(
+        (acc: any, booking: any) => {
+          const legs = booking.itinerary.legs;
+          const lastLeg = legs[legs.length - 1];
+          console.log(lastLeg);
+          const lastDepartureTime = new Date(lastLeg.departure_time);
+
+          if (lastDepartureTime > now) {
+            acc.upcoming.push(booking);
+          } else {
+            acc.past.push(booking);
+          }
+
+          return acc;
+        },
+        { upcoming: [], past: [] }
+      );
+
+      console.log(filteredBookings.past);
+
+      this.upcomingBookings.set(filteredBookings.upcoming);
+      this.pastBookings.set(filteredBookings.past);
+
       this.bookings.set(bookingData);
     });
   }
@@ -50,6 +69,15 @@ export class BookingsComponent {
           );
           console.log(this.bookings());
         }
+      });
+  }
+
+  bookingDetailChange(bookingData: any) {
+    console.log('bookingData', bookingData);
+    this.bookingService
+      .updateBokingById(bookingData.booking_id, bookingData.booking_data)
+      .subscribe((booking) => {
+        console.log('booking', booking);
       });
   }
 }
