@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { filter, map, pipe, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { AccountPageService } from 'src/app/services/account-page.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { TokenService } from 'src/app/services/token.service';
 import { userService } from 'src/app/services/user.service';
@@ -24,7 +25,8 @@ export class ProfileComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private userService: userService
+    private userService: userService,
+    private accountPageService: AccountPageService
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +53,6 @@ export class ProfileComponent {
   }
 
   patchUserForm(userData: any) {
-    console.log(userData);
     this.userForm.patchValue({
       firstName: userData[0].first_name,
       lastName: userData[0].last_name,
@@ -137,8 +138,7 @@ export class ProfileComponent {
   }
 
   getUserProfile() {
-    return this.authService
-      .getDataFromAccessToken()
+    this.accountPageService.sharedData$
       .pipe(
         map((data) => {
           this.dataEmail = data.email;

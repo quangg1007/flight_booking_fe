@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
+import { AccountPageService } from 'src/app/services/account-page.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { TokenService } from 'src/app/services/token.service';
 import { userService } from 'src/app/services/user.service';
 
@@ -21,8 +23,26 @@ export class AccountComponent {
 
   constructor(
     private userService: userService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private accountPageService: AccountPageService,
+    private authService: AuthService
   ) {}
+
+  ngOnInit(): void {
+    this.authService
+      .getDataFromAccessToken()
+      .pipe(
+        map((data) => {
+          this.accountPageService.setSharedData({
+            user_id: data.user_id,
+            email: data.email,
+            isAdmin: data.isAdmin,
+          });
+        })
+      )
+      .subscribe();
+  }
+
   logout() {
     const token = this.tokenService.getAccessToken();
     let tokenPayload;

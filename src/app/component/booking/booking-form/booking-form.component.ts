@@ -259,7 +259,7 @@ export class BookingFormComponent {
     this.bookingService
       .createBooking({
         itinerary_id: itinerary_id,
-        user_id: this.  user_id,
+        user_id: this.user_id,
         passenger_data: passenger_data,
       })
       .subscribe((data) => {
@@ -281,6 +281,7 @@ export class BookingFormComponent {
 
     this.router.navigate(['/invoice'], {
       state: {
+        user_id: this.user_id,
         booking: this.booking,
         passenger: this.passenger,
         itinerary: this.flightItinerary,

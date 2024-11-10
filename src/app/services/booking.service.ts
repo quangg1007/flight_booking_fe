@@ -29,7 +29,7 @@ export class BookingService {
     );
   }
 
-  removeBookingByUserIdAndBookingId(user_id: string, booking_id: string) {
+  removeBookingByUserIdAndBookingId(user_id: number, booking_id: string) {
     return this.http.delete<any>(`${this.apiUrl}/bookings/${booking_id}`);
   }
 }
