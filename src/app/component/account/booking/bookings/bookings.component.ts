@@ -53,9 +53,9 @@ export class BookingsComponent {
           const legs = booking.itinerary.legs;
           const lastLeg = legs[legs.length - 1];
           console.log(lastLeg);
-          const lastDepartureTime = new Date(lastLeg.departure_time);
+          const lastArrivalTime = new Date(lastLeg.arrival_time);
 
-          if (lastDepartureTime > now) {
+          if (lastArrivalTime > now) {
             acc.upcoming.push(booking);
           } else {
             acc.past.push(booking);
@@ -70,7 +70,6 @@ export class BookingsComponent {
 
       this.upcomingBookings.set(filteredBookings.upcoming);
       this.pastBookings.set(filteredBookings.past);
-
     });
   }
 

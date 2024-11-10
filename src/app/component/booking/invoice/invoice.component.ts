@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UserTimezonePipe } from 'src/app/pipe/timezone.pipe';
 import { BookingService } from 'src/app/services/booking.service';
 import {
   convertToAMPMFormat,
   formatDateToShortString,
 } from 'src/app/util/time';
+import { DurationFormatPipe } from "../../../pipe/duration-format.pipe";
 
 @Component({
   selector: 'app-invoice',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UserTimezonePipe, DurationFormatPipe],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css',
 })

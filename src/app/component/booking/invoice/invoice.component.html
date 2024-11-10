@@ -68,8 +68,8 @@
       @for (leg of flightItinerary.legs; track leg; let i = $index) {
       <div class="mb-8">
         <!-- Leg Header -->
-        <div class="flex items-center mb-4">
-          <i class="fas fa-plane-departure text-primary mr-2"></i>
+        <div class="flex items-center mb-4 gap-2">
+          <span class="material-symbols-outlined"> flight_takeoff </span>
           <h3 class="font-bold text-lg">
             {{ i === 0 ? "Outbound Flight" : "Return Flight" }}
           </h3>
@@ -92,7 +92,7 @@
           <div>
             <p class="text-sm">Duration</p>
             <p class="font-bold">
-              {{ leg.duration_in_minutes }}
+              {{ leg.duration_in_minutes | durationFormat }}
             </p>
           </div>
           <div>
@@ -122,18 +122,18 @@
             <div>
               <p class="text-sm">Departure</p>
               <p class="font-bold">{{ segment.origin_name }}</p>
-              <p>{{ segment.depature_time | date : "short" }}</p>
+              <p>{{ segment.depature_time | userTimezone }}</p>
             </div>
             <div class="flex items-center justify-center">
               <i class="fas fa-arrow-right"></i>
               <p class="text-sm ml-2">
-                {{ segment.duration_in_minutes }}
+                {{ segment.duration_in_minutes | durationFormat }}
               </p>
             </div>
             <div>
               <p class="text-sm">Arrival</p>
               <p class="font-bold">{{ segment.destination_name }}</p>
-              <p>{{ segment.arrival_time | date : "short" }}</p>
+              <p>{{ segment.arrival_time | userTimezone }}</p>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@
         <div>
           <p class="font-normal">Booking Date:</p>
           <p class="text-lg text-neutral-950 font-bold">
-            {{ bookingInfo?.date }}
+            {{ bookingInfo?.date | userTimezone }}
           </p>
         </div>
         <div>
