@@ -74,10 +74,7 @@ export class BookingFormComponent {
       .pipe(
         tap(() => this.bookingForm.markAsDirty()),
         switchMap(() => validateForm(this.bookingForm)),
-        filter((isValid) => {
-          console.log(isValid);
-          return isValid;
-        }),
+        filter((isValid) => isValid),
         takeUntil(this.destroy$)
       )
       .subscribe(() => this.confirmBooking());
@@ -137,7 +134,6 @@ export class BookingFormComponent {
     this.route.queryParams.subscribe((params) => {
       const state = history.state;
       this.legInfo = state.legInfo;
-      console.log(JSON.stringify(this.legInfo));
 
       if (!params['itineraryId'] && this.legInfo) {
         this.router.navigate(['/']);
@@ -146,7 +142,6 @@ export class BookingFormComponent {
 
       const itineraryID = params['itineraryId'];
       this.bookingForm.get('itineraryId')?.setValue(itineraryID);
-      console.log('itineraryId:', this.bookingForm.get('itineraryId')?.value);
     });
   }
 
@@ -223,11 +218,6 @@ export class BookingFormComponent {
       postalCode: passenger.postal_code,
     };
 
-    // const passengerForm = (this.bookingForm.get('passengers') as FormArray).at(
-    //   this.passengersFormArray.length - 1
-    // ) as FormGroup;
-
-    // passengerForm.patchValue(formValues);
     lastPassengerForm.patchValue(formValues);
   }
 
@@ -249,8 +239,6 @@ export class BookingFormComponent {
       })
     );
 
-    console.log('itinerary_id:', itinerary_id);
-    console.log('passengers_data:', passengers_data);
     this.proceedWithBooking(itinerary_id, passengers_data);
   }
 
@@ -269,16 +257,11 @@ export class BookingFormComponent {
           this.flightItinerary = data.itinerary;
           this.closeDialog();
           this.redirectToInvoicePage();
-          console.log(data);
         }
       });
   }
 
   redirectToInvoicePage() {
-    console.log('booking', this.booking);
-    console.log('passenger', this.passenger);
-    console.log('itinerary', this.flightItinerary);
-
     this.router.navigate(['/invoice'], {
       state: {
         user_id: this.user_id,
@@ -300,7 +283,6 @@ export class BookingFormComponent {
   }
   // Add this method to check current step validation
   isCurrentStepValid(index: number): boolean {
-    // console.log('index:', index);
     let fieldsToCheck: string[] = [];
 
     // this.passengers
@@ -327,7 +309,6 @@ export class BookingFormComponent {
 
   // Modify your nextStep method
   nextStep(index: number) {
-    console.log('isCurrentStepValid', this.isCurrentStepValid(index));
     if (this.isCurrentStepValid(index)) {
       this.currentStep[index]++;
     } else {

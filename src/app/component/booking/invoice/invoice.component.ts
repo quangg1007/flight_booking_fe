@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserTimezonePipe } from 'src/app/pipe/timezone.pipe';
 import { BookingService } from 'src/app/services/booking.service';
@@ -7,12 +7,14 @@ import {
   convertToAMPMFormat,
   formatDateToShortString,
 } from 'src/app/util/time';
-import { DurationFormatPipe } from "../../../pipe/duration-format.pipe";
+import { DurationFormatPipe } from '../../../pipe/duration-format.pipe';
+import { ShortDatePipe } from "../../../pipe/short-date.pipe";
+import { MediumDatePipe } from "../../../pipe/medium-date.pipe";
 
 @Component({
   selector: 'app-invoice',
   standalone: true,
-  imports: [CommonModule, UserTimezonePipe, DurationFormatPipe],
+  imports: [CommonModule, UserTimezonePipe, DurationFormatPipe, ShortDatePipe, MediumDatePipe],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css',
 })
@@ -25,6 +27,8 @@ export class InvoiceComponent implements OnInit {
   passengersInfo: any;
   bookingInfo: any;
   contactInfo: any;
+
+  isInvoiceEmail = signal<boolean>(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -43,6 +47,8 @@ export class InvoiceComponent implements OnInit {
           this.flightItinerary = data.itinerary;
           this.passengers = data.passengers;
 
+          this.isInvoiceEmail.set(true);
+
           this.setInvoice();
         });
       } else {
@@ -53,8 +59,11 @@ export class InvoiceComponent implements OnInit {
         this.booking = state.booking;
         this.passengers = state.passenger;
 
+        this.isInvoiceEmail.set(false);
+
         this.setInvoice();
       }
+
     });
   }
 

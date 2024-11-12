@@ -53,7 +53,7 @@
           </div>
           <div>
             <p class="text-sm">Total Price</p>
-            <p class="font-bold">${{ flightItinerary.formatted_price }}</p>
+            <p class="font-bold">${{ flightItinerary?.formatted_price }}</p>
           </div>
           <div>
             <p class="text-sm">Status</p>
@@ -65,7 +65,7 @@
       </div>
 
       <!-- Flight Legs -->
-      @for (leg of flightItinerary.legs; track leg; let i = $index) {
+      @for (leg of flightItinerary?.legs; track leg; let i = $index) {
       <div class="mb-8">
         <!-- Leg Header -->
         <div class="flex items-center mb-4 gap-2">
@@ -122,7 +122,13 @@
             <div>
               <p class="text-sm">Departure</p>
               <p class="font-bold">{{ segment.origin_name }}</p>
-              <p>{{ segment.depature_time | userTimezone }}</p>
+              <p>
+                @if (isInvoiceEmail()) {
+                {{ segment.depature_time | mediumDate }}
+                } @else {
+                {{ segment.depature_time | userTimezone }}
+                }
+              </p>
             </div>
             <div class="flex items-center justify-center">
               <i class="fas fa-arrow-right"></i>
@@ -133,7 +139,13 @@
             <div>
               <p class="text-sm">Arrival</p>
               <p class="font-bold">{{ segment.destination_name }}</p>
-              <p>{{ segment.arrival_time | userTimezone }}</p>
+              <p>
+                @if (isInvoiceEmail()) {
+                {{ segment.arrival_time | mediumDate }}
+                } @else {
+                {{ segment.arrival_time | userTimezone }}
+                }
+              </p>
             </div>
           </div>
         </div>
@@ -201,7 +213,11 @@
         <div>
           <p class="font-normal">Booking Date:</p>
           <p class="text-lg text-neutral-950 font-bold">
+            @if (isInvoiceEmail()) {
+            {{ bookingInfo?.date }}
+            }@else {
             {{ bookingInfo?.date | userTimezone }}
+            }
           </p>
         </div>
         <div>
