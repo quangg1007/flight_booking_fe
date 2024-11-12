@@ -11,6 +11,7 @@ import {
   calculateDuration,
   convertMinutesToHoursAndMinutes,
   convertToAMPMFormat,
+  convertToUserTimezone,
   formatDateToShortString,
 } from 'src/app/util/time';
 
@@ -51,8 +52,8 @@ export class CardDetailComponent {
           (res) => {
             if (res.status) {
               this.legInfo = res.data.itinerary.legs.map((leg: any) => {
-                const { fullDurationSegment, headerDate } =
-                  this.createCommonFlightInfo(leg);
+                const fullDurationSegment = leg.duration;
+                const headerDate = leg.departure;
 
                 const { flightSegmentInfo, layoverInfo } =
                   this.createFlightSegment(leg.segments);
@@ -81,24 +82,15 @@ export class CardDetailComponent {
       .subscribe();
   }
 
-  createCommonFlightInfo(leg: any) {
-    const fullDurationSegment = convertMinutesToHoursAndMinutes(leg.duration);
-    const headerDate = formatDateToShortString(leg.departure);
-    return {
-      fullDurationSegment,
-      headerDate,
-    };
-  }
-
   createFlightSegment(segments: any) {
     const layoverInfo: LayoverInfo[] = [];
     let flightSegmentInfo: FlightSegmentInfo[];
 
     flightSegmentInfo = segments.map(
       (segment: any, index: number, array: any[]) => {
-        const departureTime = convertToAMPMFormat(segment.departure);
-        const arrivalTime = convertToAMPMFormat(segment.arrival);
-        const duration = convertMinutesToHoursAndMinutes(segment.duration);
+        const departureTime = convertToUserTimezone(segment.departure);
+        const arrivalTime = convertToUserTimezone(segment.arrival);
+        const duration = segment.duration;
         const flightLogoBrand = segment.marketingCarrier.logo;
         const flightLogoBrandName = segment.marketingCarrier.name;
         const departureAirport =

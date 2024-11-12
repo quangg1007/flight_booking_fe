@@ -1,4 +1,7 @@
 // @Input: 600m
+
+import { formatInTimeZone } from 'date-fns-tz';
+
 // @Output: 12h30m
 export const convertMinutesToHoursAndMinutes = (
   durationInMinutes: number
@@ -85,3 +88,14 @@ export const convertSecondsToTime = (seconds: number): string => {
 
   return `${formattedMinutes}:${formattedSeconds}`;
 };
+
+export function convertToUserTimezone(
+  utcDate: Date | string,
+  format: string = 'yyyy-MM-dd HH:mm'
+): string {
+  const userTimezone =
+    localStorage.getItem('userTimezone') ||
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return formatInTimeZone(new Date(utcDate), userTimezone, format);
+}

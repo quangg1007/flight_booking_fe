@@ -6,7 +6,10 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class DurationFormatPipe implements PipeTransform {
-  transform(durationInMinutes: number): string {
+  transform(durationInMinutes: number | string): string {
+    if (typeof durationInMinutes === 'string') {
+      durationInMinutes = parseInt(durationInMinutes, 10);
+    }
     const hours = Math.floor(durationInMinutes / 60);
     const minutes = durationInMinutes % 60;
 

@@ -15,6 +15,8 @@ import { DateSliderComponent } from '../common/date-slider/date-slider.component
 import { SliderComponent } from '../common/slider/slider.component';
 
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { TimeFormatPipe } from "../../pipe/time-format.pipe";
+import { DurationFormatPipe } from "../../pipe/duration-format.pipe";
 
 @NgModule({
   declarations: [
@@ -36,6 +38,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     DateSliderComponent,
     SliderComponent,
     InfiniteScrollModule,
-  ],
+    TimeFormatPipe,
+    DurationFormatPipe
+],
 })
 export class FlightModule {}

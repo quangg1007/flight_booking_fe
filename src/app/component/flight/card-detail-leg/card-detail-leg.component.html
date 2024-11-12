@@ -5,12 +5,14 @@
   <header
     class="flex flex-wrap gap-10 justify-between items-center pr-3 pl-5 w-full font-semibold max-md:max-w-full"
   >
+    @if(legInfo){
     <h2 class="self-stretch my-auto text-xl text-gray-800 w-[206px]">
-      {{ headerText() }} · {{ legInfo?.headerDate }}
+      {{ headerText() }} · {{ legInfo.headerDate || "" | shortDate }}
     </h2>
     <p class="self-stretch my-auto text-base text-zinc-500 w-[58px]">
-      {{ legInfo?.fullDurationSegment }}
+      {{ legInfo.fullDurationSegment | durationFormat }}
     </p>
+    }
   </header>
 
   <div class="w-full h-0.5 bg-slate-400"></div>
@@ -57,7 +59,7 @@
         <div class="flex gap-9 items-center text-lg min-w-[240px] w-[284px]">
           <time
             class="self-stretch my-auto text-base font-bold text-zinc-600 w-[73px] whitespace-nowrap"
-            >{{ flight.departureTime }}</time
+            >{{ flight.departureTime | timeFormat }}</time
           >
           <p
             class="self-stretch my-auto text-zinc-600 w-[178px] whitespace-nowrap"
@@ -74,7 +76,7 @@
         <p
           class="flex-1 shrink gap-2.5 self-stretch my-auto min-w-[240px] w-[284px]"
         >
-          {{ flight.duration }}
+          {{ flight.duration | durationFormat }}
         </p>
       </div>
 
@@ -94,7 +96,7 @@
         <div class="flex gap-8 items-center min-w-[240px]">
           <time
             class="self-stretch my-auto text-base font-bold text-zinc-600 w-[73px] whitespace-nowrap"
-            >{{ flight.arrivalTime }}</time
+            >{{ flight.arrivalTime | timeFormat }}</time
           >
           <p
             class="self-stretch my-auto text-lg text-zinc-500 w-[161px] whitespace-nowrap"

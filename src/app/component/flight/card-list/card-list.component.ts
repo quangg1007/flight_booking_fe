@@ -3,6 +3,7 @@ import { BrandFlight, FlightLegInfo } from 'src/app/models/cardList.model';
 import {
   convertMinutesToHoursAndMinutes,
   convertToAMPMFormat,
+  convertToUserTimezone,
 } from 'src/app/util/time';
 
 @Component({
@@ -24,9 +25,9 @@ export class CardListComponent {
     this.formatTagFlight(this.flightCard().tags);
 
     this.legs = this.flightCard().legs.map((leg: any) => {
-      const timeDeparture = convertToAMPMFormat(leg.departure);
-      const timeArrival = convertToAMPMFormat(leg.arrival);
-      const duration = convertMinutesToHoursAndMinutes(leg.durationInMinutes);
+      const timeDeparture = leg.departure;
+      const timeArrival = leg.arrival;
+      const duration = leg.durationInMinutes;
       const stopCount = leg.stopCount;
       const brandFlight = leg.carriers.marketing;
       const brandNameFlight = this.formatBrandFlight(brandFlight);

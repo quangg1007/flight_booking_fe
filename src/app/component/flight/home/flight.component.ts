@@ -8,6 +8,7 @@ import {
 } from 'src/app/models/cardFilter.model';
 import { FlightSearchService } from 'src/app/services/flight-search.service';
 import { FlightServiceAPI } from 'src/app/services/flight.service';
+import { convertToUserTimezone } from 'src/app/util/time';
 
 @Component({
   selector: 'app-flight',
@@ -102,10 +103,11 @@ export class FlightComponent implements OnInit {
       })
       .subscribe(
         (results) => {
-          this.allFlights = results.data.itineraries;
-          this.filteredFlights = this.allFlights;
+          this.allFlights = this.convertToUserTimeZone(
+            results.data.itineraries
+          );
 
-          console.log(this.allFlights.length);
+          this.filteredFlights = this.allFlights;
 
           this.setFilterStats(results);
 
@@ -137,7 +139,10 @@ export class FlightComponent implements OnInit {
       })
       .subscribe(
         (results) => {
-          this.allFlights = results.data.itineraries;
+          this.allFlights = this.convertToUserTimeZone(
+            results.data.itineraries
+          );
+
           this.filteredFlights = this.allFlights;
 
           this.setFilterStats(results);
@@ -152,6 +157,22 @@ export class FlightComponent implements OnInit {
           // Handle error (e.g., show error message)
         }
       );
+  }
+
+  convertToUserTimeZone(flights: any[]) {
+    return flights.map((flight) => ({
+      ...flight,
+      legs: flight.legs.map((leg: any) => ({
+        ...leg,
+        departure: convertToUserTimezone(leg.departure),
+        arrival: convertToUserTimezone(leg.arrival),
+        segments: leg.segments.map((segment: any) => ({
+          ...segment,
+          departure: convertToUserTimezone(segment.departure),
+          arrival: convertToUserTimezone(segment.arrival),
+        })),
+      })),
+    }));
   }
 
   setFilterStats(results: any) {
