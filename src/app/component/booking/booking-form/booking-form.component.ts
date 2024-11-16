@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener, signal } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -9,21 +9,25 @@ import {
 } from '@angular/forms';
 import { LoginComponent } from '../../login/login/login.component';
 import { AuthService } from 'src/app/services/auth.service';
-import { filter, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { userService } from 'src/app/services/user.service';
+import { filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { PassengerService } from 'src/app/services/passenger.service';
 import { TimerService } from 'src/app/services/timer.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { convertSecondsToTime } from 'src/app/util/time';
 import { BookingService } from 'src/app/services/booking.service';
-import { BookingModel } from 'src/app/models';
 import { validateForm } from 'src/app/util/validation';
 import { LegInfo } from 'src/app/models/cardDetail.model';
+import { RegisterComponent } from '../../login/register/register.component';
 
 @Component({
   selector: 'app-booking-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoginComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    LoginComponent,
+    RegisterComponent,
+  ],
   templateUrl: './booking-form.component.html',
   styleUrls: ['./booking-form.component.css'],
 })
@@ -32,12 +36,14 @@ export class BookingFormComponent {
   timeRemainingDisplay: string = '';
 
   currentStep: number[] = [1];
-  isAuth: boolean = false;
+  isAuth = signal<boolean>(false);
   hasFormChanged = false;
 
   dataEmail: string = '';
-  user_id: string = '';
+  user_id = signal<string>('');
   legInfo: LegInfo[] = [];
+  itinerary_id = signal<string>('');
+  booking_id = signal<number>(0);
 
   formSubmit$ = new Subject<any>();
   passengers!: FormArray;
@@ -48,11 +54,15 @@ export class BookingFormComponent {
   passenger: any;
   flightItinerary: any;
 
+  activeAuthTab: 'register' | 'login' = 'register';
+
   // Create validation groups
   step1Fields = ['firstName', 'lastName', 'dateOfBirth', 'gender'];
   step2Fields = ['passportNumber', 'passportExpiry', 'nationality'];
   step3Fields = ['address', 'city', 'country', 'postalCode'];
   tokenService: any;
+
+  toastMessages: string[] = [];
 
   constructor(
     private _fb: FormBuilder,
@@ -65,9 +75,9 @@ export class BookingFormComponent {
   ) {}
 
   ngOnInit() {
-    this.initEmptyForm();
     this.getItineraryID();
     this.checkAuthAndInitForm();
+    this.createBookingPending();
     this.startBookingTimer();
 
     this.formSubmit$
@@ -84,6 +94,37 @@ export class BookingFormComponent {
     this.destroy$.next();
     this.destroy$.complete();
     this.timerService.stopTimer();
+    window.onbeforeunload = null;
+    this.bookingService.removeBookingPending(this.booking_id());
+  }
+
+  // @HostListener('window:beforeunload', ['$event'])
+  // handleBeforeUnload(event: BeforeUnloadEvent) {
+  //   console.log('handleBeforeUnload', event);
+
+  //   event.preventDefault();
+  //   this.bookingService.removeBookingPending(this.booking_id()).subscribe();
+
+  //   return false;
+  // }
+
+  createBookingPending() {
+    const booking_data = {
+      itinerary_id: this.itinerary_id(),
+      user_id: this.user_id(),
+    };
+
+    if (this.isAuth()) {
+      this.bookingService
+        .bookingPending(booking_data)
+        .pipe(
+          tap((booking) => {
+            console.log('createBookingPending', booking.booking_id);
+            this.booking_id.set(booking.booking_id);
+          })
+        )
+        .subscribe();
+    }
   }
 
   private initEmptyForm(): void {
@@ -93,7 +134,7 @@ export class BookingFormComponent {
     });
 
     // Add first passenger by default
-    this.addPassenger();
+    this.initFirstPassenger();
   }
 
   get passengersFormArray() {
@@ -102,31 +143,82 @@ export class BookingFormComponent {
 
   // Method to add new passenger
   addPassenger() {
+    this.bookingService
+      .availabilitySeat(this.itinerary_id())
+      .pipe(
+        tap((noAvailableSeat) => {
+          console.log('noAvailableSeat', noAvailableSeat.noAvaiSeat);
+          if (noAvailableSeat.noAvaiSeat > 0) {
+            this.bookingService
+              .updateNewPassenger(this.booking_id())
+              .subscribe(() => {
+                this.currentStep.push(1);
+                this.passengersFormArray.push(this.createPassengerForm());
+              });
+          } else {
+            this.showToast('No available seat');
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  showToast(message: string) {
+    this.toastMessages.push(message);
+    setTimeout(() => {
+      this.toastMessages.pop();
+    }, 3000);
+  }
+
+  initFirstPassenger() {
     this.currentStep.push(1);
     this.passengersFormArray.push(this.createPassengerForm());
   }
 
   // Method to remove passenger
   removePassenger(index: number) {
-    this.passengersFormArray.removeAt(index);
-    this.currentStep.splice(index, 1);
+    this.bookingService
+      .removePassengerBookingPending(this.booking_id())
+      .pipe(
+        tap((res) => {
+          console.log('res', res);
+          this.passengersFormArray.removeAt(index);
+          this.currentStep.splice(index, 1);
+        })
+      )
+      .subscribe();
   }
 
   // Method to create single passenger form group
   createPassengerForm(): FormGroup {
     return this._fb.group({
       passengerID: ['', Validators.required],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      gender: ['', Validators.required],
-      passportNumber: ['', Validators.required],
-      passportExpiry: ['', Validators.required],
-      nationality: ['', Validators.required],
-      dateOfBirth: ['', Validators.required],
-      address: ['', Validators.required],
-      city: ['', Validators.required],
-      country: ['', Validators.required],
-      postalCode: ['', Validators.required],
+      firstName: [{ value: '', disabled: !this.isAuth() }, Validators.required],
+      lastName: [{ value: '', disabled: !this.isAuth() }, Validators.required],
+      gender: [{ value: '', disabled: !this.isAuth() }, Validators.required],
+      passportNumber: [
+        { value: '', disabled: !this.isAuth() },
+        Validators.required,
+      ],
+      passportExpiry: [
+        { value: '', disabled: !this.isAuth() },
+        Validators.required,
+      ],
+      nationality: [
+        { value: '', disabled: !this.isAuth() },
+        Validators.required,
+      ],
+      dateOfBirth: [
+        { value: '', disabled: !this.isAuth() },
+        Validators.required,
+      ],
+      address: [{ value: '', disabled: !this.isAuth() }, Validators.required],
+      city: [{ value: '', disabled: !this.isAuth() }, Validators.required],
+      country: [{ value: '', disabled: !this.isAuth() }, Validators.required],
+      postalCode: [
+        { value: '', disabled: !this.isAuth() },
+        Validators.required,
+      ],
     });
   }
 
@@ -140,8 +232,7 @@ export class BookingFormComponent {
         return;
       }
 
-      const itineraryID = params['itineraryId'];
-      this.bookingForm.get('itineraryId')?.setValue(itineraryID);
+      this.itinerary_id.set(params['itineraryId']);
     });
   }
 
@@ -149,40 +240,32 @@ export class BookingFormComponent {
     this.authService
       .isAuthenticated()
       .pipe(
-        tap((isAuth) => {
-          this.isAuth = isAuth;
+        map((auth) => {
+          this.isAuth.set(auth);
+          this.initEmptyForm();
+          const itineraryIdFormControl = this.bookingForm.get('itineraryId');
+          itineraryIdFormControl?.setValue(this.itinerary_id());
+          return auth;
+        }),
+        switchMap((isAuth) => {
           if (isAuth) {
-            this.loadRecentPassengers();
+            return this.authService.getDataFromAccessToken().pipe(
+              tap((data) => {
+                this.user_id.set(data.user_id);
+                this.loadRecentPassengers();
+              })
+            );
           }
+          return of(null);
         })
       )
       .subscribe();
   }
 
-  startBookingTimer() {
-    this.timerService.startTimer();
-    this.timerService.timeout$.subscribe((time) => {
-      this.timeRemainingDisplay = convertSecondsToTime(time);
-      if (time === 0) {
-        console.log('timeout');
-        this.showTimeoutModal();
-      }
-    });
-  }
-
-  showTimeoutModal() {
-    const modal = document.getElementById('timeoutModal') as HTMLDialogElement;
-    modal.showModal();
-  }
-
   loadRecentPassengers() {
-    this.authService
-      .getDataFromAccessToken()
+    this.passengerService
+      .getPassengerRecentByUserId(this.user_id())
       .pipe(
-        switchMap((data) => {
-          this.user_id = data.user_id;
-          return this.passengerService.getPassengerRecentByUserId(data.user_id);
-        }),
         tap((passengers) => {
           this.recentPassengers = passengers;
           if (passengers.length > 0) {
@@ -191,10 +274,6 @@ export class BookingFormComponent {
         })
       )
       .subscribe();
-  }
-
-  selectPassenger(passenger: any) {
-    this.initFormWithPassengerData(passenger);
   }
 
   private initFormWithPassengerData(passenger: any): void {
@@ -219,6 +298,26 @@ export class BookingFormComponent {
     };
 
     lastPassengerForm.patchValue(formValues);
+  }
+
+  startBookingTimer() {
+    this.timerService.startTimer();
+    this.timerService.timeout$.subscribe((time) => {
+      this.timeRemainingDisplay = convertSecondsToTime(time);
+      if (time === 0) {
+        console.log('timeout');
+        this.showTimeoutModal();
+      }
+    });
+  }
+
+  showTimeoutModal() {
+    const modal = document.getElementById('timeoutModal') as HTMLDialogElement;
+    modal.showModal();
+  }
+
+  selectPassenger(passenger: any) {
+    this.initFormWithPassengerData(passenger);
   }
 
   confirmBooking(): void {
@@ -246,8 +345,9 @@ export class BookingFormComponent {
     // Common booking logic
     this.bookingService
       .createBooking({
+        booking_id: this.booking_id(),
         itinerary_id: itinerary_id,
-        user_id: this.user_id,
+        user_id: this.user_id(),
         passenger_data: passenger_data,
       })
       .subscribe((data) => {
@@ -264,7 +364,7 @@ export class BookingFormComponent {
   redirectToInvoicePage() {
     this.router.navigate(['/invoice'], {
       state: {
-        user_id: this.user_id,
+        user_id: this.user_id(),
         booking: this.booking,
         passenger: this.passenger,
         itinerary: this.flightItinerary,
@@ -337,13 +437,26 @@ export class BookingFormComponent {
     );
   }
 
-  routeToBookingForm() {
-    console.log('routeToBookingForm');
+  setAuthTab(tab: 'register' | 'login') {
+    this.activeAuthTab = tab;
+  }
+
+  routeToBookingFormLogin() {
+    console.log('routeToBookingForm Login');
     window.location.reload();
+  }
+
+  routeToBookingFormRegister() {
+    console.log('routeToBookingForm Register');
+    this.activeAuthTab = 'login';
   }
 
   redirectToSearch() {
     this.router.navigate(['/home']);
-    window.location.reload();
+    this.bookingService
+      .removeBookingPending(this.booking_id())
+      .subscribe(() => {
+        window.location.reload();
+      });
   }
 }

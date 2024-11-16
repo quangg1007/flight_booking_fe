@@ -28,16 +28,17 @@ import { RetryInterceptor } from './interceptor/retry.interceptor';
 import { TokenInterceptor } from './interceptor/token.interceptor';
 import { InvoiceComponent } from './component/booking/invoice/invoice.component';
 import { BookingFormComponent } from './component/booking/booking-form/booking-form.component';
+import { RegisterPageComponent } from './component/login/register-page/register-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomePageComponent,
     PasswordResetComponent,
-    RegisterComponent,
     EmailResetPasswordComponent,
     NotFoundComponent,
     LoginPageComponent,
+    RegisterPageComponent,
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -50,6 +51,7 @@ import { BookingFormComponent } from './component/booking/booking-form/booking-f
     NgTemplateOutlet,
     NgClass,
     LoginComponent,
+    RegisterComponent,
     InvoiceComponent,
   ],
   providers: [

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
   FormGroup,
+  ReactiveFormsModule,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
@@ -22,9 +23,12 @@ import { EMAIL_PATTERN, PASSWORD_PATTERN } from 'src/app/util/auth';
 import { UserModel } from 'src/app/models/user.model';
 import { userService } from 'src/app/services/user.service';
 import { validateForm } from 'src/app/util/validation';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })
@@ -32,6 +36,8 @@ export class RegisterComponent implements OnInit {
   formSubmit$ = new Subject<any>();
   registerForm!: FormGroup;
   destroy$ = new Subject<void>();
+
+  isAuthChanged = output<boolean>();
 
   constructor(private _fb: FormBuilder, private userService: userService) {}
 
@@ -64,7 +70,9 @@ export class RegisterComponent implements OnInit {
       password,
     };
 
-    this.userService.register(newUser).subscribe(console.log);
+    this.userService.register(newUser).subscribe(() => {
+      this.isAuthChanged.emit(true);
+    });
   }
 
   initForm() {

@@ -8,13 +8,13 @@ import {
   formatDateToShortString,
 } from 'src/app/util/time';
 import { DurationFormatPipe } from '../../../pipe/duration-format.pipe';
-import { ShortDatePipe } from "../../../pipe/short-date.pipe";
-import { MediumDatePipe } from "../../../pipe/medium-date.pipe";
+import { ShortDatePipe } from '../../../pipe/short-date.pipe';
+import { MediumDatePipe } from '../../../pipe/medium-date.pipe';
 
 @Component({
   selector: 'app-invoice',
   standalone: true,
-  imports: [CommonModule, UserTimezonePipe, DurationFormatPipe, ShortDatePipe, MediumDatePipe],
+  imports: [CommonModule, UserTimezonePipe, DurationFormatPipe, MediumDatePipe],
   templateUrl: './invoice.component.html',
   styleUrl: './invoice.component.css',
 })
@@ -63,7 +63,6 @@ export class InvoiceComponent implements OnInit {
 
         this.setInvoice();
       }
-
     });
   }
 

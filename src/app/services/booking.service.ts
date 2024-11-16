@@ -22,6 +22,25 @@ export class BookingService {
     return this.http.get<any[]>(`${this.apiUrl}/bookings/user/${userId}`);
   }
 
+  availabilitySeat(itinerary_id: string) {
+    return this.http.get<any>(
+      `${this.apiUrl}/bookings/availability-seat/${itinerary_id}`
+    );
+  }
+
+  bookingPending(booking_data: any) {
+    return this.http.post<any>(
+      `${this.apiUrl}/bookings/booking-pending`,
+      booking_data
+    );
+  }
+
+  updateNewPassenger(bookingId: string | number) {
+    return this.http.patch<any>(`${this.apiUrl}/bookings/add-new-passenger`, {
+      booking_id: bookingId,
+    });
+  }
+
   updateBokingById(booking_id: string, bookingData: any): Observable<any> {
     return this.http.put<any>(
       `${this.apiUrl}/bookings/${booking_id}`,
@@ -31,5 +50,17 @@ export class BookingService {
 
   removeBookingByUserIdAndBookingId(user_id: number, booking_id: string) {
     return this.http.delete<any>(`${this.apiUrl}/bookings/${booking_id}`);
+  }
+
+  removeBookingPending(booking_id: string | number) {
+    return this.http.delete<any>(
+      `${this.apiUrl}/bookings/pending/${booking_id}`
+    );
+  }
+
+  removePassengerBookingPending(booking_id: string | number) {
+    return this.http.delete<any>(
+      `${this.apiUrl}/bookings/remove-passenger/${booking_id}`
+    );
   }
 }

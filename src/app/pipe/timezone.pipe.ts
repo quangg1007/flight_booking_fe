@@ -6,6 +6,7 @@ import { formatInTimeZone } from 'date-fns-tz';
   standalone: true,
 })
 export class UserTimezonePipe implements PipeTransform {
+  constructor() {}
   transform(date: Date | string, format: string = 'yyyy-MM-dd HH:mm'): string {
     const userTimezone =
       localStorage.getItem('userTimezone') ||

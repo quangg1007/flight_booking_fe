@@ -1,13 +1,17 @@
 <div class="flex justify-between gap-8 px-20 py-10 mx-auto">
   <!-- Left side - Booking Form -->
+
   <div class="w-2/3">
     <form [formGroup]="bookingForm">
       <!-- Add/Remove Passenger buttons -->
+      @if (isAuth()) {
       <div class="flex justify-between mb-4">
         <button type="button" class="btn btn-primary" (click)="addPassenger()">
           Add Passenger
         </button>
       </div>
+
+      }
 
       <div formArrayName="passengers">
         <div
@@ -35,7 +39,7 @@
             </li>
           </ul>
 
-          <div class="card bg-base-200 mb-4">
+          <div class="card bg-base-300 mb-4">
             <div class="card-body">
               <div class="flex justify-between">
                 <h3 class="card-title">Passenger {{ i + 1 }}</h3>
@@ -175,6 +179,7 @@
                   Next
                 </button>
 
+                @if(isAuth()) {
                 <button
                   class="btn btn-primary"
                   *ngIf="currentStep[i] === 3"
@@ -182,6 +187,7 @@
                 >
                   Submit
                 </button>
+                }
 
                 <dialog id="my_modal_1" class="modal">
                   <div class="modal-box w-5/6 max-w-xl">
@@ -197,7 +203,7 @@
         </div>
       </div>
     </form>
-    <div *ngIf="isAuth && recentPassengers.length > 0" class="mt-8">
+    <div *ngIf="isAuth() && recentPassengers.length > 0" class="mt-8">
       <h3 class="text-lg font-bold mb-4">Recent Passengers</h3>
       <div class="grid grid-cols-3 gap-4">
         <div
@@ -222,7 +228,7 @@
   <!-- Right side - Login -->
   <div class="w-1/3">
     <div class="timer-display">Time remaining: {{ timeRemainingDisplay }}</div>
-    @if (isAuth) {
+    @if (isAuth()) {
     <!-- Display user profile -->
     <div class="card bg-base-200">
       <div class="card-body">
@@ -232,17 +238,48 @@
 
     <ng-container *ngTemplateOutlet="flightItineraryInformation"></ng-container>
     }@else {
-    <!-- Display login form -->
+    <!-- Auth options -->
     <div class="card bg-base-200">
       <div class="card-body">
-        <h2 class="card-title">Already have an account?</h2>
-        <p>Login to auto-fill your information</p>
-        <app-login (isAuthChanged)="routeToBookingForm()"></app-login>
+        <h2 class="card-title">Account Options</h2>
+        <p>Create new account or login to booking</p>
+        <div class="tabs tabs-boxed">
+          <a
+            class="tab"
+            [class.tab-active]="activeAuthTab === 'register'"
+            (click)="setAuthTab('register')"
+            >Register</a
+          >
+          <a
+            class="tab"
+            [class.tab-active]="activeAuthTab === 'login'"
+            (click)="setAuthTab('login')"
+            >Login</a
+          >
+        </div>
+
+        @if (activeAuthTab === 'register') {
+        <app-register
+          (isAuthChanged)="routeToBookingFormRegister()"
+        ></app-register>
+        } @else {
+        <app-login (isAuthChanged)="routeToBookingFormLogin()"></app-login>
+        }
       </div>
     </div>
 
     <ng-container *ngTemplateOutlet="flightItineraryInformation"></ng-container>
     }
+  </div>
+</div>
+
+<div id="no-seat-toast" class="toast toast-top toast-end">
+  <div
+    class="alert alert-error text-white"
+    *ngFor="let message of toastMessages"
+  >
+    <span class="material-symbols-outlined">error</span>
+    <span>{{ message }}</span>
   </div>
 </div>
 
@@ -364,83 +401,6 @@
         }
       </div>
       }
-
-      <!-- Flight Number & Airline -->
-      <!-- <div class="flex items-center mb-4">
-        <i class="fas fa-plane mr-3"></i>
-        <div>
-          <p class="font-bold">{{ flight.airlineName }}</p>
-          <p class="text-sm">Flight {{ flight.flightNumber }}</p>
-        </div>
-        <img
-          [src]="flight.airlineLogo"
-          alt="Airline Logo"
-          class="h-8 ml-auto"
-        />
-      </div> -->
-
-      <!-- Departure Info -->
-      <!-- <div class="flex items-center mb-4">
-        <i class="fas fa-plane-departure mr-3"></i>
-        <div>
-          <p class="font-bold">
-            {{ flight.departureAirport }} ({{ flight.departureCode }})
-          </p>
-          <p class="text-sm">
-            {{ flight.departureDateTime | date : "medium" }}
-          </p>
-        </div>
-      </div> -->
-
-      <!-- Arrival Info -->
-      <!-- <div class="flex items-center mb-4">
-        <i class="fas fa-plane-arrival mr-3"></i>
-        <div>
-          <p class="font-bold">
-            {{ flight.arrivalAirport }} ({{ flight.arrivalCode }})
-          </p>
-          <p class="text-sm">{{ flight.arrivalDateTime | date : "medium" }}</p>
-        </div>
-      </div> -->
-
-      <!-- Duration & Layover -->
-      <!-- <div class="flex items-center mb-4">
-        <i class="fas fa-clock mr-3"></i>
-        <div>
-          <p class="font-bold">Duration: {{ flight.duration }}</p>
-          @if (flight.layover) {
-          <p class="text-sm">
-            Layover: {{ flight.layoverDuration }} at
-            {{ flight.layoverLocation }}
-          </p>
-          }
-        </div>
-      </div> -->
-
-      <!-- Baggage Info -->
-      <!-- <div class="flex items-center mb-4">
-        <i class="fas fa-suitcase mr-3"></i>
-        <div>
-          <p class="font-bold">Baggage Allowance</p>
-          <p class="text-sm">Checked: {{ flight.checkedBaggage }}</p>
-          <p class="text-sm">Carry-on: {{ flight.carryOn }}</p>
-        </div>
-      </div> -->
-
-      <!-- Additional Services -->
-      <!-- @if (flight.specialServices?.length) {
-      <div class="flex items-center">
-        <i class="fas fa-concierge-bell mr-3"></i>
-        <div>
-          <p class="font-bold">Special Services</p>
-          <ul class="list-disc list-inside text-sm">
-            @for (service of flight.specialServices; track service) {
-            <li>{{ service }}</li>
-            }
-          </ul>
-        </div>
-      </div>
-      } -->
     </div>
   </div>
 </ng-template>

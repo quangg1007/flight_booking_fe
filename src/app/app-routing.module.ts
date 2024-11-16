@@ -10,6 +10,7 @@ import { BookingFormComponent } from './component/booking/booking-form/booking-f
 import { LoginPageComponent } from './component/login/login-page/login-page.component';
 import { LoginGuard } from './guard/login.guard';
 import { InvoiceComponent } from './component/booking/invoice/invoice.component';
+import { RegisterPageComponent } from './component/login/register-page/register-page.component';
 
 const routes: Routes = [
   {
@@ -46,7 +47,8 @@ const routes: Routes = [
   },
   {
     path: 'register',
-    component: RegisterComponent,
+    component: RegisterPageComponent,
+    canActivate: [LoginGuard],
   },
   {
     path: 'password-reset',

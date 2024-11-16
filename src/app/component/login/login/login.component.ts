@@ -25,6 +25,7 @@ import { TokenService } from 'src/app/services/token.service';
 import { LoginResponse } from 'src/app/models/auth.model';
 import { CommonModule } from '@angular/common';
 import { AuthService } from 'src/app/services/auth.service';
+import { TimezoneService } from 'src/app/services/timezone.service';
 
 @Component({
   selector: 'app-login',
@@ -45,8 +46,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private _fb: FormBuilder,
     private userService: userService,
-    private router: Router,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private timezoneService: TimezoneService
   ) {}
 
   ngOnInit(): void {
@@ -82,10 +83,11 @@ export class LoginComponent implements OnInit, OnDestroy {
       .login(user)
       .pipe(
         map((res: LoginResponse) => {
-          // console.log(res);
-          if (res.accessToken && res.isAdmin) {
+          console.log(res);
+          if (res.accessToken && res.isAdmin && res.timezone) {
             // Save the user data to local storage
             this.tokenService.setAccessToken(res.accessToken);
+            this.timezoneService.setTimezone(res.timezone);
 
             // Create a successfull notification
             console.log('Login successful');

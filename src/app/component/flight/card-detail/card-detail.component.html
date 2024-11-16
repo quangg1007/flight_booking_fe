@@ -17,7 +17,13 @@
     [headerText]="even ? 'Depart' : 'Return'"
   ></app-card-detail-leg>
   }
-  <button (click)="navigateToBooking()" *ngIf="legInfo.length" class="btn btn-accent">Book</button>
+  <button
+    (click)="navigateToBooking()"
+    *ngIf="legInfo.length"
+    class="btn btn-accent text-white text-base font-bold"
+  >
+    Book
+  </button>
   }@else {
   <div>Check network connection...</div>
   }
@@ -25,3 +31,12 @@
 <!-- Add content for loading state here -->
 
 }
+
+<div class="toast toast-top toast-end">
+  <div
+    class="alert alert-error text-white"
+    *ngFor="let message of toastMessages"
+  >
+    <span>{{ message }}</span>
+  </div>
+</div>

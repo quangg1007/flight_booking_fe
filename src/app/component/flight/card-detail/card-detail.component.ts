@@ -1,19 +1,14 @@
 import { Component, input, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { map, of, switchMap, tap } from 'rxjs';
 import {
   FlightSegmentInfo,
   LayoverInfo,
   LegInfo,
 } from 'src/app/models/cardDetail.model';
+import { BookingService } from 'src/app/services/booking.service';
 import { FlightServiceAPI } from 'src/app/services/flight.service';
-import {
-  calculateDuration,
-  convertMinutesToHoursAndMinutes,
-  convertToAMPMFormat,
-  convertToUserTimezone,
-  formatDateToShortString,
-} from 'src/app/util/time';
+import { calculateDuration, convertToUserTimezone } from 'src/app/util/time';
 
 @Component({
   selector: 'app-card-detail',
@@ -32,9 +27,12 @@ export class CardDetailComponent {
 
   legInfo: LegInfo[] = [];
 
+  toastMessages: string[] = [];
+
   constructor(
     private flightServiceAPI: FlightServiceAPI,
-    private router: Router
+    private router: Router,
+    private bookingService: BookingService
   ) {}
 
   ngOnInit() {
@@ -132,13 +130,35 @@ export class CardDetailComponent {
   }
 
   navigateToBooking() {
-    this.router.navigate(['/booking'], {
-      queryParams: {
-        itineraryId: this.itineraryId(),
-      },
-      state: {
-        legInfo: this.legInfo,
-      },
-    });
+    this.bookingService
+      .availabilitySeat(this.itineraryId())
+      .pipe(
+        tap((data: any) => {
+          const noAvailableSeat = data.noAvaiSeat;
+
+          console.log('noAvailableSeat', noAvailableSeat);
+
+          if (noAvailableSeat > 0) {
+            this.router.navigate(['/booking'], {
+              queryParams: {
+                itineraryId: this.itineraryId(),
+              },
+              state: {
+                legInfo: this.legInfo,
+              },
+            });
+          } else {
+            this.showToast('No available seats for this flight.');
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  showToast(message: string) {
+    this.toastMessages.push(message);
+    setTimeout(() => {
+      this.toastMessages.pop();
+    }, 3000);
   }
 }

@@ -1,4 +1,8 @@
-<form class="register-form" autocomplete="off" [formGroup]="registerForm">
+<form
+  class="register-form min-w-80"
+  autocomplete="off"
+  [formGroup]="registerForm"
+>
   <!-- User name -->
   <div class="row-control">
     <label class="form-control w-full max-w-xs">
@@ -89,9 +93,10 @@
     </label>
   </div>
   <pre>{{ registerForm.value | json }}</pre>
-  <div class="row-control row-actions">
+
+  <div class="row-control row-actions mt-2">
     <button
-      class="btn btn-primary"
+      class="btn btn-primary w-full"
       type="submit"
       [disabled]="registerForm.invalid"
       (click)="submitForm()"
