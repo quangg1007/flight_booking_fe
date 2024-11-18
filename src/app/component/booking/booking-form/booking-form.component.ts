@@ -78,7 +78,6 @@ export class BookingFormComponent {
     this.getItineraryID();
     this.checkAuthAndInitForm();
     this.createBookingPending();
-    this.startBookingTimer();
 
     this.formSubmit$
       .pipe(
@@ -94,19 +93,20 @@ export class BookingFormComponent {
     this.destroy$.next();
     this.destroy$.complete();
     this.timerService.stopTimer();
+    localStorage.removeItem('bookingTimer');
     window.onbeforeunload = null;
     this.bookingService.removeBookingPending(this.booking_id());
   }
 
-  // @HostListener('window:beforeunload', ['$event'])
-  // handleBeforeUnload(event: BeforeUnloadEvent) {
-  //   console.log('handleBeforeUnload', event);
+  @HostListener('window:beforeunload', ['$event'])
+  handleBeforeUnload(event: BeforeUnloadEvent) {
+    console.log('handleBeforeUnload', event);
 
-  //   event.preventDefault();
-  //   this.bookingService.removeBookingPending(this.booking_id()).subscribe();
+    event.preventDefault();
+    this.bookingService.removeBookingPending(this.booking_id()).subscribe();
 
-  //   return false;
-  // }
+    return false;
+  }
 
   createBookingPending() {
     const booking_data = {
@@ -121,6 +121,7 @@ export class BookingFormComponent {
           tap((booking) => {
             console.log('createBookingPending', booking.booking_id);
             this.booking_id.set(booking.booking_id);
+            this.startBookingTimer();
           })
         )
         .subscribe();
