@@ -1,0 +1,423 @@
+<div
+  class="w-full h-screen relative flex flex-col items-center justify-center bg-slate-200"
+>
+  <img
+    ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/f7b6b2931a5ba543da034a16e2dcc32321625dcb98cef54c0d19c43197e5314e?apiKey=6b158420ea1148c682b1835c67783cca&"
+    priority
+    alt=""
+    fill
+  />
+
+  <form
+    class="flex relative flex-row gap-10 justify-center m-auto"
+    autocomplete="off"
+    [formGroup]="flightSearchForm"
+    (ngSubmit)="submitForm()"
+  >
+    <section
+      class="flex flex-col self-stretch my-auto text-black whitespace-nowrap w-[252px]"
+    >
+      <div class="row-control">
+        <div class="label flex gap-2 justify-start">
+          <span class="label-text">Depature</span>
+        </div>
+
+        <label class="input input-bordered flex items-center gap-2">
+          <span class="material-symbols-outlined"> flight_takeoff </span>
+          <input
+            type="text"
+            placeholder="Ha Noi"
+            class="grow"
+            id="from_departure"
+            formControlName="from_departure"
+            name="from_departure"
+            required
+          />
+        </label>
+
+        <ng-container
+          *ngTemplateOutlet="
+            autocompleteTemplate;
+            context: { results: fromResults, field: 'from_departure' }
+          "
+        ></ng-container>
+
+        <div class="label">
+          <span
+            class="error-message label-text-alt text-red-600"
+            *ngIf="
+              flightSearchForm.get('from_departure')?.invalid &&
+              (flightSearchForm.get('from_departure')?.dirty ||
+                flightSearchForm.get('from_departure')?.touched)
+            "
+          >
+            {{ getErrorMessage('from_departure') }}
+          </span>
+        </div>
+      </div>
+
+      <figure
+        class="flex flex-col p-2 mt-7 text-lg bg-white rounded-xl h-[171px] w-[171px]"
+      >
+        <img
+          ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/d4438f2f2f0d4e1b80b2a07ec4bc458cd606a527405112f27a29a1b4bc9eda8e?apiKey=6b158420ea1148c682b1835c67783cca&"
+          alt="Hanoi cityscape"
+          priority
+          width="157"
+          height="120"
+        />
+        <figcaption class="mt-2.5">Hanoi</figcaption>
+      </figure>
+    </section>
+
+    <div
+      class="flex relative gap-2.5 justify-center items-start self-stretch px-12 py-20 my-auto min-h-[591px] min-w-[240px] max-md:px-5 max-md:max-w-full"
+    >
+      <img
+        ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/3dd1ba8dd670d19287ef667409c5adca6a3fd1f7e65741a52893e3082a10a766?apiKey=6b158420ea1148c682b1835c67783cca&"
+        alt=""
+        priority
+        width="478"
+        height="591"
+        class="absolute top-2/4 left-2/4 z-0 self-start -translate-x-2/4 -translate-y-2/4 min-w-[240px] max-md:max-w-full"
+      />
+      <div class="flex z-0 flex-col my-auto min-w-[240px] w-[400px]">
+        <div class="flex gap-10 items-center self-center">
+          <!-- One way Option -->
+          <ng-container
+            *ngTemplateOutlet="
+              TripOrCityTemplate;
+              context: {
+                icon: 'flight',
+                label: 'One way',
+                cityOrTrip: 'trip',
+                flightType: 'oneWay'
+              }
+            "
+          >
+          </ng-container>
+
+          <!-- Round trip Option -->
+          <ng-container
+            *ngTemplateOutlet="
+              TripOrCityTemplate;
+              context: {
+                icon: 'connecting_airports',
+                label: 'Round Trip',
+                cityOrTrip: 'trip',
+                flightType: 'roundTrip'
+              }
+            "
+          >
+          </ng-container>
+
+          <!-- Multi city Option -->
+          <ng-container
+            *ngTemplateOutlet="
+              TripOrCityTemplate;
+              context: {
+                icon: 'language',
+                label: 'Multi City',
+                cityOrTrip: 'city'
+              }
+            "
+          >
+          </ng-container>
+        </div>
+
+        <!-- Date -->
+        <div
+          *ngIf="
+            selectedFlightType == 'oneWay';
+            then oneWayCalendar;
+            else roundTripCalendar
+          "
+        ></div>
+
+        <!-- Class and Traveller -->
+        <div
+          class="flex items-center justify-around px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
+        >
+          <div class="flex flex-col my-auto w-5/12">
+            <label
+              for="classSelect"
+              class="text-base text-black text-opacity-60"
+              >Class</label
+            >
+            <select
+              id="classSelect"
+              class="select select-bordered w-full"
+              formControlName="class_type"
+              name="class_type"
+            >
+              <option *ngFor="let class of selectedClassType" [value]="class">
+                {{ class }}
+              </option>
+            </select>
+          </div>
+
+          <div class="divider divider-horizontal w-1/6"></div>
+
+          <div class="flex flex-col my-auto w-5/12">
+            <label
+              for="travellerSelect"
+              class="text-base text-black text-opacity-60"
+              >Traveller</label
+            >
+            <select
+              id="travellerSelect"
+              class="select select-bordered w-full"
+              formControlName="traveller_type"
+              name="traveller_type"
+            >
+              <option
+                *ngFor="let traveler of selectedTravellerType"
+                [value]="traveler"
+              >
+                {{ traveler }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!--  Search Button -->
+        <button
+          class="flex gap-2.5 items-center self-center p-5 mt-3.5 bg-slate-400 h-[60px] min-h-[60px] rounded-[30px] w-[60px]"
+          aria-label="Search flights"
+          type="submit"
+          [disabled]="flightSearchForm.invalid"
+        >
+          <span class="material-symbols-outlined text-white"> search </span>
+        </button>
+      </div>
+    </div>
+
+    <section
+      class="flex flex-col self-stretch my-auto text-black whitespace-nowrap w-[252px]"
+    >
+      <div class="row-control">
+        <div class="label flex gap-2 justify-start">
+          <span class="label-text">Arrival</span>
+        </div>
+        <label class="input input-bordered flex items-center gap-2">
+          <span class="material-symbols-outlined"> flight_land </span>
+          <input
+            type="text"
+            placeholder="New york city"
+            class="grow"
+            id="to_destination"
+            formControlName="to_destination"
+            name="to_destination"
+            required
+          />
+        </label>
+        <ng-container
+          *ngTemplateOutlet="
+            autocompleteTemplate;
+            context: { results: toResults, field: 'to_destination' }
+          "
+        ></ng-container>
+
+        <div class="label">
+          <span
+            class="error-message label-text-alt text-red-600"
+            *ngIf="
+              flightSearchForm.get('to_destination')?.invalid &&
+              (flightSearchForm.get('to_destination')?.dirty ||
+                flightSearchForm.get('to_destination')?.touched)
+            "
+          >
+            {{ getErrorMessage('to_destination') }}
+          </span>
+        </div>
+      </div>
+
+      <figure
+        class="flex flex-col p-2 mt-7 text-lg bg-white rounded-xl h-[171px] w-[171px]"
+      >
+        <img
+          ngSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/6655cded37a0d184135bb1e86f283624fb3cd1f0647a52aa9b399fbe088591a1?apiKey=6b158420ea1148c682b1835c67783cca&"
+          priority
+          width="157"
+          height="120"
+          alt="Singapore cityscape"
+          class="rounded-xl"
+        />
+        <figcaption class="mt-2.5">Singapore</figcaption>
+      </figure>
+    </section>
+  </form>
+</div>
+
+<ng-template #autocompleteTemplate let-results="results" let-field="field">
+  <div
+    *ngIf="results && results.length > 0"
+    class="absolute z-10 w-[252px] bg-white shadow-lg rounded-md"
+  >
+    <ul class="py-1">
+      <li
+        *ngFor="let result of results"
+        class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        (click)="selectResult(field, result)"
+      >
+        {{ result.presentation.title }}
+      </li>
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #oneWayCalendar>
+  <div
+    [formGroup]="flightSearchForm"
+    class="flex items-center justify-center px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
+  >
+    <label class="form-control w-full max-w-xs">
+      <div class="label flex gap-2 justify-start">
+        <span class="label-text">Departure Date</span>
+      </div>
+      <input
+        type="date"
+        placeholder="Today"
+        class="input input-bordered w-full max-w-xs"
+        id="date"
+        formControlName="depart_date"
+        name="date"
+        required
+      />
+      <div class="label">
+        <span
+          class="error-message label-text-alt text-red-600"
+          *ngIf="
+            flightSearchForm.get('date')?.invalid &&
+            (flightSearchForm.get('date')?.dirty ||
+              flightSearchForm.get('date')?.touched)
+          "
+        >
+          {{ getErrorMessage('date') }}
+        </span>
+      </div>
+    </label>
+  </div>
+</ng-template>
+
+<ng-template #roundTripCalendar>
+  <div
+    [formGroup]="flightSearchForm"
+    class="flex items-center justify-between px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
+  >
+    <div class="flex flex-col my-auto w-5/12">
+      <label class="form-control w-full max-w-xs">
+        <div class="label flex gap-2 justify-start">
+          <span class="label-text">Departure Date</span>
+        </div>
+        <input
+          type="date"
+          placeholder="Today"
+          class="input input-bordered w-full max-w-xs"
+          id="depart_date"
+          formControlName="depart_date"
+          name="depart_date"
+          required
+        />
+        <div class="label">
+          <span
+            class="error-message label-text-alt text-red-600"
+            *ngIf="
+              flightSearchForm.get('depart_date')?.invalid &&
+              (flightSearchForm.get('depart_date')?.dirty ||
+                flightSearchForm.get('depart_date')?.touched)
+            "
+          >
+            {{ getErrorMessage('depart_date') }}
+          </span>
+        </div>
+      </label>
+    </div>
+
+    <div class="divider divider-horizontal w-1/6"></div>
+
+    <div class="flex flex-col my-auto w-5/12">
+      <label class="form-control w-full max-w-xs">
+        <div class="label flex gap-2 justify-start">
+          <span class="label-text">Return Date</span>
+        </div>
+        <input
+          type="date"
+          placeholder="Today"
+          class="input input-bordered w-full max-w-xs"
+          id="return_date"
+          formControlName="return_date"
+          name="return_date"
+          required
+        />
+        <div class="label">
+          <span
+            class="error-message label-text-alt text-red-600"
+            *ngIf="
+              flightSearchForm.get('return_date')?.invalid &&
+              (flightSearchForm.get('return_date')?.dirty ||
+                flightSearchForm.get('return_date')?.touched)
+            "
+          >
+            {{ getErrorMessage('return_date') }}
+          </span>
+        </div>
+      </label>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template
+  #TripOrCityTemplate
+  let-icon="icon"
+  let-label="label"
+  let-cityOrTrip="cityOrTrip"
+  let-flightType="flightType"
+>
+  <button
+    type="button"
+    class="flex gap-2 items-center self-stretch px-1.5 pt-1.5 pb-1.5 my-auto bg-white min-h-[142px] rounded-[100px] w-[78px]"
+    [ngClass]="
+      cityOrTrip === 'trip'
+        ? selectedFlightType === flightType
+          ? 'flex-col'
+          : 'flex-col-reverse'
+        : selectedMultiCity
+        ? 'flex-col'
+        : 'flex-col-reverse'
+    "
+    (click)="
+      cityOrTrip === 'trip' ? selectFlightType(flightType) : toggleMultiCity()
+    "
+  >
+    <div
+      class="flex gap-2.5 items-center justify-center border border-solid border-stone-300 h-[66px] min-h-[66px] rounded-[33px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[66px] max-md:pl-5"
+      [ngClass]="
+        cityOrTrip === 'trip'
+          ? selectedFlightType === flightType
+            ? 'bg-[#97C1CE]'
+            : 'bg-white'
+          : selectedMultiCity
+          ? 'bg-[#97C1CE]'
+          : 'bg-white'
+      "
+      aria-label="Select multi-city flight"
+    >
+      <span
+        class="material-symbols-outlined"
+        [ngClass]="
+          cityOrTrip === 'trip'
+            ? selectedFlightType === flightType
+              ? 'text-white'
+              : ''
+            : selectedMultiCity
+            ? 'text-white'
+            : ''
+        "
+      >
+        {{ icon }}
+      </span>
+    </div>
+    <div class="mt-1.5 text-xl text-center text-black">{{ label }}</div>
+  </button>
+</ng-template>
