@@ -24,6 +24,8 @@ module.exports = [
           style: 'kebab-case',
         },
       ],
+       "@typescript-eslint/no-empty-lifecycle-method": "off",
+       "@typescript-eslint/no-empty-function": "off"
     },
   },
   {
