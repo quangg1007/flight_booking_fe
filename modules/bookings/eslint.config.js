@@ -12,7 +12,7 @@ module.exports = [
         'error',
         {
           type: 'attribute',
-          prefix: 'app',
+          prefix: 'lib',
           style: 'camelCase',
         },
       ],
@@ -20,13 +20,10 @@ module.exports = [
         'error',
         {
           type: 'element',
-          prefix: 'app',
+          prefix: 'lib',
           style: 'kebab-case',
         },
       ],
-      "no-empty-function": "off",
-      "@typescript-eslint/no-empty-function": "off",
-      "@angular-eslint/no-empty-lifecycle-method": "off"
     },
   },
   {

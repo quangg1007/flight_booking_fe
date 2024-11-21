@@ -19,7 +19,11 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
-    "paths": {},
+    "paths": {
+      "booking": ["modules/src/index.ts"],
+      "@flight_booking_fe/modules/bookings": ["modules/bookings/src/index.ts"],
+      "@flight_booking_fe/modules/flights": ["modules/flights/src/index.ts"]
+    },
     "rootDir": "."
   },
   "angularCompilerOptions": {
@@ -28,5 +32,6 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules", "tmp"]
 }
