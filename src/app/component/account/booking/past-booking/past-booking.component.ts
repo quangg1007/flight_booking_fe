@@ -1,8 +1,4 @@
-import {
-  CommonModule,
-  NgComponentOutlet,
-  NgOptimizedImage,
-} from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { ShortDatePipe } from '../../../../pipe/short-date.pipe';
 import { TimeFormatPipe } from '../../../../pipe/time-format.pipe';
@@ -13,11 +9,10 @@ import { LegDetailComponent } from '../leg-detail/leg-detail.component';
   standalone: true,
   imports: [
     CommonModule,
-    NgComponentOutlet,
     ShortDatePipe,
     TimeFormatPipe,
     NgOptimizedImage,
-    LegDetailComponent
+    LegDetailComponent,
   ],
   templateUrl: './past-booking.component.html',
   styleUrl: './past-booking.component.css',

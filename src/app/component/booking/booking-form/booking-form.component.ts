@@ -145,23 +145,15 @@ export class BookingFormComponent {
   // Method to add new passenger
   addPassenger() {
     this.bookingService
-      .availabilitySeat(this.itinerary_id())
-      .pipe(
-        tap((noAvailableSeat) => {
-          console.log('noAvailableSeat', noAvailableSeat.noAvaiSeat);
-          if (noAvailableSeat.noAvaiSeat > 0) {
-            this.bookingService
-              .updateNewPassenger(this.booking_id())
-              .subscribe(() => {
-                this.currentStep.push(1);
-                this.passengersFormArray.push(this.createPassengerForm());
-              });
-          } else {
-            this.showToast('No available seat');
-          }
-        })
-      )
-      .subscribe();
+      .updateNewPassenger(this.booking_id())
+      .subscribe((res) => {
+        if (res.status) {
+          this.currentStep.push(1);
+          this.passengersFormArray.push(this.createPassengerForm());
+        } else {
+          this.showToast('No available seat');
+        }
+      });
   }
 
   showToast(message: string) {

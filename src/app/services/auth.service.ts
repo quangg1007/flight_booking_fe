@@ -16,7 +16,6 @@ export class AuthService {
   ) {}
 
   sendEmailResetPassword(userEmail: string): Observable<any> {
-    console.log('sendEmailResetPassword', userEmail);
     return this.http.post<any>(`${this.apiUrl}/auth/request-password-reset`, {
       email: userEmail,
     });

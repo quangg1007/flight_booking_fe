@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class TimerService {
-  private timeoutSubject = new BehaviorSubject<number>(100);
+  private timeoutSubject = new BehaviorSubject<number>(300);
   public timeout$ = this.timeoutSubject.asObservable();
   private timer: any;
 

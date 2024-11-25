@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       .pipe(
         map((res: LoginResponse) => {
           console.log(res);
-          if (res.accessToken && res.isAdmin && res.timezone) {
+          if (res.accessToken && res.role && res.timezone) {
             // Save the user data to local storage
             this.tokenService.setAccessToken(res.accessToken);
             this.timezoneService.setTimezone(res.timezone);

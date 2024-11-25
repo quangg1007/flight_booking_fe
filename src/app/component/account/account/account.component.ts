@@ -36,7 +36,7 @@ export class AccountComponent {
           this.accountPageService.setSharedData({
             user_id: data.user_id,
             email: data.email,
-            isAdmin: data.isAdmin,
+            role: data.role,
           });
         })
       )

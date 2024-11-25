@@ -29,7 +29,7 @@ export class RoleGuard {
             console.log(data);
             const expectedRole = route.data['expectedRole'];
 
-            if (!isAuth || data.isAdmin !== expectedRole) {
+            if (!isAuth || data.role !== expectedRole) {
               this.router.navigate(['/login']);
               return false;
             }

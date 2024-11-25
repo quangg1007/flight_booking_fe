@@ -45,7 +45,8 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       const token = params['token'];
       this.email$ = params['email'];
-      if (token) {
+
+      if (token && this.email$) {
         this.authService.validateToken(token).subscribe(
           (response) => {
             console.log(response);
@@ -57,6 +58,8 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
             this.router.navigate(['/**']);
           }
         );
+      } else {
+        this.router.navigate(['/**']);
       }
     });
   }

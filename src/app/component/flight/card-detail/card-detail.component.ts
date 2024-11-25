@@ -134,11 +134,10 @@ export class CardDetailComponent {
       .availabilitySeat(this.itineraryId())
       .pipe(
         tap((data: any) => {
-          const noAvailableSeat = data.noAvaiSeat;
+          const isAvailableSeat = data.isAvailableSeat;
+          console.log('noAvailableSeat', data.isAvailableSeat);
 
-          console.log('noAvailableSeat', noAvailableSeat);
-
-          if (noAvailableSeat > 0) {
+          if (isAvailableSeat) {
             this.router.navigate(['/booking'], {
               queryParams: {
                 itineraryId: this.itineraryId(),

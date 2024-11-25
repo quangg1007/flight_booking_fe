@@ -33,7 +33,7 @@ export interface UserModel {
   country?: string | null;
   postal_code?: string | null;
   profile_picture?: string | null;
-  isAdmin?: 'admin' | 'user';
+  role?: 'admin' | 'user';
   booking?: BookingModel[];
   passengers?: PassengerModel[];
   date_of_birth?: Date;

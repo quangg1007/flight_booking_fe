@@ -17,6 +17,9 @@ export class EmailResetPasswordComponent implements OnInit {
   emailResetPasswordForm!: FormGroup;
   destroy$ = new Subject<void>();
 
+  successMessages: string[] = [];
+  errorMessages: string[] = [];
+
   constructor(
     private _fb: FormBuilder,
     private router: Router,
@@ -58,12 +61,27 @@ export class EmailResetPasswordComponent implements OnInit {
         if (response.status === 200) {
           console.log('Success:', response.message);
           // Show the success notification.
-          alert('Email sent successfully');
+          this.showSuccessToast('Email sent successfully');
         }
       },
       (error) => {
         console.error('Error:', error);
+        this.showErrorToast('Failed to send email. Please try again.');
       }
     );
+  }
+
+  showSuccessToast(message: string) {
+    this.successMessages.push(message);
+    setTimeout(() => {
+      this.successMessages.pop();
+    }, 3000);
+  }
+
+  showErrorToast(message: string) {
+    this.errorMessages.push(message);
+    setTimeout(() => {
+      this.errorMessages.pop();
+    }, 3000);
   }
 }
