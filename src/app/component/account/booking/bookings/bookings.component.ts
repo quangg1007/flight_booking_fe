@@ -44,32 +44,32 @@ export class BookingsComponent {
   }
 
   setUpUpcomingPastBookings() {
-    this.bookingService.getBookingByUserId(13).subscribe((bookingData) => {
-      console.log(bookingData);
-      const now = new Date();
+    this.bookingService
+      .getBookingByUserId(this.user_id)
+      .subscribe((bookingData) => {
+        console.log(bookingData);
+        const now = new Date();
 
-      const filteredBookings = bookingData.reduce(
-        (acc: any, booking: any) => {
-          const legs = booking.itinerary.legs;
-          const lastLeg = legs[legs.length - 1];
-          const lastArrivalTime = new Date(lastLeg.arrival_time);
+        const filteredBookings = bookingData.reduce(
+          (acc: any, booking: any) => {
+            const legs = booking.itinerary.legs;
+            const lastLeg = legs[legs.length - 1];
+            const lastArrivalTime = new Date(lastLeg.arrival_time);
 
-          if (lastArrivalTime > now) {
-            acc.upcoming.push(booking);
-          } else {
-            acc.past.push(booking);
-          }
+            if (lastArrivalTime > now) {
+              acc.upcoming.push(booking);
+            } else {
+              acc.past.push(booking);
+            }
 
-          return acc;
-        },
-        { upcoming: [], past: [] }
-      );
+            return acc;
+          },
+          { upcoming: [], past: [] }
+        );
 
-      console.log(JSON.stringify(filteredBookings.past[0]));
-
-      this.upcomingBookings.set(filteredBookings.upcoming);
-      this.pastBookings.set(filteredBookings.past);
-    });
+        this.upcomingBookings.set(filteredBookings.upcoming);
+        this.pastBookings.set(filteredBookings.past);
+      });
   }
 
   downloadTicket() {
@@ -80,7 +80,7 @@ export class BookingsComponent {
   deleteBooking(bookingId: string) {
     console.log('bookingId', bookingId);
     this.bookingService
-      .removeBookingByUserIdAndBookingId(13, bookingId)
+      .removeBookingByUserIdAndBookingId(this.user_id, bookingId)
       .subscribe((res) => {
         if (res.status == 200) {
           this.bookings.set(

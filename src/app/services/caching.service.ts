@@ -2,21 +2,27 @@ import { HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CacheEntry } from '../models/caching.model';
 
-const TTL = 300000;
-
 @Injectable({
   providedIn: 'root',
 })
 export class CachingService {
-  private readonly keyword = [
-    'auto-complete',
-    'one-way',
-    'detail',
-    'flightsItinerary',
-  ];
+  private readonly keywordTTL = new Map<string, number>([
+    ['auto-complete', 60 * 60 * 1000], //1 hour
+    ['search/one-way', 5 * 60 * 1000], //5 minutes
+    ['search/round-trip', 5 * 60 * 1000], //5 minutes
+    ['detail', 5 * 60 * 1000], //5 minutes
+    ['flightsItinerary', 5 * 60 * 1000], //5 minutes
+  ]);
   constructor() {}
 
   readonly #cache = new Map<string, CacheEntry>();
+
+  private getRandomizedTTL(baseTTL: number): number {
+    // Add/subtract up to 10% of the base TTL
+    const variance = baseTTL * 0.1;
+    const randomOffset = Math.random() * variance * 2 - variance;
+    return baseTTL + randomOffset;
+  }
 
   get(key: string): HttpEvent<unknown> | undefined {
     const cached = this.#cache.get(key);
@@ -37,13 +43,15 @@ export class CachingService {
 
   set(key: string, data: HttpEvent<unknown>): void {
     // Add TTL for some chaning data
-    for (const keyword of this.keyword) {
+    for (const [keyword, ttl] of this.keywordTTL) {
       if (key.includes(keyword)) {
+        const randomizedTTL = this.getRandomizedTTL(ttl);
         this.#cache.set(key, {
           data,
           // 👇 Set its lifespan
-          expiresOn: new Date().getTime() + TTL,
+          expiresOn: new Date().getTime() + randomizedTTL,
         });
+        return;
       }
     }
   }
