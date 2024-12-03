@@ -1,11 +1,13 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { forkJoin, from, map, mergeMap, switchMap, tap, toArray } from 'rxjs';
 import {
   Airlines,
   FilterStats,
   Location,
   PriceRange,
 } from 'src/app/models/cardFilter.model';
+import { OneWaySearchParams } from 'src/app/models/flightService.model';
 import { FlightSearchService } from 'src/app/services/flight-search.service';
 import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { convertToUserTimezone } from 'src/app/util/time';
@@ -38,6 +40,53 @@ export class FlightComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    const params: OneWaySearchParams = {
+      departureEntityId: 'HAN',
+      arrivalEntityId: 'ICN',
+      departDate: '2024-10-30',
+      classType: 'Economy',
+      travellerType: 'Adult',
+    };
+
+    this._flightServiceAPI
+      .searchOneWay(params)
+      .pipe(
+        map((results) => {
+          this.allFlights = this.convertToUserTimeZone(
+            results.data.itineraries
+          );
+
+          this.filteredFlights = this.allFlights;
+
+          this.setFilterStats(results);
+
+          this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
+
+          this.isLoading = false;
+
+          return this.allFlights;
+        }),
+        map((allFlights) => {
+          const first2Flights = Array.isArray(allFlights)
+            ? allFlights.slice(0, 2)
+            : [];
+          console.log('first2Flights 1: ', first2Flights);
+          return first2Flights;
+        }),
+        // Switch to switchMap to handle the inner observables
+        mergeMap((first2Flights) => {
+          console.log('first2Flights 2: ', first2Flights);
+          // Use forkJoin to combine multiple API calls
+          return forkJoin(
+            first2Flights.map((flight: any) => {
+              console.log('flight: ', flight);
+              return this._flightServiceAPI.searchDetail(flight.id);
+            })
+          );
+        })
+      )
+      .subscribe();
+
     this.initData();
   }
 
@@ -129,6 +178,35 @@ export class FlightComponent implements OnInit {
     classType: string,
     travellerType: string
   ) {
+    // this._flightServiceAPI
+    //   .searchOneWay({
+    //     departureEntityId,
+    //     arrivalEntityId,
+    //     departDate,
+    //     classType,
+    //     travellerType,
+    //   })
+    //   .subscribe(
+    //     (results) => {
+    //       this.allFlights = this.convertToUserTimeZone(
+    //         results.data.itineraries
+    //       );
+
+    //       this.filteredFlights = this.allFlights;
+
+    //       this.setFilterStats(results);
+
+    //       this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
+
+    //       this.isLoading = false;
+    //     },
+    //     (error) => {
+    //       console.error('Error fetching flight results:', error);
+    //       this.isLoading = false;
+    //       // Handle error (e.g., show error message)
+    //     }
+    //   );
+
     this._flightServiceAPI
       .searchOneWay({
         departureEntityId,
@@ -137,8 +215,8 @@ export class FlightComponent implements OnInit {
         classType,
         travellerType,
       })
-      .subscribe(
-        (results) => {
+      .pipe(
+        map((results) => {
           this.allFlights = this.convertToUserTimeZone(
             results.data.itineraries
           );
@@ -150,13 +228,29 @@ export class FlightComponent implements OnInit {
           this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
 
           this.isLoading = false;
-        },
-        (error) => {
-          console.error('Error fetching flight results:', error);
-          this.isLoading = false;
-          // Handle error (e.g., show error message)
-        }
-      );
+
+          return this.allFlights;
+        }),
+        map((allFlights) => {
+          const first4Flights = Array.isArray(allFlights)
+            ? allFlights.slice(0, 4)
+            : [];
+          console.log('first4Flights 1: ', first4Flights);
+          return first4Flights;
+        }),
+        // Switch to switchMap to handle the inner observables
+        mergeMap((first4Flights) => {
+          console.log('first4Flights 2: ', first4Flights);
+          // Use forkJoin to combine multiple API calls
+          return forkJoin(
+            first4Flights.map((flight: any) => {
+              console.log('flight: ', flight);
+              return this._flightServiceAPI.searchDetail(flight.id);
+            })
+          );
+        })
+      )
+      .subscribe();
   }
 
   convertToUserTimeZone(flights: any[]) {
@@ -278,6 +372,14 @@ export class FlightComponent implements OnInit {
 
     if (nextFlights.length > 0) {
       this.currentPage = nextPage;
+
+      // Call flight details API for new batch
+      forkJoin(
+        nextFlights.map((flight) =>
+          this._flightServiceAPI.searchDetail(flight.id)
+        )
+      ).subscribe();
+
       this.flightListResult.update((current) => [...current, ...nextFlights]);
     }
   }

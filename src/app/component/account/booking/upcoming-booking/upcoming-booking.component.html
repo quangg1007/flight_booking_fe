@@ -115,6 +115,40 @@
     </tbody>
   </table>
 
+  <!-- Add this after your bookings table -->
+  <div class="flex justify-center mt-4">
+    <div class="join">
+      <button
+        class="join-item btn btn-sm"
+        [disabled]="currentPageUpcomingBooking() === 1"
+        (click)="changePage(currentPageUpcomingBooking() - 1)"
+      >
+        «
+      </button>
+
+      <ng-container *ngFor="let page of getPagesArray(); let i = index">
+        <button
+          class="join-item btn btn-sm"
+          [class.btn-active]="currentPageUpcomingBooking() === i + 1"
+          (click)="changePage(i + 1)"
+        >
+          {{ i + 1 }}
+        </button>
+      </ng-container>
+
+      <button
+        class="join-item btn btn-sm"
+        [disabled]="
+          currentPageUpcomingBooking() === totalBookings() ||
+          totalBookings() === 0
+        "
+        (click)="changePage(currentPageUpcomingBooking() + 1)"
+      >
+        »
+      </button>
+    </div>
+  </div>
+
   <ng-container *ngTemplateOutlet="drawerSide"> </ng-container>
 </div>
 

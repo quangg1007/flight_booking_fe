@@ -6,6 +6,7 @@ import {
   ElementRef,
   input,
   output,
+  signal,
   viewChildren,
 } from '@angular/core';
 import { DurationFormatPipe } from '../../../../pipe/duration-format.pipe';
@@ -19,7 +20,6 @@ import { LegDetailComponent } from '../leg-detail/leg-detail.component';
   standalone: true,
   imports: [
     CommonModule,
-    DurationFormatPipe,
     TimeFormatPipe,
     NgOptimizedImage,
     ShortDatePipe,
@@ -30,11 +30,20 @@ import { LegDetailComponent } from '../leg-detail/leg-detail.component';
   styleUrl: './upcoming-booking.component.css',
 })
 export class UpcomingBookingComponent {
+  isLoading = input.required<boolean>();
+
   cancelButtons = viewChildren<ElementRef<HTMLButtonElement>>('cancelBtn');
   bookings = input.required<any[]>();
   selectedBookingId: string | null = null;
   selectedBooking: any;
   selectedFormatedDepDes: any;
+
+  totalBookings = input.required<number>();
+  currentPageChange = output<number>();
+
+  pageSize = input.required<number>();
+  currentPage = input.required<number>();
+  currentPageUpcomingBooking = signal<number>(1);
 
   bookingsChanged = output<string>();
   BookingDetailChange = output<any>();
@@ -65,6 +74,8 @@ export class UpcomingBookingComponent {
 
   constructor() {
     effect(() => {
+      console.log('total Booking:', this.totalBookings());
+
       const buttons = this.cancelButtons();
       buttons.forEach((button, index) => {
         // Work with each button element
@@ -94,7 +105,7 @@ export class UpcomingBookingComponent {
     this.expandedIndex = this.expandedIndex === index ? -1 : index;
   }
 
-  setSelectedBooking(booking: any, booking_id: string|null,index: number) {
+  setSelectedBooking(booking: any, booking_id: string | null, index: number) {
     this.selectedBooking = booking;
     this.selectedBookingId = booking_id;
     this.selectedFormatedDepDes = this.formatedDepDes()[index];
@@ -107,5 +118,19 @@ export class UpcomingBookingComponent {
       },
       booking_id: this.selectedBookingId,
     });
+  }
+
+  changePage(page: number) {
+    this.currentPageUpcomingBooking.update(() => page);
+    this.currentPageChange.emit(page);
+  }
+
+  getPagesArray(): number[] {
+    if (this.totalBookings() === 0) {
+      return [0];
+    }
+    return Array(this.totalBookings())
+      .fill(0)
+      .map((_, i) => i);
   }
 }

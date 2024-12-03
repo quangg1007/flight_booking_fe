@@ -10,11 +10,21 @@ import { BookingService } from 'src/app/services/booking.service';
   styleUrls: ['./bookings.component.css'],
 })
 export class BookingsComponent {
+  isLoading = signal<boolean>(true);
+
   modifyButtonArray = viewChildren<ElementRef>('.booking-detail-drawer');
 
   bookings = signal<any[]>([]); // Array to store bookings
   upcomingBookings = signal<any[]>([]);
   pastBookings = signal<any[]>([]);
+
+  pageSize = signal<number>(4);
+
+  currentPageUpcoming = signal<number>(1);
+  totalPageUpcomming = signal<number>(1);
+
+  currentPagePast = signal<number>(1);
+  totalPagePast = signal<number>(1);
 
   user_id: number = 0;
 
@@ -37,38 +47,33 @@ export class BookingsComponent {
           this.user_id = data.user_id;
         }),
         tap(() => {
-          this.setUpUpcomingPastBookings();
+          this.setupUpcomingPastBooking();
         })
       )
       .subscribe();
   }
 
-  setUpUpcomingPastBookings() {
+  setupUpcomingPastBooking() {
     this.bookingService
-      .getBookingByUserId(this.user_id)
+      .getUpcomingBookings(
+        this.user_id,
+        this.currentPageUpcoming(),
+        this.pageSize()
+      )
       .subscribe((bookingData) => {
-        console.log(bookingData);
-        const now = new Date();
-
-        const filteredBookings = bookingData.reduce(
-          (acc: any, booking: any) => {
-            const legs = booking.itinerary.legs;
-            const lastLeg = legs[legs.length - 1];
-            const lastArrivalTime = new Date(lastLeg.arrival_time);
-
-            if (lastArrivalTime > now) {
-              acc.upcoming.push(booking);
-            } else {
-              acc.past.push(booking);
-            }
-
-            return acc;
-          },
-          { upcoming: [], past: [] }
+        console.log('bookingData', bookingData);
+        this.upcomingBookings.set(bookingData.bookings);
+        this.totalPageUpcomming.set(
+          Math.ceil(bookingData.total / this.pageSize())
         );
-
-        this.upcomingBookings.set(filteredBookings.upcoming);
-        this.pastBookings.set(filteredBookings.past);
+        this.isLoading.set(false);
+      });
+    this.bookingService
+      .getPastBookings(this.user_id, this.currentPagePast(), this.pageSize())
+      .subscribe((bookingData) => {
+        this.pastBookings.set(bookingData.bookings);
+        this.totalPagePast.set(Math.ceil(bookingData.total / this.pageSize()));
+        this.isLoading.set(false);
       });
   }
 
@@ -99,6 +104,32 @@ export class BookingsComponent {
       .updateBokingById(bookingData.booking_id, bookingData.booking_data)
       .subscribe((booking) => {
         console.log('booking', booking);
+      });
+  }
+
+  changePastBookingPage(page: number) {
+    this.currentPagePast.update(() => page);
+    console.log('upcoming page', page);
+    this.bookingService
+      .getPastBookings(this.user_id, this.currentPagePast(), this.pageSize())
+      .subscribe((bookingData) => {
+        console.log('bookingData', bookingData);
+        this.pastBookings.set(bookingData.bookings);
+      });
+  }
+
+  changeUpcomingBookingPage(page: number) {
+    this.currentPageUpcoming.set(page);
+    console.log('past page', page);
+    this.bookingService
+      .getUpcomingBookings(
+        this.user_id,
+        this.currentPageUpcoming(),
+        this.pageSize()
+      )
+      .subscribe((bookingData) => {
+        console.log('bookingData', bookingData);
+        this.upcomingBookings.set(bookingData.bookings);
       });
   }
 }

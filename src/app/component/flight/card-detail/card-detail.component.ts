@@ -43,41 +43,32 @@ export class CardDetailComponent {
     this.isLoading = true;
 
     console.log(this.itineraryId());
-    this.flightServiceAPI
-      .searchDetail(this.itineraryId())
-      .pipe(
-        tap(
-          (res) => {
-            if (res.status) {
-              this.legInfo = res.data.itinerary.legs.map((leg: any) => {
-                const fullDurationSegment = leg.duration;
-                const headerDate = leg.departure;
+    this.flightServiceAPI.searchDetail(this.itineraryId()).subscribe((res) => {
+      console.log("res", res);
+      if (res.status) {
+        this.legInfo = res.data.itinerary.legs.map((leg: any) => {
+          const fullDurationSegment = leg.duration;
+          const headerDate = leg.departure;
 
-                const { flightSegmentInfo, layoverInfo } =
-                  this.createFlightSegment(leg.segments);
+          const { flightSegmentInfo, layoverInfo } = this.createFlightSegment(
+            leg.segments
+          );
 
-                const isDetailSegmentAmenities = new Array(
-                  this.flightSegmentInfo.length
-                ).fill(false);
+          const isDetailSegmentAmenities = new Array(
+            this.flightSegmentInfo.length
+          ).fill(false);
 
-                return {
-                  flightSegmentInfo,
-                  layoverInfo,
-                  fullDurationSegment,
-                  headerDate,
-                  isDetailSegmentAmenities,
-                };
-              });
-            }
-            this.isLoading = false;
-          },
-          (error) => {
-            console.error(error);
-            this.isLoading = false;
-          }
-        )
-      )
-      .subscribe();
+          return {
+            flightSegmentInfo,
+            layoverInfo,
+            fullDurationSegment,
+            headerDate,
+            isDetailSegmentAmenities,
+          };
+        });
+      }
+      this.isLoading = false;
+    });
   }
 
   createFlightSegment(segments: any) {
