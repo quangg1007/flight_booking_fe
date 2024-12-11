@@ -17,6 +17,7 @@ import { calculateDuration, convertToUserTimezone } from 'src/app/util/time';
 })
 export class CardDetailComponent {
   itineraryId = input<string>('');
+  tokenItinerary = input<string>('');
   isLoading: boolean = true;
 
   flightSegmentInfo: FlightSegmentInfo[] = [];
@@ -43,8 +44,8 @@ export class CardDetailComponent {
     this.isLoading = true;
 
     console.log(this.itineraryId());
-    this.flightServiceAPI.searchDetail(this.itineraryId()).subscribe((res) => {
-      console.log("res", res);
+    this.flightServiceAPI.searchDetail(this.itineraryId(), this.tokenItinerary()).subscribe((res) => {
+      console.log('res', res);
       if (res.status) {
         this.legInfo = res.data.itinerary.legs.map((leg: any) => {
           const fullDurationSegment = leg.duration;

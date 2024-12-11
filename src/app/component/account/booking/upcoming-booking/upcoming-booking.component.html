@@ -46,7 +46,7 @@
 
         <td>
           <div>
-            {{ booking?.itinerary?.legs[0]?.departure_time | shortDate }}
+            {{ booking?.itinerary?.legs[0]?.departure_time | weekMonthDay }}
           </div>
           <div class="text-sm opacity-50">
             {{ booking?.itinerary?.legs[0]?.departure_time | timeFormat }}

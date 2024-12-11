@@ -29,6 +29,10 @@ import { TokenInterceptor } from './interceptor/token.interceptor';
 import { InvoiceComponent } from './component/booking/invoice/invoice.component';
 import { BookingFormComponent } from './component/booking/booking-form/booking-form.component';
 import { RegisterPageComponent } from './component/login/register-page/register-page.component';
+import { CalendarComponent } from './component/common/calendar/calendar.component';
+import { CalendarService } from './services/calender.service';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { WeekMonthDayPipe } from './pipe/week-month-day.pipe';
 
 @NgModule({
   declarations: [
@@ -53,10 +57,14 @@ import { RegisterPageComponent } from './component/login/register-page/register-
     LoginComponent,
     RegisterComponent,
     InvoiceComponent,
+    CalendarComponent,
+    ClickOutsideDirective,
+    WeekMonthDayPipe,
   ],
   providers: [
     userService,
     FlightServiceAPI,
+    CalendarService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

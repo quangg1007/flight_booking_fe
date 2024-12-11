@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { DurationFormatPipe } from '../../../../pipe/duration-format.pipe';
 import { TimeFormatPipe } from '../../../../pipe/time-format.pipe';
-import { ShortDatePipe } from '../../../../pipe/short-date.pipe';
+import { WeekMonthDayPipe } from '../../../../pipe/week-month-day.pipe';
 import { BookingDetailComponent } from '../booking-detail/booking-detail.component';
 import { LegDetailComponent } from '../leg-detail/leg-detail.component';
 
@@ -22,7 +22,7 @@ import { LegDetailComponent } from '../leg-detail/leg-detail.component';
     CommonModule,
     TimeFormatPipe,
     NgOptimizedImage,
-    ShortDatePipe,
+    WeekMonthDayPipe,
     BookingDetailComponent,
     LegDetailComponent,
   ],

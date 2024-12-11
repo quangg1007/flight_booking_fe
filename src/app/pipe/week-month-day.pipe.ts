@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'shortDate',
+  name: 'weekMonthDay',
   standalone: true,
 })
-export class ShortDatePipe implements PipeTransform {
+export class WeekMonthDayPipe implements PipeTransform {
   transform(dateTimeString: string): string {
     const date = new Date(dateTimeString);
     return date.toLocaleDateString('en-US', {

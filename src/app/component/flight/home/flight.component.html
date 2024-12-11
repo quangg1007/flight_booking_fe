@@ -25,9 +25,12 @@
         class="skeleton flex flex-row max-w-[800px] min-h-[200px] bg-red-300 z-0 flex-wrap justify-center mb-10 max-md:max-w-full rounded-t-xl"
         *ngFor="let i of [1, 2, 3, 4, 5]"
       ></div>
-      }@else{ @if(flightListResult().length>0){ @for (item of
-      flightListResult(); track $index) {
-      <app-card-list [flightCard]="item"></app-card-list>
+      }@else{ @if(flightListResult().length>0 && flightListResult().length > 0){
+      @for (item of flightListResult(); track $index) {
+      <app-card-list
+        [flightCard]="item"
+        [tokenItinerary]="tokenItinerary()"
+      ></app-card-list>
       } }@else {
       <div class="flex flex-col items-center justify-center p-8 text-center">
         <svg

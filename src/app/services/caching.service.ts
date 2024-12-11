@@ -12,6 +12,7 @@ export class CachingService {
     ['search/round-trip', 5 * 60 * 1000], //5 minutes
     ['detail', 5 * 60 * 1000], //5 minutes
     ['flightsItinerary', 5 * 60 * 1000], //5 minutes
+    ['flights/search/price', 5 * 60 * 1000], //5 minutes
   ]);
   constructor() {}
 

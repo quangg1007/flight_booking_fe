@@ -28,6 +28,7 @@ export class FlightComponent implements OnInit {
   pageSize = 10;
   currentPage = 1;
   allFlights: any[] = [];
+  tokenItinerary = signal<string>('');
   filteredFlights: any[] = [];
 
   scrollDistance = 1;
@@ -40,52 +41,57 @@ export class FlightComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const params: OneWaySearchParams = {
-      departureEntityId: 'HAN',
-      arrivalEntityId: 'ICN',
-      departDate: '2024-10-30',
-      classType: 'Economy',
-      travellerType: 'Adult',
-    };
+    // const params: OneWaySearchParams = {
+    //   departureEntityId: 'HAN',
+    //   arrivalEntityId: 'ICN',
+    //   departDate: '2024-10-30',
+    //   classType: 'Economy',
+    //   travellerType: 'Adult',
+    // };
 
-    this._flightServiceAPI
-      .searchOneWay(params)
-      .pipe(
-        map((results) => {
-          this.allFlights = this.convertToUserTimeZone(
-            results.data.itineraries
-          );
+    // this._flightServiceAPI
+    //   .searchOneWay(params)
+    //   .pipe(
+    //     map((results) => {
+    //       this.allFlights = this.convertToUserTimeZone(
+    //         results.data.itineraries
+    //       );
 
-          this.filteredFlights = this.allFlights;
+    //       this.tokenItinerary = results.data.token;
 
-          this.setFilterStats(results);
+    //       this.filteredFlights = this.allFlights;
 
-          this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
+    //       this.setFilterStats(results);
 
-          this.isLoading = false;
+    //       this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
 
-          return this.allFlights;
-        }),
-        map((allFlights) => {
-          const first2Flights = Array.isArray(allFlights)
-            ? allFlights.slice(0, 2)
-            : [];
-          console.log('first2Flights 1: ', first2Flights);
-          return first2Flights;
-        }),
-        // Switch to switchMap to handle the inner observables
-        mergeMap((first2Flights) => {
-          console.log('first2Flights 2: ', first2Flights);
-          // Use forkJoin to combine multiple API calls
-          return forkJoin(
-            first2Flights.map((flight: any) => {
-              console.log('flight: ', flight);
-              return this._flightServiceAPI.searchDetail(flight.id);
-            })
-          );
-        })
-      )
-      .subscribe();
+    //       this.isLoading = false;
+
+    //       return this.allFlights;
+    //     }),
+    //     map((allFlights) => {
+    //       const first2Flights = Array.isArray(allFlights)
+    //         ? allFlights.slice(0, 2)
+    //         : [];
+    //       console.log('first2Flights 1: ', first2Flights);
+    //       return first2Flights;
+    //     }),
+    //     // Switch to switchMap to handle the inner observables
+    //     mergeMap((first2Flights) => {
+    //       console.log('first2Flights 2: ', first2Flights);
+    //       // Use forkJoin to combine multiple API calls
+    //       return forkJoin(
+    //         first2Flights.map((flight: any) => {
+    //           console.log('flight: ', flight);
+    //           return this._flightServiceAPI.searchDetail(
+    //             flight.id,
+    //             this.tokenItinerary
+    //           );
+    //         })
+    //       );
+    //     })
+    //   )
+    //   .subscribe();
 
     this.initData();
   }
@@ -156,6 +162,10 @@ export class FlightComponent implements OnInit {
             results.data.itineraries
           );
 
+          console.log('token: ', results.data.token);
+
+          this.tokenItinerary.set(results.data.token);
+
           this.filteredFlights = this.allFlights;
 
           this.setFilterStats(results);
@@ -221,6 +231,8 @@ export class FlightComponent implements OnInit {
             results.data.itineraries
           );
 
+          this.tokenItinerary.set(results.data.token);
+
           this.filteredFlights = this.allFlights;
 
           this.setFilterStats(results);
@@ -245,7 +257,10 @@ export class FlightComponent implements OnInit {
           return forkJoin(
             first4Flights.map((flight: any) => {
               console.log('flight: ', flight);
-              return this._flightServiceAPI.searchDetail(flight.id);
+              return this._flightServiceAPI.searchDetail(
+                flight.id,
+                this.tokenItinerary()
+              );
             })
           );
         })
@@ -376,7 +391,7 @@ export class FlightComponent implements OnInit {
       // Call flight details API for new batch
       forkJoin(
         nextFlights.map((flight) =>
-          this._flightServiceAPI.searchDetail(flight.id)
+          this._flightServiceAPI.searchDetail(flight.id, this.tokenItinerary())
         )
       ).subscribe();
 

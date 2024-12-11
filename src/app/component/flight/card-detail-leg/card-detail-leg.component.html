@@ -7,7 +7,7 @@
   >
     @if(legInfo){
     <h2 class="self-stretch my-auto text-xl text-gray-800 w-[206px]">
-      {{ headerText() }} · {{ legInfo.headerDate || "" | shortDate }}
+      {{ headerText() }} · {{ legInfo.headerDate || "" | weekMonthDay }}
     </h2>
     <p class="self-stretch my-auto text-base text-zinc-500 w-[58px]">
       {{ legInfo.fullDurationSegment | durationFormat }}

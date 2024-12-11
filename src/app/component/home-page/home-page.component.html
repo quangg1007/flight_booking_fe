@@ -22,25 +22,28 @@
           <span class="label-text">Depature</span>
         </div>
 
-        <label class="input input-bordered flex items-center gap-2">
-          <span class="material-symbols-outlined"> flight_takeoff </span>
-          <input
-            type="text"
-            placeholder="Ha Noi"
-            class="grow"
-            id="from_departure"
-            formControlName="from_departure"
-            name="from_departure"
-            required
-          />
-        </label>
+        <div clickOutside (clickOutside)="closeAutoComplete()">
+          <label class="input input-bordered flex items-center gap-2">
+            <span class="material-symbols-outlined"> flight_takeoff </span>
+            <input
+              type="text"
+              placeholder="Ha Noi"
+              class="grow"
+              id="from_departure"
+              formControlName="from_departure"
+              name="from_departure"
+              required
+              (click)="onInputClick($event, 'from_departure')"
+            />
+          </label>
 
-        <ng-container
-          *ngTemplateOutlet="
-            autocompleteTemplate;
-            context: { results: fromResults, field: 'from_departure' }
-          "
-        ></ng-container>
+          <ng-container
+            *ngTemplateOutlet="
+              autocompleteTemplate;
+              context: { results: fromResults, field: 'from_departure' }
+            "
+          ></ng-container>
+        </div>
 
         <div class="label">
           <span
@@ -199,24 +202,26 @@
         <div class="label flex gap-2 justify-start">
           <span class="label-text">Arrival</span>
         </div>
-        <label class="input input-bordered flex items-center gap-2">
-          <span class="material-symbols-outlined"> flight_land </span>
-          <input
-            type="text"
-            placeholder="New york city"
-            class="grow"
-            id="to_destination"
-            formControlName="to_destination"
-            name="to_destination"
-            required
-          />
-        </label>
-        <ng-container
-          *ngTemplateOutlet="
-            autocompleteTemplate;
-            context: { results: toResults, field: 'to_destination' }
-          "
-        ></ng-container>
+        <div clickOutside (clickOutside)="closeAutoComplete()">
+          <label class="input input-bordered flex items-center gap-2">
+            <span class="material-symbols-outlined"> flight_land </span>
+            <input
+              type="text"
+              placeholder="New york city"
+              class="grow"
+              id="to_destination"
+              formControlName="to_destination"
+              name="to_destination"
+              required
+            />
+          </label>
+          <ng-container
+            *ngTemplateOutlet="
+              autocompleteTemplate;
+              context: { results: toResults, field: 'to_destination' }
+            "
+          ></ng-container>
+        </div>
 
         <div class="label">
           <span
@@ -275,7 +280,27 @@
       <div class="label flex gap-2 justify-start">
         <span class="label-text">Departure Date</span>
       </div>
-      <input
+      <div clickOutside (clickOutside)="closeCalendar()">
+        <button
+          type="button"
+          class="flex items-center gap-2 w-full h-12 border-2 rounded-md"
+          [ngClass]="isCalendarOpen() ? 'border-blue-400' : 'border-gray-400'"
+          (click)="openCalendar()"
+        >
+          <span class="material-symbols-outlined ml-2"> calendar_month </span>
+
+          <p>
+            {{ this.flightSearchForm.get("depart_date")!.value | weekMonthDay }}
+          </p>
+        </button>
+
+        <app-calendar
+          [isCalendarOpen]="isCalendarOpen()"
+          [selectedFlightType]="selectedFlightType"
+          (priceDay)="priceDayChange($event)"
+        ></app-calendar>
+      </div>
+      <!-- <input
         type="date"
         placeholder="Today"
         class="input input-bordered w-full max-w-xs"
@@ -283,7 +308,7 @@
         formControlName="depart_date"
         name="date"
         required
-      />
+      /> -->
       <div class="label">
         <span
           class="error-message label-text-alt text-red-600"
@@ -303,67 +328,60 @@
 <ng-template #roundTripCalendar>
   <div
     [formGroup]="flightSearchForm"
-    class="flex items-center justify-between px-4 mt-3.5 w-full bg-white rounded-xl min-h-[95px]"
+    class="flex items-center justify-center px-4 mt-3.5 pb-3.5 w-full bg-white rounded-xl min-h-[95px]"
   >
-    <div class="flex flex-col my-auto w-5/12">
-      <label class="form-control w-full max-w-xs">
-        <div class="label flex gap-2 justify-start">
-          <span class="label-text">Departure Date</span>
-        </div>
-        <input
-          type="date"
-          placeholder="Today"
-          class="input input-bordered w-full max-w-xs"
-          id="depart_date"
-          formControlName="depart_date"
-          name="depart_date"
-          required
-        />
-        <div class="label">
-          <span
-            class="error-message label-text-alt text-red-600"
-            *ngIf="
-              flightSearchForm.get('depart_date')?.invalid &&
-              (flightSearchForm.get('depart_date')?.dirty ||
-                flightSearchForm.get('depart_date')?.touched)
-            "
-          >
-            {{ getErrorMessage("depart_date") }}
-          </span>
-        </div>
-      </label>
-    </div>
+    <label class="form-control w-full max-w-xs">
+      <div class="label flex gap-2 justify-between">
+        <span class="label-text">Departure Date </span>
+        <span class="label-text">Return Date</span>
+      </div>
 
-    <div class="divider divider-horizontal w-1/6"></div>
+      <div clickOutside (clickOutside)="closeCalendar()">
+        <button
+          type="button"
+          class="flex items-center justify-between gap-2 w-full h-12 border-2 rounded-md"
+          [ngClass]="isCalendarOpen() ? 'border-blue-400' : 'border-gray-400'"
+          (click)="openCalendar()"
+        >
+          <div class="w-full">
+            <div class="flex items-center justify-start gap-2">
+              <span class="material-symbols-outlined ml-1">
+                calendar_month
+              </span>
 
-    <div class="flex flex-col my-auto w-5/12">
-      <label class="form-control w-full max-w-xs">
-        <div class="label flex gap-2 justify-start">
-          <span class="label-text">Return Date</span>
-        </div>
-        <input
-          type="date"
-          placeholder="Today"
-          class="input input-bordered w-full max-w-xs"
-          id="return_date"
-          formControlName="return_date"
-          name="return_date"
-          required
-        />
-        <div class="label">
-          <span
-            class="error-message label-text-alt text-red-600"
-            *ngIf="
-              flightSearchForm.get('return_date')?.invalid &&
-              (flightSearchForm.get('return_date')?.dirty ||
-                flightSearchForm.get('return_date')?.touched)
-            "
-          >
-            {{ getErrorMessage("return_date") }}
-          </span>
-        </div>
-      </label>
-    </div>
+              <p>
+                {{
+                  this.flightSearchForm.get("depart_date")!.value | weekMonthDay
+                }}
+              </p>
+            </div>
+          </div>
+
+          <div class="h-full w-0.5 bg-gray-400"></div>
+
+          <div class="w-full">
+            <div class="flex items-center justify-start gap-2">
+              <span class="material-symbols-outlined ml-1">
+                calendar_month
+              </span>
+
+              <p>
+                {{
+                  this.flightSearchForm.get("return_date")!.value | weekMonthDay
+                }}
+              </p>
+            </div>
+          </div>
+        </button>
+
+        <app-calendar
+          [isCalendarOpen]="isCalendarOpen()"
+          [selectedFlightType]="selectedFlightType"
+          (priceDay)="priceDayChange($event)"
+
+        ></app-calendar>
+      </div>
+    </label>
   </div>
 </ng-template>
 

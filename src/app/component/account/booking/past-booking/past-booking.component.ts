@@ -7,7 +7,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { ShortDatePipe } from '../../../../pipe/short-date.pipe';
+import { WeekMonthDayPipe } from '../../../../pipe/week-month-day.pipe';
 import { TimeFormatPipe } from '../../../../pipe/time-format.pipe';
 import { LegDetailComponent } from '../leg-detail/leg-detail.component';
 
@@ -16,7 +16,7 @@ import { LegDetailComponent } from '../leg-detail/leg-detail.component';
   standalone: true,
   imports: [
     CommonModule,
-    ShortDatePipe,
+    WeekMonthDayPipe,
     TimeFormatPipe,
     NgOptimizedImage,
     LegDetailComponent,

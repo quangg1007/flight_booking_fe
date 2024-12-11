@@ -13,6 +13,7 @@ import {
 })
 export class CardListComponent {
   flightCard = input.required<any>();
+  tokenItinerary = input.required<string>();
   isDetailVisible: boolean = false;
   tagsFlight: string[] = [];
 

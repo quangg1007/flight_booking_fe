@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -17,9 +23,9 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { AuthService } from 'src/app/services/auth.service';
 import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
+import { PriceDate } from '../common/calendar/calendar.component';
 
 @Component({
   selector: 'app-home-page',
@@ -38,6 +44,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   selectedClassType = ['Economy', 'Premium Economy', 'Business', 'First'];
 
   selectedTravellerType = ['Adult', 'Children', 'Infant', 'Senior', 'Student'];
+
+  isCalendarOpen = signal<boolean>(false);
 
   constructor(
     private _fb: FormBuilder,
@@ -75,8 +83,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
         from_departure_skyID: [''],
         to_destination: ['', [Validators.required, Validators.minLength(3)]],
         to_destination_skyID: [''],
-        depart_date: ['', [Validators.required]],
-        return_date: ['', [Validators.required]],
+        depart_date: [new Date().toISOString(), [Validators.required]],
+        return_date: [new Date().toISOString(), [Validators.required]],
         class_type: ['Economy'],
         traveller_type: ['Adult'],
       },
@@ -212,6 +220,63 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   toggleMultiCity() {
     this.selectedMultiCity = !this.selectedMultiCity;
+  }
+
+  openCalendar() {
+    this.isCalendarOpen.set(!this.isCalendarOpen());
+  }
+
+  closeCalendar() {
+    this.isCalendarOpen.set(false);
+  }
+
+  closeAutoComplete() {
+    this.fromResults = [];
+    this.toResults = [];
+
+  }
+
+  onInputClick(event: any, fieldName: string) {
+    console.log('Input clicked');
+    const value = event.target.value;
+    if (value) {
+      const formattedValue = value.replace(/\s+/g, '-').toLowerCase();
+
+      // Trigger your existing search/autocomplete logic here
+      this._flightServiceAPI
+        .getLocations(formattedValue)
+        .pipe(
+          catchError((error) => {
+            console.error(`Error fetching locations:`, error);
+            return of({ data: [] });
+          })
+        )
+        .subscribe((results) => {
+          const resultArray =
+            fieldName === 'from_departure' ? 'fromResults' : 'toResults';
+          console.log('results', results);
+          this[resultArray] =
+            results.data.length > 0
+              ? results.data
+              : [{ presentation: { title: 'No data found' } }];
+          console.log(`${fieldName} results:`, this[resultArray]);
+        });
+    }
+  }
+
+  priceDayChange(date: PriceDate) {
+    console.log('day', date);
+    const depart_date = date.departure;
+    const return_date = date.return;
+
+    if (this.selectedFlightType === 'oneWay') {
+      this.flightSearchForm.get('depart_date')?.setValue(depart_date);
+    } else {
+      this.flightSearchForm.get('depart_date')?.setValue(depart_date);
+      this.flightSearchForm.get('return_date')?.setValue(return_date);
+    }
+
+    this.isCalendarOpen.set(false);
   }
 
   // VALIDATOR

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, input, output } from '@angular/core';
-import { ShortDatePipe } from '../../../../pipe/short-date.pipe';
+import { WeekMonthDayPipe } from '../../../../pipe/week-month-day.pipe';
 import { TimeFormatPipe } from '../../../../pipe/time-format.pipe';
 import {
   FormArray,
@@ -14,7 +14,12 @@ import { Subject } from 'rxjs';
 @Component({
   selector: 'app-booking-detail',
   standalone: true,
-  imports: [CommonModule, ShortDatePipe, TimeFormatPipe, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    WeekMonthDayPipe,
+    TimeFormatPipe,
+    ReactiveFormsModule,
+  ],
   templateUrl: './booking-detail.component.html',
   styleUrls: ['./booking-detail.component.css'],
 })

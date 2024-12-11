@@ -8,7 +8,7 @@ import { AccountComponent } from './account/account.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DurationFormatPipe } from 'src/app/pipe/duration-format.pipe';
-import { ShortDatePipe } from 'src/app/pipe/short-date.pipe';
+import { WeekMonthDayPipe } from 'src/app/pipe/week-month-day.pipe';
 import { TimeFormatPipe } from 'src/app/pipe/time-format.pipe';
 import { UpcomingBookingComponent } from './booking/upcoming-booking/upcoming-booking.component';
 import { PastBookingComponent } from './booking/past-booking/past-booking.component';
@@ -22,7 +22,7 @@ import { TimeZoneSettingsComponent } from '../util/time-zone-settings/time-zone-
     FormsModule,
     ReactiveFormsModule,
     DurationFormatPipe,
-    ShortDatePipe,
+    WeekMonthDayPipe,
     TimeFormatPipe,
     NgOptimizedImage,
     BookingDetailComponent,

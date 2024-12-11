@@ -127,5 +127,6 @@
 
 <app-card-detail
   *ngIf="isDetailVisible"
+  [tokenItinerary]="tokenItinerary()"
   [itineraryId]="flightCard().id"
 ></app-card-detail>

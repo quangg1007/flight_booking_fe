@@ -8,7 +8,7 @@ import {
   formatDateToShortString,
 } from 'src/app/util/time';
 import { DurationFormatPipe } from '../../../pipe/duration-format.pipe';
-import { ShortDatePipe } from '../../../pipe/short-date.pipe';
+import { WeekMonthDayPipe } from '../../../pipe/week-month-day.pipe';
 import { MediumDatePipe } from '../../../pipe/medium-date.pipe';
 
 @Component({
