@@ -297,6 +297,7 @@
         <app-calendar
           [isCalendarOpen]="isCalendarOpen()"
           [selectedFlightType]="selectedFlightType"
+          [DepDesCalendar]="DepDesCalendar()"
           (priceDay)="priceDayChange($event)"
         ></app-calendar>
       </div>
@@ -377,8 +378,8 @@
         <app-calendar
           [isCalendarOpen]="isCalendarOpen()"
           [selectedFlightType]="selectedFlightType"
+          [DepDesCalendar]="DepDesCalendar()"
           (priceDay)="priceDayChange($event)"
-
         ></app-calendar>
       </div>
     </label>

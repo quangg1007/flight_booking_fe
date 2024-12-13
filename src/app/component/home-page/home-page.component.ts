@@ -26,6 +26,12 @@ import {
 import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
 import { PriceDate } from '../common/calendar/calendar.component';
+import { CalendarService } from 'src/app/services/calender.service';
+
+export interface DepDes {
+  from: string;
+  to: string;
+}
 
 @Component({
   selector: 'app-home-page',
@@ -47,11 +53,17 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   isCalendarOpen = signal<boolean>(false);
 
+  DepDesCalendar = signal<DepDes>({
+    from: '',
+    to: '',
+  });
+
   constructor(
     private _fb: FormBuilder,
     private _flightServiceAPI: FlightServiceAPI,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private calendarService: CalendarService
   ) {}
   ngOnInit(): void {
     this.initForm();
@@ -161,6 +173,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         filter((value) => value.length >= 3),
         switchMap((value) => {
           const formattedValue = value.replace(/\s+/g, '-').toLowerCase();
+
           return this._flightServiceAPI.getLocations(formattedValue).pipe(
             catchError((error) => {
               console.error(`Error fetching ${fieldName} locations:`, error);
@@ -189,6 +202,27 @@ export class HomePageComponent implements OnInit, OnDestroy {
     skyIDControl.setValue(result.navigation!.relevantFlightParams!.skyId, {
       emitEvent: false,
     });
+
+    if (controlName === 'to_destination') {
+      const from_departure_skyID = this.flightSearchForm.get(
+        'from_departure_skyID'
+      )!.value;
+
+      const to_destination_skyID = this.flightSearchForm.get(
+        'to_destination_skyID'
+      )!.value;
+
+      console.log('from_departure_skyID', from_departure_skyID);
+      console.log('to_destination_skyID', to_destination_skyID);
+
+      this.DepDesCalendar.set({
+        from: from_departure_skyID,
+        to: to_destination_skyID,
+      });
+
+      console.log('DepDesCalendar', this.DepDesCalendar());
+      // const to_destination_skyID = this.calendarService.searchCalenderPrice();
+    }
 
     if (controlName === 'from_departure') {
       this.fromResults = [];
@@ -233,7 +267,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
   closeAutoComplete() {
     this.fromResults = [];
     this.toResults = [];
-
   }
 
   onInputClick(event: any, fieldName: string) {

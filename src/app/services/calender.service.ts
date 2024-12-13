@@ -108,15 +108,21 @@ export class CalendarService {
   searchCalenderPrice(
     fromEntityId: string,
     departDate: string,
-    toEntityId: string,
-    returnDate: string
+    toEntityId: string
   ): Observable<any> {
     return this.http.get(`${APIUrl}/flights/search/price-oneway`, {
-      params: { fromEntityId, departDate, toEntityId, returnDate },
+      params: { fromEntityId, departDate, toEntityId },
     });
   }
 
-  searchCalenderPriceReturn(): Observable<any> {
-    return this.http.get(`${APIUrl}/flights/search/price-return`);
+  searchCalenderPriceReturn(
+    fromEntityId: string,
+    departDate: string,
+    toEntityId: string,
+    returnDate: string
+  ): Observable<any> {
+    return this.http.get(`${APIUrl}/flights/search/price-return`, {
+      params: { fromEntityId, departDate, toEntityId, returnDate },
+    });
   }
 }

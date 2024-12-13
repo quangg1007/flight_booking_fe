@@ -12,6 +12,8 @@ import {
   CalendarMonth,
   CalendarService,
 } from 'src/app/services/calender.service';
+import { DepDes } from '../../home-page/home-page.component';
+import { forkJoin } from 'rxjs';
 
 interface PriceData {
   day: string;
@@ -35,6 +37,8 @@ export class CalendarComponent {
   isCalendarOpen = input.required<boolean>();
   selectedFlightType = input.required<'oneWay' | 'roundTrip'>();
 
+  DepDesCalendar = input.required<DepDes>();
+
   priceDay = output<PriceDate>();
 
   isLoad = signal<boolean>(true);
@@ -53,40 +57,87 @@ export class CalendarComponent {
   endDate = signal<string>('');
 
   constructor(private calendarService: CalendarService) {
+    this.initCalendar();
+    
+    effect(
+      () => {
+        if (this.DepDesCalendar()?.from && this.DepDesCalendar()?.to) {
+          const today = new Date();
+
+          const fromEntityId = this.DepDesCalendar()?.from;
+          const departDate = today.toISOString().split('T')[0];
+          const toEntityId = this.DepDesCalendar()?.to;
+          const returnDate = new Date(
+            today.getFullYear(),
+            today.getMonth() + 10,
+            0
+          )
+            .toISOString()
+            .split('T')[0];
+
+          this.getPriceCalendar(
+            fromEntityId,
+            departDate,
+            toEntityId,
+            returnDate
+          );
+        }
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
+  }
+
+  initCalendar() {
     // Initialize empty calendar first
     const today = new Date();
     this.calendarMonths = this.calendarService.generateCalendarRange(
       new Date(today.getFullYear(), today.getMonth() + 2, 0).toISOString()
     );
 
-    console.log('this.calendarMonths', this.calendarMonths);
-
-    this.getPriceCalendar();
+    this.isLoad.set(false);
   }
 
-  getPriceCalendar() {
-    effect(
-      () => {
-        console.log('this.isCalendarOpen', this.isCalendarOpen());
+  getPriceCalendar(
+    fromEntityId: string,
+    departDate: string,
+    toEntityId: string,
+    returnDate: string
+  ) {
+    forkJoin({
+      oneWay: this.calendarService.searchCalenderPrice(
+        fromEntityId,
+        departDate,
+        toEntityId
+      ),
+      roundTrip: this.calendarService.searchCalenderPriceReturn(
+        fromEntityId,
+        departDate,
+        toEntityId,
+        returnDate
+      ),
+    }).subscribe(({ oneWay, roundTrip }) => {
+      if (this.selectedFlightType() === 'roundTrip') {
+        this.updateCalendar(roundTrip);
+      } else {
+        this.updateCalendar(oneWay);
+      }
+    });
+    this.isLoad.set(false);
+  }
 
-        if (this.isCalendarOpen()) {
-          // this.calendarService.searchCalenderPrice().subscribe((res) => {
-          //   const priceData = res.data.flights.days;
+  updateCalendar(response: any) {
+    const priceData = response.data.flights.days;
 
-          //   const thelastDayPrice = priceData[priceData.length - 1].day;
+    const thelastDayPrice = priceData[priceData.length - 1].day;
 
-          //   // this.calendarMonths =
-          //   //   this.calendarService.generateCalendarRange(thelastDayPrice);
+    this.calendarMonths =
+      this.calendarService.generateCalendarRange(thelastDayPrice);
 
-          //   // this.calendarMonths = this.calendarService.mergePriceData(
-          //   //   this.calendarMonths,
-          //   //   priceData
-          //   // );
-          // });
-          this.isLoad.set(false);
-        }
-      },
-      { allowSignalWrites: true }
+    this.calendarMonths = this.calendarService.mergePriceData(
+      this.calendarMonths,
+      priceData
     );
   }
 
