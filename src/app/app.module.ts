@@ -33,6 +33,8 @@ import { CalendarComponent } from './component/common/calendar/calendar.componen
 import { CalendarService } from './services/calender.service';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { WeekMonthDayPipe } from './pipe/week-month-day.pipe';
+import { ChatBotComponent } from './component/common/chat-bot/chat-bot.component';
+import { ChatBotService } from './services/chat-bot.service';
 
 @NgModule({
   declarations: [
@@ -60,11 +62,13 @@ import { WeekMonthDayPipe } from './pipe/week-month-day.pipe';
     CalendarComponent,
     ClickOutsideDirective,
     WeekMonthDayPipe,
+    ChatBotComponent
   ],
   providers: [
     userService,
     FlightServiceAPI,
     CalendarService,
+    ChatBotService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
