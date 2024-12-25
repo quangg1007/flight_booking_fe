@@ -98,4 +98,9 @@ export class ChatBotService {
         })
       );
   }
+
+
+  chatWithBackend() {
+    // return this.http.post<any>(`${this.apiUrl}/chatbot/chat`);
+  }
 }

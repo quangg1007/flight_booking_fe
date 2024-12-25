@@ -48,7 +48,7 @@ export class ChatBotComponent implements OnInit {
     window.voiceflow.chat.load({
       verify: { projectID: '675fe848e375d84376eea09d' },
       url: 'https://general-runtime.voiceflow.com',
-      versionID: '675fe848e375d84376eea09e',
+      versionID: 'production',
       user_id: this.userID,
       container: this.chatContainer()!.nativeElement
     });
