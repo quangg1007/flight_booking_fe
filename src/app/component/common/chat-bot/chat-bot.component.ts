@@ -39,8 +39,50 @@ export class ChatBotComponent implements OnInit {
 
   isTyping = false;
 
-  isMinimized = false;
+  isMinimized = true;
   showEndChat = false;
+
+  flights = [
+    {
+      name: "Tokyo Express",
+      origin: "Noi Bai Airport",
+      destination: "Narita Airport",
+      departureTime: "2024-12-25T20:00:00",
+      arrivalTime: "2024-12-26T04:00:00",
+      duration: "8 hours",
+      price: 1200,
+      stops: 0,
+      description: "Direct flight to Tokyo with premium service",
+      image: "https://images.unsplash.com/photo-1542296332-2e4473faf563",
+      tags: "Cheapest",
+    },
+    {
+      name: "Singapore Shuttle",
+      origin: "Noi Bai Airport",
+      destination: "Changi Airport",
+      departureTime: "2024-12-25T10:00:00",
+      arrivalTime: "2024-12-25T14:00:00",
+      duration: "4 hours",
+      price: 800,
+      stops: 0,
+      description: "Non-stop flight to Singapore with luxury service",
+      image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05",
+      tags: "Second Cheapest",
+    },
+    {
+      name: "Seoul Flyer",
+      origin: "Noi Bai Airport",
+      destination: "Incheon Airport",
+      departureTime: "2024-12-25T08:00:00",
+      arrivalTime: "2024-12-25T14:30:00",
+      duration: "6.5 hours",
+      price: 900,
+      stops: 1,
+      description: "Convenient flight to Seoul with one stop",
+      image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1",
+      tags: "Shortest",
+    }
+  ]
 
   constructor(
     private _fb: FormBuilder,

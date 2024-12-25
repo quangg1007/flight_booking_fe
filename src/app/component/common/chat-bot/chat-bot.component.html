@@ -11,7 +11,7 @@
   <!-- Chat Window -->
   <div
     *ngIf="isMinimized"
-    class="w-[350px] h-[500px] bg-white rounded-lg shadow-md flex flex-col relative"
+    class="w-[350px] h-[650px] bg-white rounded-lg shadow-md flex flex-col relative"
   >
     <!-- Header -->
     <div
@@ -66,6 +66,78 @@
             {{ button.request.payload.label }}
           </button>
         </div>
+        }
+        @else if(message.type === 'carousel'){
+        <div
+          class="carousel carousel-center bg-neutral rounded-box max-w-md space-x-4 p-4"
+        >
+          <div
+            class="carousel-item w-full"
+            *ngFor="let flight of flights; let i = index"
+            id="slide{{ i }}"
+          >
+            <div class="card w-96 bg-base-100 shadow-xl">
+              <figure>
+                <img src="{{ flight.image }}" alt="{{ flight.name }}" />
+              </figure>
+              <div class="card-body">
+                <!-- Header -->
+                <div>
+                  <h2 class="card-title">{{ flight.name }}</h2>
+
+                  <span
+                    class="badge badge-sm"
+                    [ngClass]="{
+                      'badge-neutral': flight.tags === 'Cheapest',
+                      'badge-success text-white':
+                        flight.tags === 'Second Cheapest',
+                      'badge-warning': flight.tags === 'Shortest',
+                      'badge-error': flight.tags === 'Second Shortest'
+                    }"
+                    >{{ flight.tags }}</span
+                  >
+                </div>
+
+                <!-- Content -->
+                <div class="space-y-2 text-sm">
+                  <div class="flex gap-2">
+                    <span class="font-semibold">Itinerary:</span>
+                    <span>{{ flight.origin }} → {{ flight.destination }}</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="font-semibold">Depart:</span>
+                    <span>{{
+                      flight.departureTime | date : "yyyy-MM-dd hh:mma"
+                    }}</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="font-semibold">Arrival:</span>
+                    <span>{{
+                      flight.arrivalTime | date : "yyyy-MM-dd hh:mma"
+                    }}</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="font-semibold">Duration:</span>
+                    <span>{{ flight.duration }}</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="font-semibold">Price:</span>
+                    <span>{{ flight.price | currency }}</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <span class="font-semibold">Stops:</span>
+                    <span>{{ flight.stops }}</span>
+                  </div>
+                </div>
+
+                <div class="card-actions">
+                  <button class="btn btn-primary w-full">Book Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         }
       </div>
 
