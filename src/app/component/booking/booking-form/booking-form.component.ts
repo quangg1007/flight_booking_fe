@@ -18,6 +18,8 @@ import { BookingService } from 'src/app/services/booking.service';
 import { validateForm } from 'src/app/util/validation';
 import { LegInfo } from 'src/app/models/cardDetail.model';
 import { RegisterComponent } from '../../login/register/register.component';
+import { FlightServiceAPI } from 'src/app/services/flight.service';
+import { createFlightSegment } from 'src/app/util/flight';
 
 @Component({
   selector: 'app-booking-form',
@@ -68,6 +70,7 @@ export class BookingFormComponent {
     private _fb: FormBuilder,
     private authService: AuthService,
     private timerService: TimerService,
+    private flightServiceAPI: FlightServiceAPI,
     private router: Router,
     private bookingService: BookingService,
     private route: ActivatedRoute,
@@ -218,11 +221,46 @@ export class BookingFormComponent {
   getItineraryID() {
     this.route.queryParams.subscribe((params) => {
       const state = history.state;
+      console.log("state", state);
       this.legInfo = state.legInfo;
 
-      if (!params['itineraryId'] && this.legInfo) {
+      const itinerary_id = params['itineraryId'];
+      const token = params['token'];
+      if (!itinerary_id && !token){
         this.router.navigate(['/']);
         return;
+      } else if(!this.legInfo) {
+        this.flightServiceAPI.searchDetail(itinerary_id, token).subscribe((res) => {
+          console.log('res', res);
+          if (res.status) {
+            this.legInfo = res.data.itinerary.legs.map((leg: any) => {
+              const fullDurationSegment = leg.duration;
+              const headerDate = leg.departure;
+
+              const { flightSegmentInfo, layoverInfo } = createFlightSegment(
+                leg.segments
+              );
+
+              const isDetailSegmentAmenities = new Array(
+                flightSegmentInfo.length
+              ).fill(false);
+
+              return {
+                flightSegmentInfo,
+                layoverInfo,
+                fullDurationSegment,
+                headerDate,
+                isDetailSegmentAmenities,
+              };
+            });
+
+            this.itinerary_id.set(itinerary_id);
+          }else{
+            this.router.navigate(['/']);
+          }
+
+          console.log('legInfo', this.legInfo);
+        });
       }
 
       this.itinerary_id.set(params['itineraryId']);

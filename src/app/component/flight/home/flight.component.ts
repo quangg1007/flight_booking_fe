@@ -1,8 +1,10 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, from, map, mergeMap, switchMap, tap, toArray } from 'rxjs';
 import {
   Airlines,
+  // Airlines,
   FilterStats,
   Location,
   PriceRange,
@@ -11,6 +13,26 @@ import { OneWaySearchParams } from 'src/app/models/flightService.model';
 import { FlightSearchService } from 'src/app/services/flight-search.service';
 import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { convertToUserTimezone } from 'src/app/util/time';
+
+interface Flight {
+  id: string;
+  airline: string;
+  airlinePhoto: string;
+  flightNumber: string;
+  departureTime: string;
+  arrivalTime: string;
+  duration: string;
+  origin: string;
+  destination: string;
+  stops: number;
+  price: number;
+}
+
+interface Airline {
+  id: string;
+  name: string;
+}
+
 
 @Component({
   selector: 'app-flight',
@@ -34,13 +56,262 @@ export class FlightComponent implements OnInit {
   scrollDistance = 1;
   throttle = 300;
 
+  searchForm!: FormGroup;
+  // flights: Flight[] = [
+  //   {
+  //     id: "1",
+  //     airline: "Delta Airlines",
+  //     airlinePhoto: "https://images.unsplash.com/photo-1615394695852-da39b8df8c90",
+  //     flightNumber: "DL123",
+  //     departureTime: "08:00 AM",
+  //     arrivalTime: "11:30 AM",
+  //     duration: "3h 30m",
+  //     origin: "New York (JFK)",
+  //     destination: "Los Angeles (LAX)",
+  //     stops: 0,
+  //     price: 299
+  //   },
+  //   {
+  //     id: "2",
+  //     airline: "United Airlines",
+  //     airlinePhoto: "https://images.unsplash.com/photo-1542296332-2e4473faf563",
+  //     flightNumber: "UA456",
+  //     departureTime: "10:15 AM",
+  //     arrivalTime: "02:45 PM",
+  //     duration: "4h 30m",
+  //     origin: "Chicago (ORD)",
+  //     destination: "San Francisco (SFO)",
+  //     stops: 1,
+  //     price: 399
+  //   }
+  // ];
+
+  flights: Flight[] = [
+    {
+      id: "VN405",
+      airline: "Vietnam Airlines",
+      airlinePhoto: "https://tinhocnews.com/wp-content/uploads/2024/06/vietnam-airlines-logo-png.jpg",
+      flightNumber: "VN405",
+      departureTime: "07:30 AM",
+      arrivalTime: "02:15 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 450
+    },
+    {
+      id: "KE684",
+      airline: "Korean Air",
+      airlinePhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxkdT4bGelSzZCzKQ4ika7oDt3wS4FYls3Kg&s",
+      flightNumber: "KE684",
+      departureTime: "10:45 AM",
+      arrivalTime: "05:30 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 520
+    },
+    {
+      id: "VJ862",
+      airline: "VietJet Air",
+      airlinePhoto: "https://brasol.vn/wp-content/uploads/2022/08/logo-vietjet-air.jpg",
+      flightNumber: "VJ862",
+      departureTime: "02:30 PM",
+      arrivalTime: "11:15 PM",
+      duration: "5h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 1,
+      price: 320
+    },
+    {
+      id: "OZ733",
+      airline: "Asiana Airlines",
+      airlinePhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbGKtwdxpqIcbjWdyM4jQmEm6fKO2w8Q3VMg&s",
+      flightNumber: "OZ733",
+      departureTime: "09:20 AM",
+      arrivalTime: "04:05 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 490
+    },
+    {
+      id: "VN403",
+      airline: "Vietnam Airlines",
+      airlinePhoto: "https://tinhocnews.com/wp-content/uploads/2024/06/vietnam-airlines-logo-png.jpg",
+      flightNumber: "VN403",
+      departureTime: "01:30 PM",
+      arrivalTime: "08:15 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 475
+    },
+    {
+      id: "KE686",
+      airline: "Korean Air",
+      airlinePhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxkdT4bGelSzZCzKQ4ika7oDt3wS4FYls3Kg&s",
+      flightNumber: "KE686",
+      departureTime: "03:45 PM",
+      arrivalTime: "10:30 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 510
+    },
+    {
+      id: "VJ864",
+      airline: "VietJet Air",
+      airlinePhoto: "https://brasol.vn/wp-content/uploads/2022/08/logo-vietjet-air.jpg",
+      flightNumber: "VJ864",
+      departureTime: "06:15 AM",
+      arrivalTime: "03:00 PM",
+      duration: "5h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 1,
+      price: 310
+    },
+    {
+      id: "OZ735",
+      airline: "Asiana Airlines",
+      airlinePhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbGKtwdxpqIcbjWdyM4jQmEm6fKO2w8Q3VMg&s",
+      flightNumber: "OZ735",
+      departureTime: "11:50 AM",
+      arrivalTime: "06:35 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 495
+    },
+    {
+      id: "VN407",
+      airline: "Vietnam Airlines",
+      airlinePhoto: "https://tinhocnews.com/wp-content/uploads/2024/06/vietnam-airlines-logo-png.jpg",
+      flightNumber: "VN407",
+      departureTime: "04:30 PM",
+      arrivalTime: "11:15 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 460
+    },
+    {
+      id: "KE688",
+      airline: "Korean Air",
+      airlinePhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxkdT4bGelSzZCzKQ4ika7oDt3wS4FYls3Kg&s",
+      flightNumber: "KE688",
+      departureTime: "08:15 AM",
+      arrivalTime: "03:00 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 530
+    },
+    {
+      id: "VJ866",
+      airline: "VietJet Air",
+      airlinePhoto: "https://brasol.vn/wp-content/uploads/2022/08/logo-vietjet-air.jpg",
+      flightNumber: "VJ866",
+      departureTime: "12:45 PM",
+      arrivalTime: "09:30 PM",
+      duration: "5h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 1,
+      price: 315
+    },
+    {
+      id: "OZ737",
+      airline: "Asiana Airlines",
+      airlinePhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbGKtwdxpqIcbjWdyM4jQmEm6fKO2w8Q3VMg&s",
+      flightNumber: "OZ737",
+      departureTime: "02:20 PM",
+      arrivalTime: "09:05 PM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 485
+    },
+    {
+      id: "VN409",
+      airline: "Vietnam Airlines",
+      airlinePhoto: "https://tinhocnews.com/wp-content/uploads/2024/06/vietnam-airlines-logo-png.jpg",
+      flightNumber: "VN409",
+      departureTime: "07:00 PM",
+      arrivalTime: "01:45 AM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 440
+    },
+    {
+      id: "KE690",
+      airline: "Korean Air",
+      airlinePhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxkdT4bGelSzZCzKQ4ika7oDt3wS4FYls3Kg&s",
+      flightNumber: "KE690",
+      departureTime: "05:30 PM",
+      arrivalTime: "00:15 AM",
+      duration: "4h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 0,
+      price: 515
+    },
+    {
+      id: "VJ868",
+      airline: "VietJet Air",
+      airlinePhoto: "https://brasol.vn/wp-content/uploads/2022/08/logo-vietjet-air.jpg",
+      flightNumber: "VJ868",
+      departureTime: "09:45 PM",
+      arrivalTime: "06:30 AM",
+      duration: "5h 45m",
+      origin: "Hanoi (HAN)",
+      destination: "Incheon (ICN)",
+      stops: 1,
+      price: 305
+    }
+  ]
+
+
+  airlines: Airline[] = [
+    { id: "delta", name: "Delta Airlines" },
+    { id: "united", name: "United Airlines" },
+    { id: "american", name: "American Airlines" },
+    { id: "southwest", name: "Southwest Airlines" }
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private _flightServiceAPI: FlightServiceAPI,
-    private _flightSearchService: FlightSearchService
-  ) {}
+    private _flightSearchService: FlightSearchService,
+    private fb: FormBuilder
+  ) {
+    this.searchForm = this.fb.group({
+      departure: ["", Validators.required],
+      arrival: ["", Validators.required],
+      tripType: ["oneWay", Validators.required],
+      date: ["", Validators.required],
+      priceRange: [1000]
+    });
+  }
 
   ngOnInit() {
+
+    this.searchForm.valueChanges.subscribe((value: any) => {
+      console.log("Form values:", value);
+    });
     // const params: OneWaySearchParams = {
     //   departureEntityId: 'HAN',
     //   arrivalEntityId: 'ICN',
@@ -95,6 +366,7 @@ export class FlightComponent implements OnInit {
 
     this.initData();
   }
+
 
   initData() {
     this.route.queryParams.subscribe((params) => {
@@ -188,35 +460,6 @@ export class FlightComponent implements OnInit {
     classType: string,
     travellerType: string
   ) {
-    // this._flightServiceAPI
-    //   .searchOneWay({
-    //     departureEntityId,
-    //     arrivalEntityId,
-    //     departDate,
-    //     classType,
-    //     travellerType,
-    //   })
-    //   .subscribe(
-    //     (results) => {
-    //       this.allFlights = this.convertToUserTimeZone(
-    //         results.data.itineraries
-    //       );
-
-    //       this.filteredFlights = this.allFlights;
-
-    //       this.setFilterStats(results);
-
-    //       this.flightListResult.set(this.allFlights.slice(0, this.pageSize));
-
-    //       this.isLoading = false;
-    //     },
-    //     (error) => {
-    //       console.error('Error fetching flight results:', error);
-    //       this.isLoading = false;
-    //       // Handle error (e.g., show error message)
-    //     }
-    //   );
-
     this._flightServiceAPI
       .searchOneWay({
         departureEntityId,

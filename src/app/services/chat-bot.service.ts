@@ -8,20 +8,21 @@ import { tap } from 'rxjs';
 export class ChatBotService {
   private apiUrl = 'https://general-runtime.voiceflow.com/state/user';
   private authorization_chat_bot =
-    'VF.DM.6768f10323f513b896bec8ed.29llFRjzhgcBLvj2';
-  private userID: string = '';
+    'VF.DM.6768f10323f513b896bec8ed.BRNJsDc8D1YsdpX8';
 
   constructor(private http: HttpClient) {}
 
   private generateUserID() {
     // create code that generate random user_id
-    this.userID =
+    const userID =
       Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15);
+
+    localStorage.setItem('vf_user_id', userID);
   }
 
   getUserID() {
-    return this.userID;
+    return localStorage.getItem('vf_user_id');
   }
 
   loadChat(
@@ -35,7 +36,7 @@ export class ChatBotService {
     this.generateUserID();
 
     return this.http.post<any>(
-      `${this.apiUrl}/${this.userID}/interact?logs=off`,
+      `${this.apiUrl}/${this.getUserID()}/interact?logs=off`,
       {
         action: {
           type: 'launch',
@@ -46,7 +47,7 @@ export class ChatBotService {
         headers: {
           'Content-Type': 'application/json',
           Authorization: this.authorization_chat_bot,
-          versionID: 'development',
+          versionID: 'production',
         },
       }
     );
@@ -62,7 +63,7 @@ export class ChatBotService {
     }
   ) {
     return this.http.post<any>(
-      `${this.apiUrl}/${this.userID}/interact?logs=off`,
+      `${this.apiUrl}/${this.getUserID()}/interact?logs=off`,
       {
         action: action,
         config: {
@@ -76,7 +77,7 @@ export class ChatBotService {
         headers: {
           'Content-Type': 'application/json',
           Authorization: this.authorization_chat_bot,
-          versionID: 'development',
+          versionID: 'production',
         },
       }
     );
@@ -84,17 +85,17 @@ export class ChatBotService {
 
   deleteState() {
     return this.http
-      .delete<any>(`${this.apiUrl}/${this.userID}`, {
+      .delete<any>(`${this.apiUrl}/${this.getUserID()}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: this.authorization_chat_bot,
-          versionID: 'development',
+          versionID: 'production',
         },
       })
       .pipe(
         tap(() => {
           // Remove userID after successful deletion
-          this.userID = '';
+          localStorage.removeItem('vf_user_id');
         })
       );
   }

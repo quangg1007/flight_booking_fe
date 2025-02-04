@@ -54,91 +54,201 @@
             'bg-gray-100 text-black': !message.isUser
           }"
         >
-          {{ message.payload?.message }}
+          {{ message.payload?.text }}
         </div>
         } @else if (message.type === 'choice') {
         <div class="flex flex-wrap gap-2 my-2">
           <button
-            *ngFor="let button of message.payload?.choices"
+            *ngFor="let button of message.payload?.choice"
             class="btn btn-primary btn-sm text-white"
             (click)="handleChoiceSelection(button)"
           >
-            {{ button.request.payload.label }}
+            {{ button.request["payload"]["label"] }}
           </button>
         </div>
-        }
-        @else if(message.type === 'carousel'){
+        } @else if(message.type === 'carousel'){
         <div
           class="carousel carousel-center bg-neutral rounded-box max-w-md space-x-4 p-4"
         >
           <div
             class="carousel-item w-full"
-            *ngFor="let flight of flights; let i = index"
+            *ngFor="let card of message.payload?.carousel; let i = index"
             id="slide{{ i }}"
           >
             <div class="card w-96 bg-base-100 shadow-xl">
               <figure>
-                <img src="{{ flight.image }}" alt="{{ flight.name }}" />
+                <img [src]="card.imageUrl" [alt]="card.title" />
               </figure>
               <div class="card-body">
                 <!-- Header -->
                 <div>
-                  <h2 class="card-title">{{ flight.name }}</h2>
+                  <h2 class="card-title">{{ card.title }}</h2>
 
+                  <!-- Badge -->
+
+                  @if(card.variables && card.variables['tags']){
                   <span
                     class="badge badge-sm"
                     [ngClass]="{
-                      'badge-neutral': flight.tags === 'Cheapest',
+                      'badge-neutral':
+                        card.variables['tags'].includes('cheapest'),
+
                       'badge-success text-white':
-                        flight.tags === 'Second Cheapest',
-                      'badge-warning': flight.tags === 'Shortest',
-                      'badge-error': flight.tags === 'Second Shortest'
+                        card.variables['tags'].includes('shortest')
                     }"
-                    >{{ flight.tags }}</span
                   >
+                    {{ card.variables["tags"] }}
+                  </span>
+                  }
                 </div>
 
                 <!-- Content -->
                 <div class="space-y-2 text-sm">
-                  <div class="flex gap-2">
-                    <span class="font-semibold">Itinerary:</span>
-                    <span>{{ flight.origin }} → {{ flight.destination }}</span>
-                  </div>
-                  <div class="flex gap-2">
-                    <span class="font-semibold">Depart:</span>
-                    <span>{{
-                      flight.departureTime | date : "yyyy-MM-dd hh:mma"
-                    }}</span>
-                  </div>
-                  <div class="flex gap-2">
-                    <span class="font-semibold">Arrival:</span>
-                    <span>{{
-                      flight.arrivalTime | date : "yyyy-MM-dd hh:mma"
-                    }}</span>
-                  </div>
-                  <div class="flex gap-2">
-                    <span class="font-semibold">Duration:</span>
-                    <span>{{ flight.duration }}</span>
-                  </div>
-                  <div class="flex gap-2">
-                    <span class="font-semibold">Price:</span>
-                    <span>{{ flight.price | currency }}</span>
-                  </div>
-                  <div class="flex gap-2">
-                    <span class="font-semibold">Stops:</span>
-                    <span>{{ flight.stops }}</span>
-                  </div>
+                  <div
+                    class="whitespace-pre-line"
+                    [innerHTML]="
+                      renderStyledText(card.description.slate[0].children)
+                    "
+                  ></div>
                 </div>
-
                 <div class="card-actions">
-                  <button class="btn btn-primary w-full">Book Now</button>
+                  @for(button of card.buttons;track $index){
+                  <button
+                    class="btn btn-primary w-full"
+                    (click)="handleSelectionCarousel(button)"
+                  >
+                    {{ button.request["payload"]["label"] }}
+                  </button>
+
+                  }
                 </div>
               </div>
             </div>
           </div>
         </div>
+        } @else if(message.type === 'cardV2'){
 
-        }
+        <!-- <div class="cardV2 bg-base-100 w-80 shadow-xl">
+              <figure>
+                <img [src]="message.payload?.cardV2![0].imageUrl" [alt]="message.payload?.cardV2![0].title" />
+              </figure>
+              <div class="cardV2-body">
+                <div>
+                  <h2 class="cardV2-title">
+                    {{ message.payload?.cardV2![0].title }}
+                  </h2>
+
+
+                  @if(message.payload?.cardV2![0].variables && message.payload?.cardV2![0].variables['tags']){
+                  <span
+                    class="badge badge-sm"
+                    [ngClass]="{
+                      'badge-neutral':
+
+                        message.payload?.cardV2![0].variables['tags'].includes('cheapest'),
+
+                      'badge-success text-white':
+
+                        message.payload?.cardV2![0].variables['tags'].includes('shortest')
+                    }"
+                  >
+
+                    {{ message.payload?.cardV2![0].variables["tags"] }}
+                  </span>
+                  }
+                </div>
+
+                <div class="space-y-2 text-sm">
+                  <div
+                    class="whitespace-pre-line"
+                    [innerHTML]="
+
+                      renderStyledText(message.payload?.cardV2![0].description.slate[0].children)
+                    "
+                  ></div>
+                </div>
+                <div class="cardV2-actions">
+
+                  @for(button of message.payload?.cardV2![0].buttons;track $index){
+                  <button
+                    class="btn btn-primary w-full"
+                    (click)="handleSelectionCarousel(button)"
+                  >
+                    {{ button.request["payload"]["label"] }}
+                  </button>
+
+                  }
+                </div>
+              </div>
+            </div> -->
+
+        <div
+          class="cardV2 bg-base-100 w-72 shadow-2xl hover:shadow-3xl transition-shadow duration-300"
+        >
+          <figure class="px-2 pt-2">
+            <img
+              [src]="(message.payload?.cardV2)![0].imageUrl"
+              [alt]="(message.payload?.cardV2)![0].title"
+              class="rounded-xl h-48 w-full object-cover hover:scale-105 transition-transform duration-300"
+            />
+          </figure>
+          <div class="cardV2-body p-6">
+            <div class="flex items-center gap-2">
+              <h2 class="cardV2-title text-xl font-bold">
+                {{ (message.payload?.cardV2)![0].title }}
+              </h2>
+              @if(message.payload?.cardV2![0].variables &&
+              message.payload?.cardV2![0].variables['tags']){
+              <span
+                class="badge badge-sm"
+                [ngClass]="{
+                  'badge-neutral':
+                    message.payload?.cardV2![0].variables['tags'].includes(
+                      'cheapest'
+                    ),
+                  'badge-success text-white':
+                    message.payload?.cardV2![0].variables['tags'].includes(
+                      'shortest'
+                    )
+                }"
+              >
+                {{ (message.payload?.cardV2)![0].variables["tags"] }}
+              </span>
+              }
+            </div>
+
+            <div class="space-y-3 text-sm mt-2">
+              <div
+                class="whitespace-pre-line prose"
+                [innerHTML]="
+                  renderStyledText(
+                    (message.payload?.cardV2)![0].description.slate[0].children
+                  )
+                "
+              ></div>
+            </div>
+
+            <div class="cardV2-actions mt-4 gap-2">
+              @for(button of message.payload?.cardV2![0].buttons;track $index){
+              <button
+                class="btn btn-primary w-full hover:btn-primary-focus transition-colors duration-200"
+                (click)="handleSelectionCarousel(button)"
+              >
+                {{ button.request["payload"]["label"] }}
+              </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        } @else if(message.type === 'custom_form'){
+        @if(message.payload?.formField){
+        <app-dynamic-form
+          [formFields]="message.payload?.formField || {}"
+          (formSubmit)="onFormSubmit($event)"
+        >
+        </app-dynamic-form>
+        } }
       </div>
 
       <div class="flex items-center gap-1 p-2" *ngIf="isTyping">
@@ -172,7 +282,7 @@
           class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
           [disabled]="!chatForm.valid"
         >
-          <span class="material-symbols-outlined">send</span>
+          <span class="material-symbols-outlined"> send </span>
         </button>
       </div>
     </form>

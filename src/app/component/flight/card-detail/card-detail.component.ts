@@ -8,6 +8,7 @@ import {
 } from 'src/app/models/cardDetail.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { FlightServiceAPI } from 'src/app/services/flight.service';
+import { createFlightSegment } from 'src/app/util/flight';
 import { calculateDuration, convertToUserTimezone } from 'src/app/util/time';
 
 @Component({
@@ -44,86 +45,39 @@ export class CardDetailComponent {
     this.isLoading = true;
 
     console.log(this.itineraryId());
-    this.flightServiceAPI.searchDetail(this.itineraryId(), this.tokenItinerary()).subscribe((res) => {
-      console.log('res', res);
-      if (res.status) {
-        this.legInfo = res.data.itinerary.legs.map((leg: any) => {
-          const fullDurationSegment = leg.duration;
-          const headerDate = leg.departure;
+    this.flightServiceAPI
+      .searchDetail(this.itineraryId(), this.tokenItinerary())
+      .subscribe((res) => {
+        console.log('res', res);
+        if (res.status) {
+          this.legInfo = res.data.itinerary.legs.map((leg: any) => {
+            const fullDurationSegment = leg.duration;
+            const headerDate = leg.departure;
 
-          const { flightSegmentInfo, layoverInfo } = this.createFlightSegment(
-            leg.segments
-          );
+            const { flightSegmentInfo, layoverInfo } = createFlightSegment(
+              leg.segments
+            );
 
-          const isDetailSegmentAmenities = new Array(
-            this.flightSegmentInfo.length
-          ).fill(false);
+            const isDetailSegmentAmenities = new Array(
+              this.flightSegmentInfo.length
+            ).fill(false);
 
-          return {
-            flightSegmentInfo,
-            layoverInfo,
-            fullDurationSegment,
-            headerDate,
-            isDetailSegmentAmenities,
-          };
-        });
-      }
-      this.isLoading = false;
-    });
-  }
-
-  createFlightSegment(segments: any) {
-    const layoverInfo: LayoverInfo[] = [];
-    let flightSegmentInfo: FlightSegmentInfo[];
-
-    flightSegmentInfo = segments.map(
-      (segment: any, index: number, array: any[]) => {
-        const departureTime = convertToUserTimezone(segment.departure);
-        const arrivalTime = convertToUserTimezone(segment.arrival);
-        const duration = segment.duration;
-        const flightLogoBrand = segment.marketingCarrier.logo;
-        const flightLogoBrandName = segment.marketingCarrier.name;
-        const departureAirport =
-          segment.origin.name + ' (' + segment.origin.displayCode + ')';
-        const arrivalAirport =
-          segment.destination.name +
-          ' (' +
-          segment.destination.displayCode +
-          ')';
-
-        if (index < array.length - 1) {
-          const nextSegment = array[index + 1];
-          const layoverDuration = calculateDuration(
-            nextSegment.departure,
-            segment.arrival
-          );
-          layoverInfo.push({
-            duration: layoverDuration,
-            layoverAirport: arrivalAirport,
+            return {
+              flightSegmentInfo,
+              layoverInfo,
+              fullDurationSegment,
+              headerDate,
+              isDetailSegmentAmenities,
+            };
           });
         }
-
-        return {
-          departureTime,
-          departureAirport,
-          arrivalTime,
-          arrivalAirport,
-          duration,
-          flightLogoBrand,
-          flightLogoBrandName,
-        };
-      }
-    );
-
-    return {
-      flightSegmentInfo,
-      layoverInfo,
-    };
+        this.isLoading = false;
+      });
   }
 
   navigateToBooking() {
     this.bookingService
-      .availabilitySeat(this.itineraryId())
+      .availabilitySeat(this.itineraryId(), this.tokenItinerary())
       .pipe(
         tap((data: any) => {
           const isAvailableSeat = data.isAvailableSeat;

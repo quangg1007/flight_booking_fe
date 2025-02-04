@@ -94,6 +94,7 @@ export class CardSearchComponent {
         [Validators.required, Validators.minLength(3)],
       ],
       to_destination_skyID: [paramSearch.to_destination_id],
+      tripType: ['oneWay'],
       depart_date: [parsedDepartureDate, [Validators.required]],
       return_date: [parsedReturnDate, [Validators.required]],
       class_type: [paramSearch.class_type],

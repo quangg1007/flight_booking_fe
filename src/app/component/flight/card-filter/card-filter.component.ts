@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { DateSliderComponent } from '../../common/date-slider/date-slider.component';
 import { CommonModule } from '@angular/common';
 import { convertTimestampToISOString } from 'src/app/util/time';
@@ -60,6 +60,7 @@ export class CardFilterComponent {
   filterChange = output<FilterStats>();
 
   ngOnInit(): void {
+      console.log("filterStats", this.filterStats());
     this.minTimeDeparture.set(this.filterStats().timeRange.minTimeDeparture);
     this.maxTimeDeparture.set(this.filterStats().timeRange.maxTimeDeparture);
 
@@ -100,6 +101,8 @@ export class CardFilterComponent {
         maxPrice: this.priceData(),
       },
     });
+
+    console.log("filterChange", JSON.stringify(this.filterStats()));
   }
 
   handleMinTimeDepartureValueChange(valueTime: number) {
@@ -204,3 +207,4 @@ export class CardFilterComponent {
     this.handleFiterChange();
   }
 }
+

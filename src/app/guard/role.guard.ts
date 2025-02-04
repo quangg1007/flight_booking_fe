@@ -27,9 +27,11 @@ export class RoleGuard {
         return this.authService.getDataFromAccessToken().pipe(
           map((data) => {
             console.log(data);
-            const expectedRole = route.data['expectedRole'];
+            const isCorrectRole = route.data['expectedRole'].includes(
+              data.role
+            );
 
-            if (!isAuth || data.role !== expectedRole) {
+            if (!isAuth || !isCorrectRole) {
               this.router.navigate(['/login']);
               return false;
             }

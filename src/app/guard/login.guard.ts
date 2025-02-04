@@ -23,7 +23,7 @@ export class LoginGuard implements CanActivate {
         if (isAccessTokenValid) {
           return this.authService.isRefreshTokenExpired().pipe(
             switchMap((isExpired) => {
-              console.log(isExpired);
+              console.log("isExpired", isExpired);
               if (!isExpired) {
                 return this.authService.refreshToken().pipe(
                   map((response) => {

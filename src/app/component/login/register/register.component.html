@@ -3,6 +3,12 @@
   autocomplete="off"
   [formGroup]="registerForm"
 >
+<div class="text-center mb-8">
+  <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    Create Your Account
+  </h2>
+</div>
+
   <!-- User name -->
   <div class="row-control">
     <label class="form-control w-full max-w-xs">
@@ -92,7 +98,6 @@
       </div>
     </label>
   </div>
-  <pre>{{ registerForm.value | json }}</pre>
 
   <div class="row-control row-actions mt-2">
     <button
