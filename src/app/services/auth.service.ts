@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { TokenService } from './token.service';
 import { Router } from '@angular/router';
+import { APIUrl } from 'src/environments/enviroment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8081/api';
   constructor(
     private http: HttpClient,
     private tokenService: TokenService,
@@ -16,19 +16,19 @@ export class AuthService {
   ) {}
 
   sendEmailResetPassword(userEmail: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/request-password-reset`, {
+    return this.http.post<any>(`${APIUrl}/auth/request-password-reset`, {
       email: userEmail,
     });
   }
 
   validateToken(token: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/password/edit`, {
+    return this.http.post<any>(`${APIUrl}/auth/password/edit`, {
       token: token,
     });
   }
 
   resetPassword(token: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/reset-password`, {
+    return this.http.post<any>(`${APIUrl}/auth/reset-password`, {
       token: token,
       password: password,
     });
@@ -57,7 +57,7 @@ export class AuthService {
 
   refreshToken(): Observable<any> {
     return this.http.post(
-      `${this.apiUrl}/auth/refresh`,
+      `${APIUrl}/auth/refresh`,
       {},
       {
         withCredentials: true,
@@ -70,7 +70,7 @@ export class AuthService {
 
   isRefreshTokenExpired(): Observable<boolean> {
     return this.http
-      .get<any>(`${this.apiUrl}/auth/check-refresh-token`, {
+      .get<any>(`${APIUrl}/auth/check-refresh-token`, {
         withCredentials: true,
       })
       .pipe(

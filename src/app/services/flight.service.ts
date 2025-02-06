@@ -6,18 +6,17 @@ import {
   RoundTripSearchParams,
 } from '../models/flightService.model';
 import { TokenService } from './token.service';
+import { APIUrl } from 'src/environments/enviroment';
 
 @Injectable()
 export class FlightServiceAPI {
-  private apiUrl = 'http://localhost:8081/api';
-
   constructor(private http: HttpClient, private tokenService: TokenService) {}
 
   getLocations(location: string): Observable<any> {
     console.log('API call initiated for:', location);
     const token = this.tokenService.getAccessToken();
     const results = this.http.get<any>(
-      `${this.apiUrl}/flights/search/auto-complete`,
+      `${APIUrl}/flights/search/auto-complete`,
       {
         params: { keyword: location },
       }
@@ -29,7 +28,7 @@ export class FlightServiceAPI {
   }
 
   searchOneWay(params: OneWaySearchParams): Observable<any> {
-    const url = `${this.apiUrl}/flights/search/one-way`;
+    const url = `${APIUrl}/flights/search/one-way`;
 
     const httpParams = new HttpParams({
       fromObject: params as unknown as { [key: string]: string },
@@ -46,7 +45,7 @@ export class FlightServiceAPI {
   }
 
   searchRoundTrip(params: RoundTripSearchParams): Observable<any> {
-    const url = `${this.apiUrl}/flights/search/round-trip`;
+    const url = `${APIUrl}/flights/search/round-trip`;
 
     const httpsParams = new HttpParams({
       fromObject: params as unknown as { [key: string]: string },
@@ -63,7 +62,7 @@ export class FlightServiceAPI {
   }
 
   searchDetail(itineraryId: string, token: string): Observable<any> {
-    const url = `${this.apiUrl}/flights/search/detail`;
+    const url = `${APIUrl}/flights/search/detail`;
     const params = {
       itineraryId,
       token,

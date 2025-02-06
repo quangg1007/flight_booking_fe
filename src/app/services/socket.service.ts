@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 import { Connection } from '../types/connection.type';
 import { Observable } from 'rxjs';
 import { TokenService } from './token.service';
-const backendUrl = 'http://localhost:8081';
+const backendUrl = 'flightbookingbe-production-967d.up.railway.app';
 
 @Injectable({
   providedIn: 'root',
@@ -18,23 +18,20 @@ export class SocketService {
     this.clientSocket.on('connect', () => {
       console.log('Socket connected:', this.clientSocket.id);
 
-      console.log("socket", this.clientSocket)
+      console.log('socket', this.clientSocket);
 
       // this.clientSocket.data.socket_room_type = 'client';
-
-
     });
 
     this.clientSocket.on('connect_error', (error: any) => {
       console.error('Socket connection error:', error);
     });
-
   }
 
   connectSocket() {
     const socket = io(backendUrl, {
       auth: {
-        token: this.tokenService.getAccessToken()
+        token: this.tokenService.getAccessToken(),
       },
       transports: ['websocket'],
       // extraHeaders: {
@@ -48,7 +45,6 @@ export class SocketService {
   getSocket() {
     return this.clientSocket;
   }
-
 
   generateHashID() {
     const chars = '0123456789abcdef';

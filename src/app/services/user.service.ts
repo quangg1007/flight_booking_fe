@@ -7,7 +7,6 @@ import { APIUrl } from 'src/environments/enviroment';
 
 @Injectable()
 export class userService {
-  // private APIUrl = 'http://localhost:8081/api';
   public $refreshToken = new Subject<boolean>();
   public $refreshTokenReceived = new Subject<boolean>();
   constructor(private http: HttpClient) {}
