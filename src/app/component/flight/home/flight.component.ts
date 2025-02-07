@@ -620,6 +620,10 @@ export class FlightComponent implements OnInit {
     }, 1000);
   }
 
+  sortFlights(sortType: string) {
+    // this.isLoadingFlight = true;
+  }
+
   // Handle infinity scrolling.
   onScroll() {
     const nextPage = this.currentPage + 1;

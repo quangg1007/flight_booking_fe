@@ -1,8 +1,8 @@
-<div *ngIf="isLoading">
+<!-- <div *ngIf="isLoading">
   <app-loading-page></app-loading-page>
-</div>
+</div> -->
 
-<div
+<!-- <div
   *ngIf="!isLoading"
   class="w-full h-full px-20 overflow-x-hidden flex flex-col justify-center items-center"
 >
@@ -13,53 +13,73 @@
       (filterChange)="filterStatsChange($event)"
     ></app-card-filter>
 
-    <div class="search-results min-w-[800px] space-y-6" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="300" (scrolled)="onScroll()">
+    <div
+      class="search-results min-w-[800px] space-y-6"
+      infinite-scroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="300"
+      (scrolled)="onScroll()"
+    >
       @if (isLoadingFlight) {
-        <div class="grid gap-6">
-          <div
-            class="skeleton animate-pulse bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl shadow-lg min-h-[200px]"
-            *ngFor="let i of [1, 2, 3, 4, 5]">
-          </div>
+      <div class="grid gap-6">
+        <div
+          class="skeleton animate-pulse bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl shadow-lg min-h-[200px]"
+          *ngFor="let i of [1, 2, 3, 4, 5]"
+        ></div>
+      </div>
+      } @else { @if(flightListResult().length > 0) {
+      <div class="grid gap-6">
+        @for (item of flightListResult(); track $index) {
+        <div
+          class="transform hover:scale-[1.02] transition-transform duration-200"
+        >
+          <app-card-list
+            [flightCard]="item"
+            [tokenItinerary]="tokenItinerary()"
+          ></app-card-list>
         </div>
-      } @else {
-        @if(flightListResult().length > 0) {
-          <div class="grid gap-6">
-            @for (item of flightListResult(); track $index) {
-              <div class="transform hover:scale-[1.02] transition-transform duration-200">
-                <app-card-list
-                  [flightCard]="item"
-                  [tokenItinerary]="tokenItinerary()"
-                ></app-card-list>
-              </div>
-            }
-          </div>
-        } @else {
-          <div class="flex flex-col items-center justify-center p-12 bg-white rounded-2xl shadow-lg">
-            <div class="bg-blue-50 p-6 rounded-full mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-4">No Flights Found</h3>
-            <p class="text-gray-600 text-center mb-3">We couldn't find any flights matching your search criteria.</p>
-            <p class="text-blue-600 font-medium">Try adjusting your filters or searching for different dates.</p>
-          </div>
         }
-      }
+      </div>
+      } @else {
+      <div
+        class="flex flex-col items-center justify-center p-12 bg-white rounded-2xl shadow-lg"
+      >
+        <div class="bg-blue-50 p-6 rounded-full mb-6">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-20 h-20 text-blue-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">No Flights Found</h3>
+        <p class="text-gray-600 text-center mb-3">
+          We couldn't find any flights matching your search criteria.
+        </p>
+        <p class="text-blue-600 font-medium">
+          Try adjusting your filters or searching for different dates.
+        </p>
+      </div>
+      } }
     </div>
-
   </div>
-</div>
+</div> -->
 
-
- <div *ngIf="isLoading">
+<div *ngIf="isLoading">
   <app-loading-page></app-loading-page>
 </div>
 
-
 <div class="min-h-screen bg-gray-50 p-4 overflow-x-hidden" *ngIf="!isLoading">
   <div class="max-w-7xl mx-auto">
-     <!-- <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <!-- <div class="bg-white rounded-lg shadow-md p-6 mb-8">
       <form [formGroup]="searchForm"  class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="space-y-2">
@@ -115,7 +135,7 @@
     <app-card-search [paramSearch]="paramSearch"></app-card-search>
 
     <div class="flex flex-col lg:flex-row gap-8">
-       <!-- <div class="lg:w-1/4">
+      <!-- <div class="lg:w-1/4">
         <div class="bg-white rounded-lg shadow-md p-6 space-y-6">
           <div class="space-y-4">
             <h3 class="text-lg font-semibold">Price Range</h3>
@@ -166,62 +186,51 @@
       </div> -->
 
       <app-card-filter
-      [filterStats]="filterStats()"
-      (filterChange)="filterStatsChange($event)"
-    ></app-card-filter>
+        [filterStats]="filterStats()"
+        (filterChange)="filterStatsChange($event)"
+      ></app-card-filter>
 
-       <div class="lg:w-3/4">
+      <div class="lg:w-3/4">
         <div class="space-y-4">
-          <div
-            *ngFor="let flight of flights"
-            class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200"
-          >
-            <div
-              class="flex flex-col md:flex-row justify-between items-center gap-4"
-            >
-              <div class="flex items-center space-x-4">
-                <img
-                  [src]="flight.airlinePhoto"
-                  alt="Airline Logo"
-                  class="w-16 h-16 object-contain"
-                />
-                <div>
-                  <h3 class="font-semibold">{{ flight.airline }}</h3>
-                  <p class="text-sm text-gray-600">
-                    Flight {{ flight.flightNumber }}
-                  </p>
+          <div class="bg-white rounded-lg shadow-md mb-4">
+            <div class="flex">
+              <!-- Cheapest Tab -->
+              <div
+                class="flex-1 p-2 cursor-pointer bg-blue-200 hover:bg-blue-100 border-b-2 border-blue-600"
+                (click)="sortFlights('cheapest')"
+              >
+                <div class="flex flex-col items-center justify-center gap-2">
+                  <span class="font-semibold text-blue-600">Cheapest</span>
+                  <div class="flex flex-row items-center gap-2">
+                    <span class="text-lg font-bold">$499</span>
+                    <span class="text-sm text-gray-600">2h 30m</span>
+                  </div>
                 </div>
               </div>
-              <div class="flex flex-col items-center">
-                <p class="text-lg font-bold">{{ flight.departureTime }}</p>
-                <p class="text-sm text-gray-600">{{ flight.origin }}</p>
-              </div>
-              <div class="flex flex-col items-center">
-                <p class="text-sm text-gray-600">{{ flight.duration }}</p>
-                <div class="w-32 h-0.5 bg-gray-300 relative">
-                  <div
-                    *ngIf="flight.stops > 0"
-                    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-gray-400 rounded-full"
-                  ></div>
+
+              <!-- Shortest Tab -->
+              <div
+                class="flex-1 p-2 cursor-pointer hover:bg-gray-50"
+                (click)="sortFlights('shortest')"
+              >
+                <div class="flex flex-col items-center justify-center gap-2">
+                  <span class="font-semibold">Shortest</span>
+                  <div class="flex flex-row items-center gap-2">
+                    <span class="text-lg font-bold">$599</span>
+                    <span class="text-sm text-gray-600">1h 45m</span>
+                  </div>
                 </div>
-                <p class="text-xs text-gray-500">{{ flight.stops }} stop(s)</p>
-              </div>
-              <div class="flex flex-col items-center">
-                <p class="text-lg font-bold">{{ flight.arrivalTime }}</p>
-                <p class="text-sm text-gray-600">{{ flight.destination }}</p>
-              </div>
-              <div class="flex flex-col items-center">
-                <p class="text-2xl font-bold text-blue-600">
-                  ${{ flight.price }}
-                </p>
-                <button
-                  class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-                >
-                  Select
-                </button>
               </div>
             </div>
           </div>
+
+          @for (flight of flightListResult(); track $index) {
+          <app-card-list
+            [flightCard]="flight"
+            [tokenItinerary]="tokenItinerary()"
+          ></app-card-list>
+
+          }
         </div>
       </div>
     </div>

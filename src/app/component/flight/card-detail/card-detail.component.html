@@ -42,13 +42,13 @@
 
 
 @if (isLoading) {
-  <div class="pt-5 px-10 pb-5 max-w-[800px] min-h-[400px] flex flex-col gap-2 mb-10 -mt-10 -z-10 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-none">
+  <div class="pt-5 px-10 pb-5 max-w-[800px] min-h-[400px] flex flex-col gap-2 mb-10 mt-10 -z-10 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-none">
     <div class="skeleton min-h-[300px] flex flex-col gap-2 pt-7 pb-12 rounded-xl bg-white/80 w-full border border-blue-200 shadow-sm">
     </div>
     <div class="w-full h-[50px] bg-blue-500 rounded-xl shadow-md"></div>
   </div>
   } @else {
-  <div class="px-10 max-w-[800px] flex flex-col gap-2 mb-10 -mt-10 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-b-xl py-5 shadow-lg">
+  <div class="px-10  flex flex-col gap-2 mb-10 -mt-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-b-xl py-5 shadow-lg">
     @if (legInfo.length) {
       @for (leg of legInfo; track $index; let even = $even) {
         <app-card-detail-leg

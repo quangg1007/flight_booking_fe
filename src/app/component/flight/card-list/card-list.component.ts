@@ -19,10 +19,12 @@ export class CardListComponent {
 
   legs: FlightLegInfo[] = [];
 
+  flight = input<any>();
+
   constructor() {}
 
   ngOnInit() {
-    // console.log(this.flightCard());
+    console.log(this.flightCard());
     this.formatTagFlight(this.flightCard().tags);
 
     this.legs = this.flightCard().legs.map((leg: any) => {
@@ -32,6 +34,11 @@ export class CardListComponent {
       const stopCount = leg.stopCount;
       const brandFlight = leg.carriers.marketing;
       const brandNameFlight = this.formatBrandFlight(brandFlight);
+      const origin = leg.origin.id;
+      const destination = leg.destination.id;
+      const airlinePhoto = leg.carriers.marketing[0].logoUrl;
+      const airline = leg.carriers.marketing[0].name;
+      const flightNumber = leg.carriers.marketing[0].alternateId;
       const formatedDepDesCode = this.formatDepDesCode(leg);
 
       return {
@@ -41,7 +48,12 @@ export class CardListComponent {
         stopCount,
         brandFlight,
         brandNameFlight,
+        origin,
+        destination,
         formatedDepDesCode,
+        airlinePhoto,
+        airline,
+        flightNumber,
       };
     });
   }
