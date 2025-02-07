@@ -87,6 +87,10 @@ export class LoginComponent implements OnInit, OnDestroy {
             // Save the user data to local storage
 
             localStorage.setItem('userEmail', res.email);
+            if(res.avatar){
+              
+            }
+            localStorage.setItem('avatar', res.avatar);
 
             this.tokenService.setAccessToken(res.accessToken);
             this.timezoneService.setTimezone(res.timezone);

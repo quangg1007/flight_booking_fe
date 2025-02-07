@@ -3,4 +3,5 @@ export interface LoginResponse {
   role: 'user' | 'admin';
   timezone: string;
   email: string;
+  avatar: string;
 }

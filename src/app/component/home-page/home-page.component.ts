@@ -27,6 +27,8 @@ import { FlightServiceAPI } from 'src/app/services/flight.service';
 import { validateForm } from 'src/app/util/validation';
 import { PriceDate } from '../common/calendar/calendar.component';
 import { CalendarService } from 'src/app/services/calender.service';
+import { userService } from 'src/app/services/user.service';
+import { TokenService } from 'src/app/services/token.service';
 
 export interface DepDes {
   from: string;
@@ -58,12 +60,17 @@ export class HomePageComponent implements OnInit, OnDestroy {
     to: '',
   });
 
+  isLoggedIn: boolean = false;
+  avatar: string = '';
+
   constructor(
     private _fb: FormBuilder,
     private _flightServiceAPI: FlightServiceAPI,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private calendarService: CalendarService
+    private calendarService: CalendarService,
+    private userService: userService,
+    private tokenService: TokenService
   ) {}
   ngOnInit(): void {
     this.initForm();
@@ -81,11 +88,25 @@ export class HomePageComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(() => this.submitForm());
+
+    this.checkAuth();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  checkAuth() {
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail) {
+      this.isLoggedIn = true;
+      this.avatar =
+        localStorage.getItem('avatar') ||
+        'https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png';
+    } else {
+      this.isLoggedIn = false;
+    }
   }
 
   initForm() {
@@ -310,6 +331,26 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     this.isCalendarOpen.set(false);
+  }
+
+  logout() {
+    const token = this.tokenService.getAccessToken();
+    let tokenPayload;
+    if (token) {
+      tokenPayload = JSON.parse(atob(token.split('.')[1]));
+    }
+    const email = tokenPayload.email;
+    console.log(tokenPayload);
+    this.userService
+      .logout(email)
+      .pipe(
+        tap(() => {
+          this.tokenService.clearTokens();
+          localStorage.clear();
+          window.location.reload();
+        })
+      )
+      .subscribe();
   }
 
   // VALIDATOR
