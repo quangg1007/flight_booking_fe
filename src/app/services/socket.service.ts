@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 import { Connection } from '../types/connection.type';
 import { Observable } from 'rxjs';
 import { TokenService } from './token.service';
-const backendUrl = 'flightbookingbe-production-967d.up.railway.app';
+const backendUrl = 'http://3.106.217.220';
 
 @Injectable({
   providedIn: 'root',
